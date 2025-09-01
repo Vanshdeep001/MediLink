@@ -1,36 +1,76 @@
 import { Button } from "@/components/ui/button";
-import { AnimatedStethoscope } from "./animated-stethoscope";
-import { FadeIn } from "@/components/fade-in";
+
+const Starfield = () => (
+  <div className="starfield" aria-hidden="true">
+    {Array.from({ length: 50 }).map((_, i) => (
+      <div
+        key={i}
+        className="stars stars-sm"
+        style={{
+          top: `${Math.random() * 100}%`,
+          left: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 150}s`,
+        }}
+      />
+    ))}
+    {Array.from({ length: 50 }).map((_, i) => (
+      <div
+        key={i}
+        className="stars stars-md"
+        style={{
+          top: `${Math.random() * 100}%`,
+          left: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 100}s`,
+        }}
+      />
+    ))}
+     {Array.from({ length: 20 }).map((_, i) => (
+      <div
+        key={i}
+        className="stars stars-lg"
+        style={{
+          top: `${Math.random() * 100}%`,
+          left: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 50}s`,
+        }}
+      />
+    ))}
+  </div>
+);
 
 export function HeroSection() {
   return (
-    <section className="container grid lg:grid-cols-2 gap-12 items-center py-24 md:py-32">
-      <div className="flex flex-col items-start space-y-6">
-        <FadeIn>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter">
-            Seamless Healthcare,{" "}
-            <span className="text-primary">Instantly Connected.</span>
-          </h1>
-        </FadeIn>
-        <FadeIn delay={200}>
-          <p className="max-w-xl text-lg text-muted-foreground">
-            MediLink bridges the gap between patients, doctors, pharmacies, and
-            emergency services. Get smart, AI-powered insights into your
-            healthcare network.
+    <section className="relative container flex flex-col items-center justify-center min-h-screen text-center py-24 md:py-32">
+      <Starfield />
+      <div className="relative z-10 flex flex-col items-center space-y-6">
+        <h1
+          className="text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-primary-foreground opacity-0 fade-in glow-effect"
+          style={{ fontFamily: "'Orbitron', sans-serif" }}
+        >
+          MediLink
+        </h1>
+        
+        <div className="text-xl md:text-2xl lg:text-3xl space-y-2 text-foreground/80">
+          <p className="opacity-0 slide-in-1">
+            Seamless Healthcare.
           </p>
-        </FadeIn>
-        <FadeIn delay={400}>
+          <p className="font-semibold text-foreground opacity-0 slide-in-2">
+            Instantly Connected.
+          </p>
+          <p className="italic opacity-0 slide-in-3">
+            AI-powered. For You.
+          </p>
+        </div>
+
+        <div className="opacity-0 fade-in-btn">
           <Button
             size="lg"
-            className="bg-accent text-accent-foreground rounded-full px-8 py-6 text-lg font-semibold shadow-lg transition-all duration-300 hover:scale-105 glow-accent"
+            className="bg-primary text-primary-foreground rounded-full px-8 py-6 text-lg font-semibold shadow-lg transition-all duration-300 hover:scale-105 btn-glow"
           >
             Get Started
           </Button>
-        </FadeIn>
+        </div>
       </div>
-      <FadeIn delay={600} className="flex items-center justify-center">
-        <AnimatedStethoscope />
-      </FadeIn>
     </section>
   );
 }
