@@ -6,34 +6,34 @@ import { AnimatedStethoscope } from "./animated-stethoscope";
 
 const Starfield = () => (
   <div className="starfield" aria-hidden="true">
-    {Array.from({ length: 50 }).map((_, i) => (
+    {Array.from({ length: 150 }).map((_, i) => (
       <div
         key={i}
         className="stars stars-sm"
         style={{
-          top: `${Math.random() * 100}%`,
+          top: `${Math.random() * 4000 - 2000}px`,
           left: `${Math.random() * 100}%`,
           animationDelay: `${Math.random() * 150}s`,
         }}
       />
     ))}
-    {Array.from({ length: 50 }).map((_, i) => (
+    {Array.from({ length: 100 }).map((_, i) => (
       <div
         key={i}
         className="stars stars-md"
         style={{
-          top: `${Math.random() * 100}%`,
+          top: `${Math.random() * 4000 - 2000}px`,
           left: `${Math.random() * 100}%`,
           animationDelay: `${Math.random() * 100}s`,
         }}
       />
     ))}
-    {Array.from({ length: 20 }).map((_, i) => (
+    {Array.from({ length: 50 }).map((_, i) => (
       <div
         key={i}
         className="stars stars-lg"
         style={{
-          top: `${Math.random() * 100}%`,
+          top: `${Math.random() * 4000 - 2000}px`,
           left: `${Math.random() * 100}%`,
           animationDelay: `${Math.random() * 50}s`,
         }}
@@ -89,15 +89,13 @@ export function HeroSection() {
           step >= 3 ? "opacity-100" : "opacity-0"
         )}
       >
-        <p className="font-light">
-          Care. <span className="font-semibold text-foreground">Simplified.</span>
+        <p style={{fontFamily: "'Lora', serif"}} className="italic">
+          Care. <span style={{fontFamily: "'Roboto Mono', monospace"}} className="not-italic font-semibold text-foreground">Simplified.</span>
         </p>
-        <p className="font-light">
-          Health. <span className="font-semibold text-foreground">Connected.</span>
+        <p style={{fontFamily: "'Lora', serif"}} className="italic">
+          Health. <span style={{fontFamily: "'Roboto Mono', monospace"}} className="not-italic font-semibold text-foreground">Connected.</span>
         </p>
       </div>
     </section>
   );
 }
-
-    
