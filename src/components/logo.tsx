@@ -3,69 +3,25 @@ import { cn } from "@/lib/utils";
 export function Logo({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 100 100"
+      viewBox="0 0 400 100"
       xmlns="http://www.w3.org/2000/svg"
       className={cn("w-full h-full", className)}
     >
-      <defs>
-        <clipPath id="clip-top-left-quarter">
-          <path d="M 50,0 A 50,50 0 0 0 0,50 H 50 V 0 Z" />
-        </clipPath>
-        <clipPath id="clip-bottom-right-quarter">
-          <path d="M 50,100 A 50,50 0 0 0 100,50 H 50 V 100 Z" />
-        </clipPath>
-      </defs>
-
-      <g transform="translate(10, 10)" style={{ transformBox: "fill-box" }}>
-        {/* Top-left */}
-        <g transform="translate(0, 0)">
-          <rect
-            width="40"
-            height="40"
-            style={{ fill: "hsl(var(--logo-color-2))" }}
-          />
-          <rect
-            width="40"
-            height="40"
-            style={{ fill: "white" }}
-            clipPath="url(#clip-top-left-quarter)"
-            transform="scale(-1, 1) translate(-40, 0)"
-          />
-        </g>
-
-        {/* Bottom-left */}
-        <rect
-          x="0"
-          y="40"
-          width="40"
-          height="40"
-          style={{ fill: "hsl(var(--logo-color-2))" }}
-        />
-
-        {/* Bottom-right */}
-        <g transform="translate(40, 40)">
-          <rect
-            width="40"
-            height="40"
-            style={{ fill: "hsl(var(--logo-color-3))" }}
-          />
-          <rect
-            width="40"
-            height="40"
-            style={{ fill: "white" }}
-            clipPath="url(#clip-bottom-right-quarter)"
-            transform="scale(-1, -1) translate(-40, -40)"
-          />
-        </g>
-
-        {/* Head */}
-        <circle
-          cx="60"
-          cy="20"
-          r="20"
-          style={{ fill: "hsl(var(--logo-color-1))" }}
-        />
+      <g fill="hsl(var(--primary))">
+        <path d="M62.3,84.1c-6.4,0-12.6-2.5-17.2-7.1c-4.6-4.6-7.1-10.8-7.1-17.2V27.3c0-4.4,3.6-8,8-8s8,3.6,8,8v32.5c0,3.9,1.6,7.7,4.4,10.4c2.8,2.8,6.5,4.4,10.4,4.4s7.7-1.6,10.4-4.4c2.8-2.8,4.4-6.5,4.4-10.4V27.3c0-4.4,3.6-8,8-8s8,3.6,8,8v32.5c0,6.4-2.5,12.6-7.1,17.2C74.9,81.5,68.7,84.1,62.3,84.1z M26.5,23.5c-4.4,0-8-3.6-8-8s3.6-8,8-8s8,3.6,8,8S30.9,23.5,26.5,23.5z M98,23.5c-4.4,0-8-3.6-8-8s3.6-8,8-8s8,3.6,8,8S102.4,23.5,98,23.5z" />
+        <path d="M37.8,96.3c-7.9,0-14.3-6.4-14.3-14.3c0-5.2,2.8-9.8,7-12.4c-1.3-0.8-2.1-2.2-2.1-3.8V35.9c0-2.2,1.8-4,4-4h5c2.2,0,4,1.8,4,4v29.9c0,1.6-0.8,3-2.1,3.8c4.2,2.5,7,7.1,7,12.4C49.3,89.9,43.7,96.3,37.8,96.3z M37.8,71.8c-5.1,0-9.3,4.2-9.3,9.3c0,5.1,4.2,9.3,9.3,9.3s9.3-4.2,9.3-9.3C47.1,75.9,42.9,71.8,37.8,71.8z" />
       </g>
+      <text
+        x="130"
+        y="68"
+        fontFamily="'Orbitron', sans-serif"
+        fontSize="50"
+        fontWeight="bold"
+        fill="hsl(var(--primary))"
+        className="glow-effect"
+      >
+        MediLink
+      </text>
     </svg>
   );
 }

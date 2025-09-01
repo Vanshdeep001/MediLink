@@ -71,27 +71,14 @@ export function HeroSection() {
             : ""
         )}
       >
-        <div className="flex items-center space-x-4">
-          <div
-            className={cn(
-              "transform scale-75 opacity-0 transition-all duration-1000 ease-in-out",
-              step >= 1 && "scale-100 opacity-100",
-              step >= 2 ? "w-10 h-10" : "w-24 h-24 md:w-32 md:h-32"
-            )}
-          >
-            <Logo />
-          </div>
-          <h1
-            className={cn(
-              "text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-primary glow-effect transition-all duration-1000 ease-in-out",
-              "transform scale-75 opacity-0",
-              step >= 1 && "scale-100 opacity-100",
-              step >= 2 && "text-4xl md:text-5xl"
-            )}
-            style={{ fontFamily: "'Orbitron', sans-serif" }}
-          >
-            MediLink
-          </h1>
+        <div
+          className={cn(
+            "transform scale-75 opacity-0 transition-all duration-1000 ease-in-out",
+            step >= 1 && "scale-100 opacity-100",
+            step >= 2 ? "w-40" : "w-80 md:w-96"
+          )}
+        >
+          <Logo />
         </div>
       </div>
 
