@@ -8,11 +8,23 @@ export default {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
       fontFamily: {
-        body: ['Lato', 'sans-serif'],
-        headline: ['Poppins', 'sans-serif'],
-        code: ['monospace'],
+        sans: ['var(--font-inter)'],
+        headline: ['var(--font-space-grotesk)'],
+      },
+      backgroundImage: {
+        'grid-pattern': 'linear-gradient(to right, hsl(var(--border) / 0.4) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border) / 0.4) 1px, transparent 1px)',
+      },
+      backgroundSize: {
+        'grid-pattern': '3rem 3rem',
       },
       colors: {
         background: 'hsl(var(--background))',

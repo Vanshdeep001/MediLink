@@ -2,30 +2,26 @@ import { cn } from "@/lib/utils";
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 200 50"
-      xmlns="http://www.w3.org/2000/svg"
-      className={cn("w-full h-full", className)}
-    >
-      <defs>
-        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: "hsl(var(--logo-color-1))" }} />
-          <stop offset="100%" style={{ stopColor: "hsl(var(--logo-color-2))" }} />
-        </linearGradient>
-      </defs>
-      <path d="M10 25 C 15 10, 25 10, 30 25 S 45 40, 50 25" stroke="url(#logoGradient)" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="10" cy="25" r="4" fill="hsl(var(--logo-color-1))" />
-      <circle cx="50" cy="25" r="4" fill="hsl(var(--logo-color-2))" />
-      <text
-        x="65"
-        y="35"
-        fontFamily="'Poppins', sans-serif"
-        fontSize="30"
-        fontWeight="600"
-        fill="hsl(var(--logo-color-3))"
-      >
-        MediLink
-      </text>
-    </svg>
+    <div className={cn("flex items-center gap-3", className)}>
+      <div className="bg-primary p-2 rounded-lg">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="black"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+        </svg>
+      </div>
+      <div>
+        <h1 className="text-2xl font-bold text-white tracking-tighter font-headline">MediLink</h1>
+        <p className="text-xs text-primary tracking-widest font-sans">HEALTHCARE</p>
+      </div>
+    </div>
   );
 }
