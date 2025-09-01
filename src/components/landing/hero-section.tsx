@@ -44,7 +44,7 @@ export function HeroSection() {
       <Starfield />
       <div className="relative z-10 flex flex-col items-center space-y-6">
         <h1
-          className="text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-primary-foreground opacity-0 fade-in glow-effect"
+          className="text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-primary opacity-0 fade-in glow-effect"
           style={{ fontFamily: "'Orbitron', sans-serif" }}
         >
           MediLink
