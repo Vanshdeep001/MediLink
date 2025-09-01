@@ -28,6 +28,10 @@ body {
     --input: 215 28% 17%;
     --ring: 198 83% 79%;
     --radius: 0.5rem;
+
+    --logo-color-1: 45 100% 60%;
+    --logo-color-2: 255 85% 65%;
+    --logo-color-3: 330 85% 65%;
   }
   .dark {
     --background: 224 71% 4%;
