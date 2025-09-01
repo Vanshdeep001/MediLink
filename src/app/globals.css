@@ -8,51 +8,30 @@ body {
 
 @layer base {
   :root {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
-    --card: 224 71% 4%;
-    --card-foreground: 213 31% 91%;
-    --popover: 224 71% 4%;
-    --popover-foreground: 213 31% 91%;
-    --primary: 198 93% 75%;
-    --primary-foreground: 224 71% 10%;
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 213 31% 91%;
-    --muted: 215 28% 17%;
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 210 40% 98%;
+    --card-foreground: 222 47% 11%;
+    --popover: 210 40% 98%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 173 93% 39%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 91%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 91%;
     --muted-foreground: 215 21% 65%;
-    --accent: 215 28% 17%;
-    --accent-foreground: 213 31% 91%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 213 31% 91%;
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 198 83% 79%;
+    --accent: 198 93% 75%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 210 40% 89%;
+    --input: 210 40% 89%;
+    --ring: 173 93% 39%;
     --radius: 0.5rem;
 
-    --logo-color-1: 45 100% 60%;
-    --logo-color-2: 255 85% 65%;
-    --logo-color-3: 330 85% 65%;
-  }
-  .dark {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
-    --card: 224 71% 4%;
-    --card-foreground: 213 31% 91%;
-    --popover: 224 71% 4%;
-    --popover-foreground: 213 31% 91%;
-    --primary: 198 93% 75%;
-    --primary-foreground: 224 71% 10%;
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 213 31% 91%;
-    --muted: 215 28% 17%;
-    --muted-foreground: 215 21% 65%;
-    --accent: 215 28% 17%;
-    --accent-foreground: 213 31% 91%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 213 31% 91%;
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 198 83% 79%;
+    --logo-color-1: 173 93% 39%;
+    --logo-color-2: 198 93% 75%;
+    --logo-color-3: 222 47% 11%;
   }
 }
 
@@ -66,81 +45,45 @@ body {
 }
 
 @layer utilities {
-  .glow-effect {
-    animation: glow-animation 3s ease-in-out infinite;
-  }
-
-  @keyframes glow-animation {
-    0%,
+  @keyframes pop-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.5) perspective(1000px) rotateX(-20deg);
+    }
     100% {
-      text-shadow: 0 0 10px hsl(var(--primary) / 0.5), 0 0 20px hsl(var(--primary) / 0.3);
-    }
-    50% {
-      text-shadow: 0 0 20px hsl(var(--primary) / 0.7), 0 0 40px hsl(var(--primary) / 0.5);
+      opacity: 1;
+      transform: scale(1) perspective(1000px) rotateX(0deg);
     }
   }
 
-  .btn-glow:hover {
-    box-shadow: 0 0 15px 5px hsl(var(--primary) / 0.3);
-  }
-
-  .starfield {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: radial-gradient(ellipse at center, rgba(27, 39, 53, 0.8) 0%, rgba(9, 10, 15, 1) 100%);
-    overflow: hidden;
-    z-index: -1;
-  }
-
-  @keyframes move-stars {
-    from {
-      transform: translateY(0px);
+  @keyframes slide-up-3d {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) translateZ(-50px) perspective(1000px);
     }
-    to {
-      transform: translateY(-2000px);
+    100% {
+      opacity: 1;
+      transform: translateY(0) translateZ(0) perspective(1000px);
     }
   }
 
-  .stars {
-    position: absolute;
-    top: -2000px;
-    width: 1px;
-    height: 1px;
-    background: transparent;
-    box-shadow: 0 0 0 1px #FFF;
-    animation: move-stars 200s linear infinite;
+  @keyframes move-up-shrink {
+    0% {
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      transform: translateY(-80px) scale(0.9);
+      opacity: 0.8;
+    }
   }
-
-  .stars:after {
-    content: " ";
-    position: absolute;
-    top: 2000px;
-    width: 1px;
-    height: 1px;
-    background: transparent;
-    box-shadow: inherit;
+  
+  .pop-in {
+    animation: pop-in 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
   }
-
-  .stars-sm { width: 1px; height: 1px; animation-duration: 150s; }
-  .stars-md { width: 2px; height: 2px; animation-duration: 100s; }
-  .stars-lg { width: 3px; height: 3px; animation-duration: 50s; }
-
-  .fade-in { animation: fade-in 1s ease-out forwards; }
-  .slide-in-1 { animation: slide-in 1s ease-out 0.5s forwards; }
-  .slide-in-2 { animation: slide-in 1s ease-out 1.5s forwards; }
-  .slide-in-3 { animation: slide-in 1s ease-out 2.5s forwards; }
-  .fade-in-btn { animation: fade-in 1s ease-out 3.5s forwards; }
-
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  .slide-up-3d {
+    animation: slide-up-3d 0.8s cubic-bezier(0.19, 1, 0.22, 1) both;
   }
-
-  @keyframes slide-in {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  .move-up-shrink {
+    animation: move-up-shrink 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
   }
 }
