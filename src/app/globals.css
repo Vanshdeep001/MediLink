@@ -43,25 +43,25 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
+    --background: 202 51% 16%;
+    --foreground: 202 20% 90%;
+    --card: 202 51% 20%;
+    --card-foreground: 202 20% 90%;
+    --popover: 202 51% 16%;
+    --popover-foreground: 202 20% 90%;
+    --primary: 179 78% 75%;
+    --primary-foreground: 202 51% 10%;
+    --secondary: 202 51% 25%;
+    --secondary-foreground: 202 20% 90%;
+    --muted: 202 51% 25%;
+    --muted-foreground: 202 20% 60%;
+    --accent: 198 57% 45%;
+    --accent-foreground: 202 20% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    --border: 202 51% 25%;
+    --input: 202 51% 25%;
+    --ring: 198 57% 55%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -84,5 +84,23 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .glow-accent {
+    animation: glow-animation 2.5s ease-in-out infinite;
+  }
+
+  @keyframes glow-animation {
+    0%,
+    100% {
+      box-shadow: 0 0 8px 2px hsla(var(--accent), 0.7),
+        0 0 16px 4px hsla(var(--accent), 0.5);
+    }
+    50% {
+      box-shadow: 0 0 16px 4px hsla(var(--accent), 0.7),
+        0 0 32px 8px hsla(var(--accent), 0.5);
+    }
   }
 }
