@@ -17,8 +17,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-inter)'],
-        headline: ['var(--font-space-grotesk)'],
+        sans: ['var(--font-ubuntu)'],
       },
       backgroundImage: {
         'grid-pattern': 'linear-gradient(to right, hsl(var(--border) / 0.4) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border) / 0.4) 1px, transparent 1px)',
