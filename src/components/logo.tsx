@@ -3,14 +3,14 @@ import { cn } from "@/lib/utils";
 export function Logo({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <div className="bg-primary p-2 rounded-lg">
+      <div className="bg-primary/20 p-3 rounded-xl border border-primary/30">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="28"
-          height="28"
+          width="32"
+          height="32"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="black"
+          stroke="hsl(var(--primary))"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -19,8 +19,8 @@ export function Logo({ className }: { className?: string }) {
         </svg>
       </div>
       <div>
-        <h1 className="text-2xl font-bold text-white tracking-tighter font-headline">MediLink</h1>
-        <p className="text-xs text-primary tracking-widest font-sans">HEALTHCARE</p>
+        <h1 className="text-2xl font-bold text-foreground tracking-tighter">MediLink</h1>
+        <p className="text-xs text-primary tracking-widest font-sans font-semibold">HEALTHCARE</p>
       </div>
     </div>
   );
