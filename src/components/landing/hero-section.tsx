@@ -23,18 +23,18 @@ export function HeroSection() {
       <FloatingIcons />
       
       <div className="relative z-10 flex flex-col items-center">
-        <div className="mb-8 animate-logo-bounce-in" style={{ animationDelay: '0s' }}>
+        <div className="mb-8 animate-logo-flip-in" style={{ animationDelay: '0s' }}>
           <Logo />
         </div>
         
         <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-foreground" style={{ perspective: '1000px' }}>
-          <span className="inline-block animate-word-slide-in-3d" style={{ animationDelay: '0.5s' }}>SMART</span>
-          <span className="inline-block text-primary animate-word-slide-in-3d" style={{ animationDelay: '0.7s' }}>RURAL</span>
-          <span className="inline-block animate-word-slide-in-3d" style={{ animationDelay: '0.9s' }}>CARE</span>
+          <span className="animate-word-rotate-in" style={{ animationDelay: '0.5s', transformOrigin: 'left center' }}>SMART</span>
+          <span className="text-primary animate-word-rotate-in" style={{ animationDelay: '0.7s', transformOrigin: 'center center' }}>RURAL</span>
+          <span className="animate-word-rotate-in" style={{ animationDelay: '0.9s', transformOrigin: 'right center' }}>CARE</span>
         </h1>
         
         <p 
-          className="mt-8 max-w-xl text-lg text-muted-foreground animate-fade-in-up"
+          className="mt-8 max-w-xl text-lg text-muted-foreground animate-text-fade-in-scale"
           style={{ animationDelay: '1.2s' }}
         >
           Get instant access to doctors, medicines, and emergency services.
@@ -43,7 +43,7 @@ export function HeroSection() {
         </p>
 
         <div 
-          className="mt-10 flex items-center gap-4 animate-button-pop-in"
+          className="mt-10 flex items-center gap-4 animate-button-press-in"
           style={{ animationDelay: '1.5s' }}
         >
           <Button 

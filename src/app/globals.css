@@ -44,53 +44,48 @@ body {
   }
 }
 
-@keyframes logo-bounce-in {
+@keyframes logo-flip-in {
   0% {
     opacity: 0;
-    transform: scale(0.5) rotateX(45deg);
+    transform: perspective(800px) rotateY(90deg) scale(0.8);
   }
   60% {
-    transform: scale(1.1) rotateX(0deg);
-  }
-  80% {
-    transform: scale(0.95);
+    transform: perspective(800px) rotateY(-20deg) scale(1.1);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: perspective(800px) rotateY(0deg) scale(1);
   }
 }
 
-@keyframes word-slide-in-3d {
+@keyframes word-rotate-in {
   0% {
     opacity: 0;
-    transform: translateY(100%) rotateX(-90deg);
-    transform-origin: top center;
+    transform: perspective(800px) rotateY(90deg);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) rotateX(0deg);
-    transform-origin: top center;
+    transform: perspective(800px) rotateY(0deg);
   }
 }
 
-@keyframes fade-in-up {
+@keyframes text-fade-in-scale {
   0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: scale(0.95) translateY(10px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
   }
 }
 
-@keyframes button-pop-in {
+@keyframes button-press-in {
   0% {
     opacity: 0;
-    transform: scale(0.8) translateY(10px);
+    transform: scale(0.7) translateY(20px);
   }
-  60% {
+  70% {
     opacity: 1;
     transform: scale(1.05) translateY(0);
   }
@@ -105,24 +100,25 @@ body {
   100% { transform: translateY(0px) rotate(0deg); }
 }
 
-.animate-logo-bounce-in {
-  animation: logo-bounce-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+.animate-logo-flip-in {
+  animation: logo-flip-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-.animate-word-slide-in-3d {
+.animate-word-rotate-in {
   display: inline-block;
   opacity: 0;
-  animation: word-slide-in-3d 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  transform-style: preserve-3d;
+  animation: word-rotate-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-.animate-fade-in-up {
+.animate-text-fade-in-scale {
   opacity: 0;
-  animation: fade-in-up 0.8s ease-out forwards;
+  animation: text-fade-in-scale 0.8s ease-out forwards;
 }
 
-.animate-button-pop-in {
+.animate-button-press-in {
   opacity: 0;
-  animation: button-pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: button-press-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .animate-float {
