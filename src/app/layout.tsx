@@ -1,12 +1,12 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
-import { Poppins } from 'next/font/google';
+import { Ubuntu } from 'next/font/google';
 
-const poppins = Poppins({
+const ubuntu = Ubuntu({
   subsets: ['latin'],
-  weight: ['300', '400', '600', '700'],
-  variable: '--font-poppins',
+  weight: ['300', '400', '500', '700'],
+  variable: '--font-ubuntu',
 });
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} font-sans antialiased bg-background text-foreground`}>
+      <body className={`${ubuntu.variable} font-sans antialiased bg-background text-foreground`}>
         {children}
         <Toaster />
       </body>
