@@ -100,6 +100,28 @@ body {
   100% { transform: translateY(0px) rotate(0deg); }
 }
 
+@keyframes logo-center-to-corner {
+    0% {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+    100% {
+        top: 1.75rem; /* Corresponds to h-24 of header and py-8 of container -> (6rem - 2.5rem [logo h]) / 2 */
+        left: 2rem; /* Corresponds to container padding */
+        transform: translate(0, 0) scale(0.625); /* Shrinks the logo down */
+    }
+}
+
+@keyframes content-fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 .animate-logo-flip-in {
   animation: logo-flip-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
@@ -123,4 +145,12 @@ body {
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+.animate-logo-center-to-corner {
+    animation: logo-center-to-corner 1s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+.animate-content-fade-in {
+    animation: content-fade-in 1s ease-in-out forwards;
 }

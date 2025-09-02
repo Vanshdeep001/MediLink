@@ -5,27 +5,48 @@ import { Button } from '@/components/ui/button';
 import { Play } from 'lucide-react';
 import { Logo } from '../logo';
 import { FloatingIcons } from './floating-icons';
+import { cn } from '@/lib/utils';
 
 export function HeroSection() {
-  const [startAnimation, setStartAnimation] = useState(false);
+  const [animationStep, setAnimationStep] = useState('logo-start');
 
   useEffect(() => {
-    // Ensure this only runs on the client
-    setStartAnimation(true);
-  }, []);
+    const sequence = [
+      setTimeout(() => setAnimationStep('logo-move'), 1200),
+      setTimeout(() => setAnimationStep('content-visible'), 2200),
+    ];
 
-  if (!startAnimation) {
-    return null; // or a loading spinner
-  }
+    return () => sequence.forEach(clearTimeout);
+  }, []);
 
   return (
     <section className="relative container flex flex-col justify-center items-center min-h-screen text-center py-24 md:py-32 overflow-hidden">
       <FloatingIcons />
-      
-      <div className="relative z-10 flex flex-col items-center">
-        <div className="mb-8 animate-logo-flip-in" style={{ animationDelay: '0s' }}>
-          <Logo />
+
+      <div
+        className={cn(
+          "absolute transition-all duration-1000 ease-[cubic-bezier(0.45,0,0.55,1)]",
+          animationStep === 'logo-start' && 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150 opacity-0',
+          animationStep === 'logo-move' && 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150 opacity-100',
+          animationStep === 'content-visible' && 'top-12 left-8 -translate-x-0 -translate-y-0 scale-[0.8] opacity-100'
+        )}
+      >
+        <div className={cn(
+          "transition-opacity duration-500",
+          animationStep === 'logo-start' ? 'opacity-0' : 'opacity-100 animate-logo-flip-in'
+        )}>
+           <Logo />
         </div>
+      </div>
+      
+      <div 
+        className={cn(
+          "relative z-10 flex flex-col items-center transition-opacity duration-1000",
+          animationStep === 'content-visible' ? 'opacity-100' : 'opacity-0'
+        )}
+        style={{ animationDelay: '2.2s' }}
+      >
+        <div className="h-24" /> {/* Placeholder to push content down */}
         
         <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-foreground" style={{ perspective: '1000px' }}>
           <span className="animate-word-rotate-in" style={{ animationDelay: '0.5s', transformOrigin: 'left center' }}>SMART</span>
