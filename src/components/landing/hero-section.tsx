@@ -6,6 +6,7 @@ import { Play } from 'lucide-react';
 import { Logo } from '../logo';
 import { FloatingIcons } from './floating-icons';
 import { cn } from '@/lib/utils';
+import FlipLink from '../ui/text-effect-flipper';
 
 export function HeroSection() {
   const [animationStep, setAnimationStep] = useState('logo-start');
@@ -48,10 +49,8 @@ export function HeroSection() {
       >
         <div className="h-24" /> {/* Placeholder to push content down */}
         
-        <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-foreground" style={{ perspective: '1000px' }}>
-          <span className="animate-word-rotate-in" style={{ animationDelay: '0.5s', transformOrigin: 'left center' }}>SMART</span>
-          <span className="text-primary animate-word-rotate-in" style={{ animationDelay: '0.7s', transformOrigin: 'center center' }}>RURAL</span>
-          <span className="animate-word-rotate-in" style={{ animationDelay: '0.9s', transformOrigin: 'right center' }}>CARE</span>
+        <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-foreground">
+          <FlipLink>SMART RURAL CARE</FlipLink>
         </h1>
         
         <p 
