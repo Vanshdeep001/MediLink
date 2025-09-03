@@ -27,14 +27,14 @@ export function HeroSection() {
       <div
         className={cn(
           "absolute transition-all duration-1000 ease-[cubic-bezier(0.45,0,0.55,1)]",
-          animationStep === 'logo-start' && 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150 opacity-0',
-          animationStep === 'logo-move' && 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150 opacity-100',
-          animationStep === 'content-visible' && 'top-12 left-8 -translate-x-0 -translate-y-0 scale-[0.8] opacity-100'
+          animationStep === 'logo-start' && 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150',
+          animationStep === 'logo-move' && 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150 animate-logo-flip-in',
+          animationStep === 'content-visible' && 'top-12 left-8 -translate-x-0 -translate-y-0 scale-[0.8]'
         )}
       >
         <div className={cn(
           "transition-opacity duration-500",
-          animationStep === 'logo-start' ? 'opacity-0' : 'opacity-100 animate-logo-flip-in'
+          animationStep === 'logo-start' ? 'opacity-0' : 'opacity-100'
         )}>
            <Logo />
         </div>
@@ -45,7 +45,6 @@ export function HeroSection() {
           "relative z-10 flex flex-col items-center transition-opacity duration-1000",
           animationStep === 'content-visible' ? 'opacity-100' : 'opacity-0'
         )}
-        style={{ animationDelay: '2.2s' }}
       >
         <div className="h-24" /> {/* Placeholder to push content down */}
         
