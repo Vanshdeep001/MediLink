@@ -1,71 +1,49 @@
-import React from "react"
-import { motion } from "framer-motion"
+"use client";
 
-const DURATION = 0.25
-const STAGGER = 0.025
+import React from "react";
+import { motion, Variants } from "framer-motion";
+import { cn } from "@/lib/utils";
 
-interface FlipLinkProps {
-  children: string
+const DURATION = 0.4;
+
+interface TextFlipperProps {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
 }
 
-const FlipLink: React.FC<FlipLinkProps> = ({ children }) => {
+const TextFlipper: React.FC<TextFlipperProps> = ({ children, className, delay = 0 }) => {
+  const variants: Variants = {
+    initial: {
+      y: "100%",
+      opacity: 0,
+      rotateX: -90,
+    },
+    animate: {
+      y: "0%",
+      opacity: 1,
+      rotateX: 0,
+    },
+  };
+
   return (
-    <motion.div
-      initial="initial"
-      whileHover="hovered"
-      className="relative block overflow-hidden whitespace-nowrap"
-      style={{
-        lineHeight: 0.75,
-      }}
-    >
-      <div>
-        {children.split("").map((l, i) => (
-          <motion.span
-            variants={{
-              initial: {
-                y: 0,
-              },
-              hovered: {
-                y: "-100%",
-              },
-            }}
-            transition={{
-              duration: DURATION,
-              ease: "easeInOut",
-              delay: STAGGER * i,
-            }}
-            className="inline-block"
-            key={i}
-          >
-            {l}
-          </motion.span>
-        ))}
-      </div>
-      <div className="absolute inset-0">
-        {children.split("").map((l, i) => (
-          <motion.span
-            variants={{
-              initial: {
-                y: "100%",
-              },
-              hovered: {
-                y: 0,
-              },
-            }}
-            transition={{
-              duration: DURATION,
-              ease: "easeInOut",
-              delay: STAGGER * i,
-            }}
-            className="inline-block"
-            key={i}
-          >
-            {l}
-          </motion.span>
-        ))}
-      </div>
-    </motion.div>
-  )
-}
+    <div className={cn("inline-block", className)}>
+       <motion.div
+        initial="initial"
+        animate="animate"
+        transition={{
+            duration: DURATION,
+            ease: [0.34, 1.56, 0.64, 1], // A bouncy ease
+            delay: delay
+        }}
+        variants={variants}
+        style={{ transformOrigin: "top center" }}
+        className="inline-block"
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+};
 
-export default FlipLink
+export default TextFlipper;
