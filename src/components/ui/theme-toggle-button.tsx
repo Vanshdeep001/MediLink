@@ -4,7 +4,6 @@ import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
-import { createAnimation } from "./theme-animations"
 
 export default function ThemeToggleButton() {
   const { theme, setTheme } = useTheme()
@@ -14,26 +13,17 @@ export default function ThemeToggleButton() {
     setMounted(true)
   }, [])
 
-  const handleThemeToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const newTheme = theme === "dark" || theme === 'system' ? "light" : "dark";
-    
-    // Fallback for browsers that don't support View Transitions
+  const handleThemeToggle = () => {
+    const newTheme = theme === "dark" ? "light" : "dark"
+
     // @ts-ignore
     if (!document.startViewTransition) {
-      setTheme(newTheme);
-      return;
+      setTheme(newTheme)
+      return
     }
-
-    const animation = createAnimation("circle", "center")
-    const style = document.createElement("style")
-    style.innerHTML = animation.css
-    document.head.appendChild(style)
-
     // @ts-ignore
     document.startViewTransition(() => {
       setTheme(newTheme)
-    }).ready.then(() => {
-        document.head.removeChild(style)
     })
   }
 
