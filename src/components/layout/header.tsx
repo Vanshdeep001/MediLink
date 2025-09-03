@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import ThemeToggleButton from '../ui/theme-toggle-button';
 
 export function Header() {
   const [showLogo, setShowLogo] = useState(false);
@@ -26,11 +27,14 @@ export function Header() {
             <Logo />
           </div>
         </div>
-        <nav className="hidden md:flex items-center space-x-6 text-lg">
-          <Button variant="ghost">Services</Button>
-          <Button variant="ghost">About</Button>
-          <Button variant="ghost">Contact</Button>
-        </nav>
+        <div className="flex items-center gap-4">
+          <nav className="hidden md:flex items-center space-x-6 text-lg">
+            <Button variant="ghost">Services</Button>
+            <Button variant="ghost">About</Button>
+            <Button variant="ghost">Contact</Button>
+          </nav>
+          <ThemeToggleButton />
+        </div>
       </div>
     </header>
   );
