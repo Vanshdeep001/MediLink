@@ -6,7 +6,6 @@ import { Play } from 'lucide-react';
 import { Logo } from '../logo';
 import { FloatingIcons } from './floating-icons';
 import { cn } from '@/lib/utils';
-import FlipLink from '../ui/text-effect-flipper';
 
 export function HeroSection() {
   const [animationStep, setAnimationStep] = useState('logo-start');
@@ -50,12 +49,14 @@ export function HeroSection() {
         <div className="h-24" /> {/* Placeholder to push content down */}
         
         <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-foreground">
-          <FlipLink>SMART RURAL CARE</FlipLink>
+          <span className="animate-word-rotate-in" style={{animationDelay: '0.8s'}}>SMART</span>{' '}
+          <span className="font-cursive text-primary animate-word-rotate-in animation-delay-200" style={{animationDelay: '1s'}}>Rural</span>{' '}
+          <span className="animate-word-rotate-in animation-delay-400" style={{animationDelay: '1.2s'}}>CARE</span>
         </h1>
         
         <p 
           className="mt-8 max-w-xl text-lg text-muted-foreground animate-text-fade-in-scale"
-          style={{ animationDelay: '1.2s' }}
+          style={{ animationDelay: '1.8s' }}
         >
           Get instant access to doctors, medicines, and emergency services.
           <br/>
@@ -64,7 +65,7 @@ export function HeroSection() {
 
         <div 
           className="mt-10 flex items-center gap-4 animate-button-press-in"
-          style={{ animationDelay: '1.5s' }}
+          style={{ animationDelay: '2.1s' }}
         >
           <Button 
             size="lg" 
