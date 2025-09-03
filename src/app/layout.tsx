@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className={`${ubuntu.variable} font-sans antialiased bg-background text-foreground`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
