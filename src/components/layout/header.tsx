@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import ThemeToggleButton from '../ui/theme-toggle-button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, X, Languages } from 'lucide-react';
+import { Menu, X, Languages, Siren } from 'lucide-react';
 import Link from 'next/link';
 import {
   DropdownMenu,
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from '@/lib/utils';
+import { SOSButtonDialog } from '../sos-button';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,6 +61,14 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
           <ThemeToggleButton />
+
+          <SOSButtonDialog>
+            <Button variant="destructive" size="icon" className="hidden md:inline-flex h-9 w-9">
+              <Siren className="h-4 w-4" />
+              <span className="sr-only">Emergency SOS</span>
+            </Button>
+          </SOSButtonDialog>
+          
           <div className="md:hidden">
             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <SheetTrigger asChild>

@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Ubuntu, Dancing_Script } from 'next/font/google';
 import { ThemeProvider } from '@/components/ui/theme-provider';
+import { SOSButton } from '@/components/sos-button';
 
 const ubuntu = Ubuntu({
   subsets: ['latin'],
@@ -37,6 +38,7 @@ export default function RootLayout({
         >
           {children}
           <Toaster />
+          <SOSButton />
         </ThemeProvider>
       </body>
     </html>
