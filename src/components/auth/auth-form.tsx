@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,12 +16,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { FadeIn } from "../fade-in";
-import { registerUser } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -33,10 +33,20 @@ const formSchema = z.object({
   }),
 });
 
+function calculateAge(dob: Date) {
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+      age--;
+  }
+  return age;
+}
+
 export function AuthForm() {
   const [startAnimation, setStartAnimation] = useState(false);
-  const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter();
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -56,30 +66,25 @@ export function AuthForm() {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    startTransition(async () => {
-      const formData = new FormData();
-      Object.entries(values).forEach(([key, value]) => {
-        if (value instanceof Date) {
-          formData.append(key, value.toISOString());
-        } else {
-          formData.append(key, String(value));
-        }
+    try {
+      const age = calculateAge(values.dob);
+      const user = { ...values, age };
+      localStorage.setItem('temp_user', JSON.stringify(user));
+      
+      toast({
+        title: "Registration Successful",
+        description: "Please select your role.",
       });
 
-      try {
-        const result = await registerUser(formData);
-        if (result?.error) {
-          toast({
-            title: "Registration Failed",
-            description: result.error,
-            variant: "destructive",
-          });
-        }
-      } catch (e) {
-        // Redirects can throw an error, which is an expected behavior in Next.js.
-        // We can safely ignore this error because the redirect will still happen.
-      }
-    });
+      router.push('/role-selection');
+
+    } catch (e) {
+      toast({
+        title: "Registration Failed",
+        description: "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -205,8 +210,8 @@ export function AuthForm() {
               </FadeIn>
               
               <FadeIn delay={1000} direction="up">
-                <Button type="submit" className="w-full text-lg h-14" disabled={isPending}>
-                  {isPending ? "Registering..." : "Register & Continue"}
+                <Button type="submit" className="w-full text-lg h-14">
+                  Register & Continue
                 </Button>
               </FadeIn>
             </form>

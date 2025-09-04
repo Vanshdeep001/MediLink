@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { User, Stethoscope, Pill } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { updateUserRole } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { FadeIn } from '../fade-in';
+import { useRouter } from 'next/navigation';
 
 type Role = 'patient' | 'doctor' | 'pharmacy';
 
@@ -19,8 +19,8 @@ const roles = [
 
 export function RoleSelectionForm() {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-  const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleRoleSelect = (role: Role) => {
     setSelectedRole(role);
@@ -36,22 +36,29 @@ export function RoleSelectionForm() {
       return;
     }
 
-    startTransition(async () => {
-      const formData = new FormData();
-      formData.append('role', selectedRole);
-      try {
-        const result = await updateUserRole(formData);
-        if (result?.error) {
-          toast({
-            title: "Update Failed",
-            description: result.error,
-            variant: "destructive",
-          });
-        }
-      } catch (e) {
-        // Redirect will throw an error, which is expected.
+    try {
+      const userString = localStorage.getItem('temp_user');
+      if (userString) {
+        const user = JSON.parse(userString);
+        user.role = selectedRole;
+        localStorage.setItem('temp_user', JSON.stringify(user));
+        router.push(`/${selectedRole}`);
+      } else {
+        // Handle case where user data is not found, maybe redirect to auth
+        toast({
+          title: "Error",
+          description: "User data not found. Please register again.",
+          variant: "destructive",
+        });
+        router.push('/auth');
       }
-    });
+    } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to save role. Please try again.",
+          variant: "destructive",
+        });
+    }
   };
 
   return (
@@ -87,9 +94,9 @@ export function RoleSelectionForm() {
           size="lg"
           className="w-full max-w-sm h-14 text-xl"
           onClick={handleSubmit}
-          disabled={isPending || !selectedRole}
+          disabled={!selectedRole}
         >
-          {isPending ? 'Saving...' : 'Continue'}
+          Continue
         </Button>
       </FadeIn>
     </div>
