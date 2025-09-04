@@ -84,7 +84,7 @@ export function RoleSelectionForm() {
 
       {startAnimation && (
         <div className="w-full animate-content-fade-in" style={{ animationDelay: '0.5s', paddingTop: '16rem' }}>
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {roles.map((role, index) => (
               <FadeIn key={role.id} delay={400 + index * 100}>
                 <Card
