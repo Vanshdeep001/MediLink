@@ -10,11 +10,11 @@ body {
   :root {
     --background: 210 40% 98%;
     --foreground: 224 71% 4%;
-    --card: 210 40% 98%;
+    --card: 210 40% 100%;
     --card-foreground: 224 71% 4%;
     --popover: 210 40% 98%;
     --popover-foreground: 224 71% 4%;
-    --primary: 180 84% 44%;
+    --primary: 200 90% 50%;
     --primary-foreground: 210 40% 98%;
     --secondary: 220 13% 91%;
     --secondary-foreground: 224 71% 4%;
@@ -26,8 +26,8 @@ body {
     --destructive-foreground: 210 40% 98%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 180 84% 44%;
-    --radius: 0.5rem;
+    --ring: 200 90% 50%;
+    --radius: 0.75rem;
 
     --logo-color-1: 180 84% 44%;
     --logo-color-2: 190 93% 75%;
@@ -37,11 +37,11 @@ body {
   .dark {
     --background: 224 71% 4%;
     --foreground: 210 40% 98%;
-    --card: 224 71% 4%;
+    --card: 224 71% 10%;
     --card-foreground: 210 40% 98%;
     --popover: 224 71% 4%;
     --popover-foreground: 210 40% 98%;
-    --primary: 180 84% 44%;
+    --primary: 200 90% 50%;
     --primary-foreground: 210 40% 98%;
     --secondary: 215 28% 17%;
     --secondary-foreground: 210 40% 98%;
@@ -53,7 +53,7 @@ body {
     --destructive-foreground: 210 40% 98%;
     --border: 215 28% 17%;
     --input: 215 28% 17%;
-    --ring: 180 84% 44%;
+    --ring: 200 90% 50%;
 
     --logo-color-1: 180 84% 44%;
     --logo-color-2: 190 93% 75%;
@@ -154,21 +154,6 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-@keyframes header-center-to-top {
-  0% {
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%) scale(1.25);
-  }
-  100% {
-    top: 10rem;
-    transform: translateX(-50%) translateY(-50%) scale(1);
-  }
-}
-
-.animate-header-center-to-top {
-  animation: header-center-to-top 1s ease-in-out forwards;
 }
 
 .animate-logo-flip-in {
