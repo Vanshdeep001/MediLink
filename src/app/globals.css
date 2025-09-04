@@ -151,8 +151,8 @@ body {
     transform: translateY(-50%) scale(1.2);
   }
   100% {
-    top: 5%;
-    transform: translateY(0) scale(1);
+    top: 10rem; /* Adjusted from 5% to a fixed value */
+    transform: translateY(-50%) scale(1); /* Adjusted to center vertically */
   }
 }
 

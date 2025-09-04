@@ -38,9 +38,10 @@ export function AuthForm() {
   const { toast } = useToast();
   
   useEffect(() => {
+    // Start animation shortly after component mounts
     const timer = setTimeout(() => {
       setStartAnimation(true);
-    }, 1500); // Delay before content moves up and form appears
+    }, 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -91,18 +92,14 @@ export function AuthForm() {
           startAnimation ? "animate-header-center-to-top" : "top-1/2 -translate-y-1/2 scale-125"
         )}
       >
-        <FadeIn delay={200}>
           <h1 className="text-4xl md:text-5xl font-bold">Create Account</h1>
-        </FadeIn>
-        <FadeIn delay={400}>
           <p className="text-lg md:text-xl text-muted-foreground mt-2">
             Let's get you started with MediLink.
           </p>
-        </FadeIn>
       </div>
 
       {startAnimation && (
-        <div className="w-full animate-content-fade-in" style={{ animationDelay: '0.5s', paddingTop: '12rem' }}>
+        <div className="w-full animate-content-fade-in" style={{ animationDelay: '0.5s', paddingTop: '18rem' }}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FadeIn delay={600} direction="left">
