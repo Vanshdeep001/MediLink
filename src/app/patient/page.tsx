@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Pill, FileText, Heart, PlusCircle, Upload, Search, ChevronRight } from "lucide-react";
+import { Calendar, Pill, FileText, Heart, PlusCircle, Upload, Search, ChevronRight, BrainCircuit, BellRing, Video } from "lucide-react";
 
 export default function PatientDashboard() {
   return (
@@ -61,6 +61,37 @@ export default function PatientDashboard() {
               <CardContent>
                 <div className="text-2xl font-bold">Good</div>
                 <p className="text-xs text-muted-foreground">Last updated yesterday</p>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.4s' }}>
+            <Card className="md:col-span-1 hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><BrainCircuit /> AI Symptom Checker</CardTitle>
+                <CardDescription>Describe your symptoms to get a primary diagnosis and find the right doctor.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full">Describe Your Symptoms</Button>
+              </CardContent>
+            </Card>
+            <Card className="md:col-span-1 hover:shadow-lg transition-shadow">
+               <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Video /> Video Consultation</CardTitle>
+                <CardDescription>Have a face-to-face consultation with your doctor from the comfort of your home.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full">Start Telemedicine Call</Button>
+              </CardContent>
+            </Card>
+             <Card className="md:col-span-1 hover:shadow-lg transition-shadow">
+               <CardHeader>
+                <CardTitle className="flex items-center gap-2"><BellRing /> Smart Reminders</CardTitle>
+                <CardDescription>Get timely alerts for medicines, appointments, and follow-ups.</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                <p>• Take Metformin at 8:00 PM</p>
+                <p>• Follow-up with Dr. Sharma tomorrow</p>
               </CardContent>
             </Card>
           </div>
@@ -188,3 +219,5 @@ export default function PatientDashboard() {
     </div>
   );
 }
+
+    
