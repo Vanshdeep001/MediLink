@@ -6,7 +6,7 @@ import { Languages } from "lucide-react";
 
 export default async function RoleSelectionPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background bg-gradient-to-br from-background via-blue-50/50 to-green-50/50 dark:from-background dark:via-blue-900/10 dark:to-green-900/10">
+    <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-grow flex items-center justify-center p-4">
         <div className="absolute top-28 right-4 md:right-8">

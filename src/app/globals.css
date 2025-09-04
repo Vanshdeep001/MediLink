@@ -156,6 +156,17 @@ body {
   }
 }
 
+@keyframes animate-header-center-to-top {
+  0% {
+    top: 50%;
+    transform: translateY(-50%) scale(1.25);
+  }
+  100% {
+    top: 10rem;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
 .animate-logo-flip-in {
   animation: logo-flip-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
@@ -184,6 +195,10 @@ body {
 .animate-content-fade-in {
     opacity: 0;
     animation: content-fade-in 1s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+.animate-header-center-to-top {
+  animation: animate-header-center-to-top 1s ease-in-out forwards;
 }
 
 /* View Transition Styles */

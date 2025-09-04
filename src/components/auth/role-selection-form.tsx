@@ -79,55 +79,46 @@ export function RoleSelectionForm() {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto pt-24 md:pt-16">
-      <FadeIn delay={100}>
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-green-400">
-            Are you joining as a...
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mt-2">
-            Choose your role to get a personalized experience.
-          </p>
-        </div>
-      </FadeIn>
-      <div className="w-full">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-          {roles.map((role, index) => (
-            <FadeIn key={role.id} delay={200 + index * 100} direction="up">
-              <Card
-                className={cn(
-                  "cursor-pointer transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20",
-                  "border-2",
-                  selectedRole === role.id 
-                    ? "ring-4 ring-primary ring-offset-4 ring-offset-background shadow-2xl shadow-primary/30 -translate-y-2" 
-                    : "border-transparent hover:border-primary/50"
-                )}
-                onClick={() => handleRoleSelect(role.id)}
-              >
-                <CardContent className={cn("p-6 md:p-8 flex flex-col items-center justify-center text-center transition-opacity duration-300",
-                    selectedRole && selectedRole !== role.id ? "opacity-50" : "opacity-100"
-                )}>
-                  <div className="w-32 h-32 md:w-40 md:h-40 mb-6">
-                    <role.icon />
-                  </div>
-                  <h3 className="text-2xl md:text-3xl font-semibold">{role.label}</h3>
-                  <p className="text-muted-foreground mt-2">{role.description}</p>
-                </CardContent>
-              </Card>
-            </FadeIn>
-          ))}
-        </div>
-
-        <FadeIn delay={600} direction="up" className="mt-16 text-center">
-          <Button
-            size="lg"
-            className="w-full max-w-sm h-14 text-xl rounded-full shadow-lg"
-            onClick={handleSubmit}
-            disabled={!selectedRole}
+    <div className="w-full max-w-4xl mx-auto text-center pt-24">
+      <div className="mb-12">
+        <h1 className="text-4xl md:text-5xl font-bold">
+          Are you joining as a...
+        </h1>
+        <p className="text-lg md:text-xl text-muted-foreground mt-2">
+          Choose your role to get a personalized experience.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {roles.map((role) => (
+          <Card
+            key={role.id}
+            className={cn(
+              "cursor-pointer transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl",
+              selectedRole === role.id && "ring-2 ring-primary -translate-y-2 shadow-xl"
+            )}
+            onClick={() => handleRoleSelect(role.id)}
           >
-            Continue as a {selectedRole ? selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1) : '...'}
-          </Button>
-        </FadeIn>
+            <CardContent className="p-6 flex flex-col items-center justify-center">
+              <div className="w-24 h-24 mb-4">
+                <role.icon />
+              </div>
+              <h3 className="text-xl font-semibold">{role.label}</h3>
+              <p className="text-sm text-muted-foreground mt-1">{role.description}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="mt-12">
+        <Button
+          size="lg"
+          className="w-full max-w-xs h-12 text-lg"
+          onClick={handleSubmit}
+          disabled={!selectedRole}
+        >
+          Continue as a {selectedRole ? selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1) : '...'}
+        </Button>
       </div>
     </div>
   );
