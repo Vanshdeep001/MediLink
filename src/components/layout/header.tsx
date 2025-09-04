@@ -5,8 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import ThemeToggleButton from '../ui/theme-toggle-button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Languages } from 'lucide-react';
 import Link from 'next/link';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -35,6 +41,19 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Languages className="h-5 w-5" />
+                <span className="sr-only">Select language</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>English</DropdownMenuItem>
+              <DropdownMenuItem>Hindi</DropdownMenuItem>
+              <DropdownMenuItem>Punjabi</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <ThemeToggleButton />
           <div className="md:hidden">
             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
