@@ -104,7 +104,7 @@ export function RoleSelectionForm() {
             ))}
           </div>
 
-          <FadeIn delay={800} className="mt-12">
+          <FadeIn delay={800} className="mt-12 text-center">
             <Button
               size="lg"
               className="w-full max-w-sm h-14 text-xl"
