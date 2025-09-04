@@ -31,7 +31,6 @@ export function RoleSelectionForm() {
     return () => clearTimeout(timer);
   }, []);
 
-
   const handleRoleSelect = (role: Role) => {
     setSelectedRole(role);
   };
@@ -75,7 +74,7 @@ export function RoleSelectionForm() {
        <div
         className={cn(
           "text-center absolute left-1/2 -translate-x-1/2 transition-all duration-1000 ease-in-out",
-          startAnimation ? "top-[10rem] -translate-y-1/2" : "top-1/2 -translate-y-1/2 scale-125"
+          startAnimation ? "animate-header-center-to-top" : "top-1/2 -translate-y-1/2 scale-125"
         )}
       >
         <h1 className="text-4xl md:text-5xl font-bold">Are you joining as a...</h1>

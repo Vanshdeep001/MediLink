@@ -156,6 +156,21 @@ body {
   }
 }
 
+@keyframes header-center-to-top {
+  0% {
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%) scale(1.25);
+  }
+  100% {
+    top: 10rem;
+    transform: translateX(-50%) translateY(-50%) scale(1);
+  }
+}
+
+.animate-header-center-to-top {
+  animation: header-center-to-top 1s ease-in-out forwards;
+}
+
 .animate-logo-flip-in {
   animation: logo-flip-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
