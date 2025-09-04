@@ -2,7 +2,7 @@
 
 import { generateResourceSummary } from "@/ai/flows/generate-resource-summary";
 import { signIn, getCurrentUser } from "@/lib/firebase/auth";
-import { addUser, updateUserRole as updateUserRoleInDb } from "@/lib/firebase/firestore";
+import { addUser, updateUserRole as updateUserRoleInDb, userExists } from "@/lib/firebase/firestore";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -62,16 +62,20 @@ export async function registerUser(formData: FormData) {
     };
   }
   
-  const { dob, ...restOfData } = validatedFields.data;
+  const { dob, email, ...restOfData } = validatedFields.data;
   const age = calculateAge(dob);
 
   if (age < 1) {
       return { error: "Age must be a positive number." };
   }
+  
+  const existingUser = await userExists(email);
+  if (existingUser) {
+    return { error: "This email is already registered. Please use a different email." };
+  }
 
   try {
-    const tempPassword = Math.random().toString(36).slice(-8);
-    const userCredential = await signIn(validatedFields.data.email, tempPassword);
+    const userCredential = await signIn(email);
     
     if (userCredential.error || !userCredential.user) {
        return { error: userCredential.error || "Failed to create user." };
@@ -80,7 +84,7 @@ export async function registerUser(formData: FormData) {
     const userData = {
       uid: userCredential.user.uid,
       fullName: restOfData.fullName,
-      email: restOfData.email,
+      email: email,
       phone: restOfData.phone,
       age: age,
     };
@@ -89,9 +93,6 @@ export async function registerUser(formData: FormData) {
 
   } catch (error) {
     console.error("Error during registration:", error);
-    if (error instanceof Error && error.message.includes('auth/email-already-in-use')) {
-        return { error: "This email is already registered. Please use a different email." };
-    }
     return { error: "Registration failed. Please try again." };
   }
 

@@ -5,7 +5,7 @@ import { app } from "./config";
 import { cookies } from "next/headers";
 import { User } from 'firebase/auth';
 
-export async function signIn(email: string, password_not_used: string) {
+export async function signIn(email: string) {
   const auth = getAuth(app);
   try {
     const password = Math.random().toString(36).slice(-8);
@@ -21,6 +21,7 @@ export async function signIn(email: string, password_not_used: string) {
     
     return { user: userCredential.user };
   } catch (error: any) {
+    console.error("Firebase signIn error:", error.message);
     return { error: error.message };
   }
 }

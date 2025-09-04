@@ -76,8 +76,8 @@ export function AuthForm() {
           });
         }
       } catch (e) {
-        // Redirects throw errors, which is expected.
-        // We can safely ignore this error.
+        // Redirects can throw an error, which is an expected behavior in Next.js.
+        // We can safely ignore this error because the redirect will still happen.
       }
     });
   };
