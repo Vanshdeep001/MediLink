@@ -92,7 +92,7 @@ export function AuthForm() {
       <div
         className={cn(
           "text-center absolute left-1/2 -translate-x-1/2 transition-all duration-1000 ease-in-out",
-          startAnimation ? "animate-header-center-to-top" : "top-1/2 -translate-y-1/2 scale-125"
+          startAnimation ? "top-[10rem] -translate-y-1/2" : "top-1/2 -translate-y-1/2 scale-125"
         )}
       >
           <h1 className="text-4xl md:text-5xl font-bold">Create Account</h1>
@@ -102,7 +102,7 @@ export function AuthForm() {
       </div>
 
       {startAnimation && (
-        <div className="w-full animate-content-fade-in" style={{ animationDelay: '0.5s', paddingTop: '18rem' }}>
+        <div className="w-full animate-content-fade-in" style={{ animationDelay: '0.5s', paddingTop: '16rem' }}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FadeIn delay={600} direction="left">
