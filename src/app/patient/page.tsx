@@ -10,7 +10,7 @@ export default function PatientDashboard() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-12 md:py-20">
+      <main className="flex-grow container mx-auto px-4 pt-28">
         <div className="max-w-5xl mx-auto">
           
           <div className="text-center mb-12 animate-fade-in-down">
