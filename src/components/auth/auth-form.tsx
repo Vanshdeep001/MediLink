@@ -66,18 +66,13 @@ export function AuthForm() {
       }
     });
 
-    try {
-      const result = await registerUser(formData);
-      if (result?.error) {
-        toast({
-          title: "Registration Failed",
-          description: result.error,
-          variant: "destructive",
-        });
-      }
-    } catch (e) {
-      // The redirect in the server action will throw an error,
-      // which is expected. We can safely ignore it.
+    const result = await registerUser(formData);
+    if (result?.error) {
+      toast({
+        title: "Registration Failed",
+        description: result.error,
+        variant: "destructive",
+      });
     }
   };
 
