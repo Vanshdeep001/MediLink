@@ -1,7 +1,9 @@
 "use server";
 
 import { generateResourceSummary } from "@/ai/flows/generate-resource-summary";
-import { signIn } from "@/lib/firebase/auth";
+import { signIn, getCurrentUser } from "@/lib/firebase/auth";
+import { addUser, updateUserRole as updateUserRoleInDb } from "@/lib/firebase/firestore";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const resourceSummarySchema = z.object({
@@ -71,18 +73,52 @@ export async function registerUser(formData: FormData) {
     const tempPassword = Math.random().toString(36).slice(-8);
     const userCredential = await signIn(validatedFields.data.email, tempPassword);
     
-    if (userCredential.error) {
-       return { error: userCredential.error };
+    if (userCredential.error || !userCredential.user) {
+       return { error: userCredential.error || "Failed to create user." };
     }
 
-    // Here you would typically save the additional user data (fullName, phone, age)
-    // to Firestore or another database, linked to the user's UID.
-    console.log("User registered successfully:", userCredential.user?.uid);
-    console.log("Additional data to save:", { ...restOfData, age });
+    const userData = {
+      uid: userCredential.user.uid,
+      fullName: restOfData.fullName,
+      email: restOfData.email,
+      phone: restOfData.phone,
+      age: age,
+    };
 
-    return { success: "Registration successful! Ready for EHR setup." };
+    await addUser(userData);
+
   } catch (error) {
     console.error("Error during registration:", error);
     return { error: "Registration failed. Please try again." };
   }
+
+  redirect('/role-selection');
+}
+
+const roleSchema = z.object({
+  role: z.enum(['patient', 'doctor', 'pharmacy']),
+});
+
+export async function updateUserRole(formData: FormData) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return { error: 'You must be logged in to select a role.' };
+  }
+
+  const validatedFields = roleSchema.safeParse({
+    role: formData.get('role'),
+  });
+
+  if (!validatedFields.success) {
+    return { error: 'Invalid role selected.' };
+  }
+
+  try {
+    await updateUserRoleInDb(user.uid, validatedFields.data.role);
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    return { error: 'Failed to update role. Please try again.' };
+  }
+
+  redirect(`/${validatedFields.data.role}`);
 }

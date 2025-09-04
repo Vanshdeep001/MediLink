@@ -22,6 +22,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -36,9 +37,9 @@ const formSchema = z.object({
 export function AuthForm() {
   const [startAnimation, setStartAnimation] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
   
   useEffect(() => {
-    // Start animation shortly after component mounts
     const timer = setTimeout(() => {
       setStartAnimation(true);
     }, 500);
@@ -65,20 +66,18 @@ export function AuthForm() {
       }
     });
 
-    const result = await registerUser(formData);
-
-    if (result.error) {
-      toast({
-        title: "Registration Failed",
-        description: result.error,
-        variant: "destructive",
-      });
-    } else if (result.success) {
-       toast({
-        title: "Registration Successful",
-        description: result.success,
-      });
-      form.reset();
+    try {
+      const result = await registerUser(formData);
+      if (result?.error) {
+        toast({
+          title: "Registration Failed",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
+    } catch (e) {
+      // The redirect in the server action will throw an error,
+      // which is expected. We can safely ignore it.
     }
   };
 
