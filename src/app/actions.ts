@@ -62,14 +62,14 @@ export async function registerUser(formData: FormData) {
     };
   }
   
+  const { dob, ...restOfData } = validatedFields.data;
+  const age = calculateAge(dob);
+
+  if (age < 1) {
+      return { error: "Age must be a positive number." };
+  }
+
   try {
-    const { dob, ...restOfData } = validatedFields.data;
-    const age = calculateAge(dob);
-
-    if (age < 1) {
-        return { error: "Age must be a positive number." };
-    }
-
     const tempPassword = Math.random().toString(36).slice(-8);
     const userCredential = await signIn(validatedFields.data.email, tempPassword);
     
@@ -89,6 +89,9 @@ export async function registerUser(formData: FormData) {
 
   } catch (error) {
     console.error("Error during registration:", error);
+    if (error instanceof Error && error.message.includes('auth/email-already-in-use')) {
+        return { error: "This email is already registered. Please use a different email." };
+    }
     return { error: "Registration failed. Please try again." };
   }
 
