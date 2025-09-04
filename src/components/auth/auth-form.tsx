@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -14,7 +15,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { FadeIn } from "../fade-in";
 import { registerUser } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
@@ -22,7 +22,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -35,7 +34,16 @@ const formSchema = z.object({
 });
 
 export function AuthForm() {
+  const [startAnimation, setStartAnimation] = useState(false);
   const { toast } = useToast();
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStartAnimation(true);
+    }, 1500); // Delay before content moves up and form appears
+    return () => clearTimeout(timer);
+  }, []);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -76,19 +84,25 @@ export function AuthForm() {
   const { isSubmitting } = form.formState;
 
   return (
-    <FadeIn delay={200} direction="up">
-      <Card className="w-full max-w-md mx-auto shadow-2xl">
-        <CardHeader className="text-center">
-          <FadeIn delay={400}>
-            <CardTitle className="text-4xl font-bold">Create Account</CardTitle>
-          </FadeIn>
-          <FadeIn delay={500}>
-            <CardDescription className="text-lg">
-              Let's get you started with MediLink.
-            </CardDescription>
-          </FadeIn>
-        </CardHeader>
-        <CardContent>
+    <div className="w-full max-w-md mx-auto">
+      <div
+        className={cn(
+          "text-center absolute left-1/2 -translate-x-1/2 transition-all duration-1000 ease-in-out",
+          startAnimation ? "animate-header-center-to-top" : "top-1/2 -translate-y-1/2 scale-125"
+        )}
+      >
+        <FadeIn delay={200}>
+          <h1 className="text-4xl md:text-5xl font-bold">Create Account</h1>
+        </FadeIn>
+        <FadeIn delay={400}>
+          <p className="text-lg md:text-xl text-muted-foreground mt-2">
+            Let's get you started with MediLink.
+          </p>
+        </FadeIn>
+      </div>
+
+      {startAnimation && (
+        <div className="w-full animate-content-fade-in" style={{ animationDelay: '0.5s', paddingTop: '12rem' }}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FadeIn delay={600} direction="left">
@@ -199,8 +213,8 @@ export function AuthForm() {
               </FadeIn>
             </form>
           </Form>
-        </CardContent>
-      </Card>
-    </FadeIn>
+        </div>
+      )}
+    </div>
   );
 }

@@ -1,15 +1,11 @@
 import { AuthForm } from "@/components/auth/auth-form";
-import { Footer } from "@/components/layout/footer";
-import { Header } from "@/components/layout/header";
 
 export default function AuthPage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-grow flex items-center justify-center py-24 md:py-32">
+    <div className="flex flex-col min-h-screen bg-background">
+      <main className="flex-grow flex items-center justify-center p-4">
         <AuthForm />
       </main>
-      <Footer />
     </div>
   );
 }
