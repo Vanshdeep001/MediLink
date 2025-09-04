@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Pill, FileText, Heart, PlusCircle, Upload, Search, ChevronRight, BrainCircuit, BellRing, Video } from "lucide-react";
+import TextFlipper from "@/components/ui/text-effect-flipper";
 
 export default function PatientDashboard() {
   return (
@@ -15,15 +16,15 @@ export default function PatientDashboard() {
           
           <div className="text-center py-16 md:py-24 animate-fade-in-down">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-              Welcome back, Patient!
+              <TextFlipper>Welcome back,</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">Patient!</TextFlipper>
             </h1>
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-4 text-lg text-muted-foreground animate-text-fade-in-scale" style={{ animationDelay: '0.4s' }}>
               Book your first appointment to get started with your healthcare journey.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-content-fade-in" style={{ animationDelay: '0.3s' }}>
-            <Card className="hover:shadow-lg transition-shadow">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-content-fade-in" style={{ animationDelay: '0.6s' }}>
+            <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Upcoming Appointments</CardTitle>
                 <Calendar className="w-5 h-5 text-muted-foreground" />
@@ -33,7 +34,7 @@ export default function PatientDashboard() {
                 <p className="text-xs text-muted-foreground">View your schedule</p>
               </CardContent>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Active Medications</CardTitle>
                 <Pill className="w-5 h-5 text-muted-foreground" />
@@ -43,7 +44,7 @@ export default function PatientDashboard() {
                 <p className="text-xs text-muted-foreground">Manage prescriptions</p>
               </CardContent>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Medical Reports</CardTitle>
                 <FileText className="w-5 h-5 text-muted-foreground" />
@@ -53,7 +54,7 @@ export default function PatientDashboard() {
                 <p className="text-xs text-muted-foreground">Access your files</p>
               </CardContent>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium">Health Status</CardTitle>
                 <Heart className="w-5 h-5 text-muted-foreground" />
@@ -65,8 +66,8 @@ export default function PatientDashboard() {
             </Card>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.4s' }}>
-            <Card className="md:col-span-1 hover:shadow-lg transition-shadow">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.8s' }}>
+            <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><BrainCircuit /> AI Symptom Checker</CardTitle>
                 <CardDescription>Describe your symptoms to get a primary diagnosis and find the right doctor.</CardDescription>
@@ -75,7 +76,7 @@ export default function PatientDashboard() {
                 <Button className="w-full">Describe Your Symptoms</Button>
               </CardContent>
             </Card>
-            <Card className="md:col-span-1 hover:shadow-lg transition-shadow">
+            <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
                <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Video /> Video Consultation</CardTitle>
                 <CardDescription>Have a face-to-face consultation with your doctor from the comfort of your home.</CardDescription>
@@ -84,7 +85,7 @@ export default function PatientDashboard() {
                 <Button className="w-full">Start Telemedicine Call</Button>
               </CardContent>
             </Card>
-             <Card className="md:col-span-1 hover:shadow-lg transition-shadow">
+             <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
                <CardHeader>
                 <CardTitle className="flex items-center gap-2"><BellRing /> Smart Reminders</CardTitle>
                 <CardDescription>Get timely alerts for medicines, appointments, and follow-ups.</CardDescription>
@@ -96,7 +97,7 @@ export default function PatientDashboard() {
             </Card>
           </div>
 
-          <div className="animate-content-fade-in" style={{ animationDelay: '0.6s' }}>
+          <div className="animate-content-fade-in" style={{ animationDelay: '1s' }}>
             <Tabs defaultValue="appointments" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="appointments">Appointments</TabsTrigger>
