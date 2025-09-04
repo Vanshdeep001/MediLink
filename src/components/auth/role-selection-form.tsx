@@ -79,7 +79,7 @@ export function RoleSelectionForm() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto text-center pt-24">
+    <div className="w-full max-w-4xl mx-auto text-center mt-24">
       <div className="mb-12">
         <h1 className="text-4xl md:text-5xl font-bold">
           Are you joining as a...
