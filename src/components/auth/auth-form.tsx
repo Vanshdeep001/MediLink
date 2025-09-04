@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { User, Mail, Phone, Calendar } from "lucide-react";
+import { User, Mail, Phone, Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,12 +18,20 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { FadeIn } from "../fade-in";
 import { registerUser } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   phone: z.string().min(10, { message: 'Phone number must be at least 10 digits.' }),
-  age: z.coerce.number().min(1, { message: 'Age must be a positive number.' }),
+  dob: z.date({
+    required_error: "A date of birth is required.",
+    invalid_type_error: "That's not a valid date!",
+  }),
 });
 
 export function AuthForm() {
@@ -34,14 +42,18 @@ export function AuthForm() {
       fullName: "",
       email: "",
       phone: "",
-      age: undefined,
+      dob: undefined,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
-      formData.append(key, String(value));
+      if (value instanceof Date) {
+        formData.append(key, value.toISOString());
+      } else {
+        formData.append(key, String(value));
+      }
     });
 
     const result = await registerUser(formData);
@@ -139,16 +151,41 @@ export function AuthForm() {
               <FadeIn delay={900} direction="right">
                 <FormField
                   control={form.control}
-                  name="age"
+                  name="dob"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-lg">Age</FormLabel>
-                      <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <FormControl>
-                          <Input type="number" className="pl-10 text-lg h-12" {...field} />
-                        </FormControl>
-                      </div>
+                    <FormItem className="flex flex-col">
+                      <FormLabel className="text-lg">Date of Birth</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "pl-3 text-left font-normal text-lg h-12",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                       <FormMessage />
                     </FormItem>
                   )}

@@ -34,8 +34,21 @@ const authSchema = z.object({
   fullName: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   phone: z.string().min(10, { message: 'Phone number must be at least 10 digits.' }),
-  age: z.coerce.number().min(1, { message: 'Age must be a positive number.' }),
+  dob: z.coerce.date({
+    required_error: "A date of birth is required.",
+    invalid_type_error: "That's not a valid date!",
+  }),
 });
+
+function calculateAge(dob: Date) {
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+    }
+    return age;
+}
 
 export async function registerUser(formData: FormData) {
   const validatedFields = authSchema.safeParse(Object.fromEntries(formData.entries()));
@@ -48,8 +61,13 @@ export async function registerUser(formData: FormData) {
   }
   
   try {
-    // In a real app, you would use a password or an OTP from the client.
-    // For this example, we'll use a placeholder password.
+    const { dob, ...restOfData } = validatedFields.data;
+    const age = calculateAge(dob);
+
+    if (age < 1) {
+        return { error: "Age must be a positive number." };
+    }
+
     const tempPassword = Math.random().toString(36).slice(-8);
     const userCredential = await signIn(validatedFields.data.email, tempPassword);
     
@@ -60,7 +78,7 @@ export async function registerUser(formData: FormData) {
     // Here you would typically save the additional user data (fullName, phone, age)
     // to Firestore or another database, linked to the user's UID.
     console.log("User registered successfully:", userCredential.user?.uid);
-    console.log("Additional data to save:", validatedFields.data);
+    console.log("Additional data to save:", { ...restOfData, age });
 
     return { success: "Registration successful! Ready for EHR setup." };
   } catch (error) {
