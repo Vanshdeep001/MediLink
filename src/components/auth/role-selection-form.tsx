@@ -90,36 +90,39 @@ export function RoleSelectionForm() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {roles.map((role) => (
-          <Card
-            key={role.id}
-            className={cn(
-              "cursor-pointer transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl",
-              selectedRole === role.id && "ring-2 ring-primary -translate-y-2 shadow-xl"
-            )}
-            onClick={() => handleRoleSelect(role.id)}
-          >
-            <CardContent className="p-6 flex flex-col items-center justify-center">
-              <div className="w-24 h-24 mb-4">
-                <role.icon />
-              </div>
-              <h3 className="text-xl font-semibold">{role.label}</h3>
-              <p className="text-sm text-muted-foreground mt-1">{role.description}</p>
-            </CardContent>
-          </Card>
+        {roles.map((role, index) => (
+          <FadeIn key={role.id} delay={200 * (index + 1)}>
+            <Card
+              className={cn(
+                "cursor-pointer transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl group",
+                selectedRole === role.id && "ring-2 ring-primary -translate-y-2 shadow-xl"
+              )}
+              onClick={() => handleRoleSelect(role.id)}
+            >
+              <CardContent className="p-6 flex flex-col items-center justify-center">
+                <div className="w-24 h-24 mb-4">
+                  <role.icon />
+                </div>
+                <h3 className="text-xl font-semibold">{role.label}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{role.description}</p>
+              </CardContent>
+            </Card>
+          </FadeIn>
         ))}
       </div>
 
-      <div className="mt-12">
-        <Button
-          size="lg"
-          className="w-full max-w-xs h-12 text-lg"
-          onClick={handleSubmit}
-          disabled={!selectedRole}
-        >
-          Continue as a {selectedRole ? selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1) : '...'}
-        </Button>
-      </div>
+      <FadeIn delay={800}>
+        <div className="mt-12">
+          <Button
+            size="lg"
+            className="w-full max-w-xs h-12 text-lg"
+            onClick={handleSubmit}
+            disabled={!selectedRole}
+          >
+            Continue as a {selectedRole ? selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1) : '...'}
+          </Button>
+        </div>
+      </FadeIn>
     </div>
   );
 }
