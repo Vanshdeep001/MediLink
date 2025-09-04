@@ -67,7 +67,13 @@ export function RoleSelectionForm() {
         const user = JSON.parse(userString);
         user.role = selectedRole;
         localStorage.setItem('temp_user', JSON.stringify(user));
-        router.push(`/${selectedRole}`);
+        
+        if (selectedRole === 'patient') {
+          router.push('/patient/medical-history');
+        } else {
+          router.push(`/${selectedRole}`);
+        }
+
       } else {
         toast({
           title: "Error",
@@ -87,7 +93,7 @@ export function RoleSelectionForm() {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div
+       <div
         className={cn(
           "text-center absolute left-1/2 -translate-x-1/2 transition-all duration-1000 ease-in-out",
           startAnimation ? "top-[10rem] -translate-y-1/2" : "top-1/2 -translate-y-1/2 scale-125"
@@ -118,7 +124,7 @@ export function RoleSelectionForm() {
                       <role.icon />
                     </div>
                     <h3 className="text-xl font-semibold">{role.label}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{role.description}</p>
+                    <p className="text-sm text-muted-foreground mt-1 text-center">{role.description}</p>
                   </CardContent>
                 </Card>
               </FadeIn>
