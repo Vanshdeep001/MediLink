@@ -1,6 +1,6 @@
 "use server";
 
-import { getFirestore, doc, setDoc, updateDoc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, updateDoc } from "firebase/firestore";
 import { app } from "./config";
 
 const db = getFirestore(app);
@@ -37,17 +37,5 @@ export async function updateUserRole(uid: string, role: 'patient' | 'doctor' | '
   } catch (error) {
     console.error("Error updating user role in Firestore: ", error);
     throw new Error("Could not update user role.");
-  }
-}
-
-export async function userExists(email: string): Promise<boolean> {
-  try {
-    const docRef = doc(db, "users_by_email", email);
-    const docSnap = await getDoc(docRef);
-    return docSnap.exists();
-  } catch (error) {
-    // This could happen if the collection doesn't exist yet.
-    // In a real app, you might want more robust error handling.
-    return false;
   }
 }

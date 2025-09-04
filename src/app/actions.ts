@@ -2,7 +2,7 @@
 
 import { generateResourceSummary } from "@/ai/flows/generate-resource-summary";
 import { signIn, getCurrentUser } from "@/lib/firebase/auth";
-import { addUser, updateUserRole as updateUserRoleInDb, userExists } from "@/lib/firebase/firestore";
+import { addUser, updateUserRole as updateUserRoleInDb } from "@/lib/firebase/firestore";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -69,11 +69,6 @@ export async function registerUser(formData: FormData) {
       return { error: "Age must be a positive number." };
   }
   
-  const existingUser = await userExists(email);
-  if (existingUser) {
-    return { error: "This email is already registered. Please use a different email." };
-  }
-
   try {
     const userCredential = await signIn(email);
     
@@ -93,6 +88,9 @@ export async function registerUser(formData: FormData) {
 
   } catch (error) {
     console.error("Error during registration:", error);
+    if (error instanceof Error) {
+        return { error: error.message };
+    }
     return { error: "Registration failed. Please try again." };
   }
 

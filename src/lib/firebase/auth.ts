@@ -21,8 +21,11 @@ export async function signIn(email: string) {
     
     return { user: userCredential.user };
   } catch (error: any) {
-    console.error("Firebase signIn error:", error.message);
-    return { error: error.message };
+    console.error("Firebase signIn error:", error.code, error.message);
+    if (error.code === 'auth/email-already-in-use') {
+        return { error: 'This email is already registered. Please use a different email.' };
+    }
+    return { error: 'An unexpected error occurred during registration.' };
   }
 }
 
