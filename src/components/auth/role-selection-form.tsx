@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User, Stethoscope, Pill } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,6 +22,15 @@ export function RoleSelectionForm() {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const [startAnimation, setStartAnimation] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStartAnimation(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
+
 
   const handleRoleSelect = (role: Role) => {
     setSelectedRole(role);
@@ -62,43 +71,52 @@ export function RoleSelectionForm() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto pt-48">
-      <div className="text-center mb-12">
+    <div className="w-full max-w-4xl mx-auto">
+       <div
+        className={cn(
+          "text-center absolute left-1/2 -translate-x-1/2 transition-all duration-1000 ease-in-out",
+          startAnimation ? "top-[10rem] -translate-y-1/2" : "top-1/2 -translate-y-1/2 scale-125"
+        )}
+      >
         <h1 className="text-4xl md:text-5xl font-bold">Are you joining as a...</h1>
         <p className="text-lg md:text-xl text-muted-foreground mt-2">
           Choose your role to get a personalized experience.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {roles.map((role, index) => (
-          <FadeIn key={role.id} delay={100 + index * 100}>
-            <Card
-              className={cn(
-                "cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl",
-                selectedRole === role.id ? "ring-2 ring-primary shadow-2xl scale-105" : "hover:bg-accent"
-              )}
-              onClick={() => handleRoleSelect(role.id)}
-            >
-              <CardContent className="p-8 flex flex-col items-center justify-center">
-                <role.icon className="w-20 h-20 text-primary mb-6" />
-                <h3 className="text-2xl font-semibold">{role.label}</h3>
-              </CardContent>
-            </Card>
-          </FadeIn>
-        ))}
-      </div>
+      {startAnimation && (
+        <div className="w-full animate-content-fade-in" style={{ animationDelay: '0.5s', paddingTop: '16rem' }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {roles.map((role, index) => (
+              <FadeIn key={role.id} delay={100 + index * 100}>
+                <Card
+                  className={cn(
+                    "cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl",
+                    selectedRole === role.id ? "ring-2 ring-primary shadow-2xl scale-105" : "hover:bg-accent"
+                  )}
+                  onClick={() => handleRoleSelect(role.id)}
+                >
+                  <CardContent className="p-8 flex flex-col items-center justify-center">
+                    <role.icon className="w-20 h-20 text-primary mb-6" />
+                    <h3 className="text-2xl font-semibold">{role.label}</h3>
+                  </CardContent>
+                </Card>
+              </FadeIn>
+            ))}
+          </div>
 
-      <FadeIn delay={500} className="mt-12 text-center">
-        <Button
-          size="lg"
-          className="w-full max-w-sm h-14 text-xl"
-          onClick={handleSubmit}
-          disabled={!selectedRole}
-        >
-          Continue
-        </Button>
-      </FadeIn>
+          <FadeIn delay={500} className="mt-12 text-center">
+            <Button
+              size="lg"
+              className="w-full max-w-sm h-14 text-xl"
+              onClick={handleSubmit}
+              disabled={!selectedRole}
+            >
+              Continue
+            </Button>
+          </FadeIn>
+        </div>
+      )}
     </div>
   );
 }
