@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Play } from 'lucide-react';
 import { FloatingIcons } from './floating-icons';
 import TextFlipper from '../ui/text-effect-flipper';
+import Link from 'next/link';
 
 export function HeroSection() {
   return (
@@ -37,9 +38,12 @@ export function HeroSection() {
           <Button
             size="lg"
             className="rounded-full shadow-lg text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground transform transition-transform hover:scale-105"
+            asChild
           >
-            <Play className="mr-2 h-5 w-5 fill-current" />
-            Get Started Now
+            <Link href="/auth">
+              <Play className="mr-2 h-5 w-5 fill-current" />
+              Get Started Now
+            </Link>
           </Button>
         </div>
       </div>
