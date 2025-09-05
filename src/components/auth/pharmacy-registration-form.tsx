@@ -85,6 +85,10 @@ export function PharmacyRegistrationForm() {
     router.push("/pharmacy");
   };
 
+  const titleParts = translations.pharmacyRegForm.title.split(' ');
+  const mainTitle = titleParts[0];
+  const cursiveTitle = titleParts.slice(1).join(' ');
+
   return (
     <div className="w-full max-w-2xl mx-auto">
       <div
@@ -94,7 +98,7 @@ export function PharmacyRegistrationForm() {
         )}
       >
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight whitespace-nowrap">
-          <TextFlipper>{translations.roleSelection.joiningAs.split(' ')[0]}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{translations.roleSelection.pharmacy}</TextFlipper>
+          <TextFlipper>{mainTitle}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{cursiveTitle}</TextFlipper>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground mt-2 font-serif">
           {translations.pharmacyRegForm.subtitle}

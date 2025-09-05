@@ -73,7 +73,7 @@
     "toastDescription": "Your profile is under review. We will notify you upon verification."
   },
   "pharmacyRegForm": {
-    "title": "Join as a Pharmacy",
+    "title": "Joining Pharmacy",
     "subtitle": "Complete your profile to manage medicines, stock, and deliveries.",
     "pharmacyNameLabel": "Pharmacy Name",
     "licenseLabel": "License Number",
