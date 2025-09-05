@@ -132,16 +132,13 @@ body {
 
 @keyframes float {
   0% {
-    transform: translateY(0px) rotate(0deg);
-    opacity: 0.1;
+    transform: translateY(0px);
   }
   50% {
-    transform: translateY(-25px) rotate(10deg);
-    opacity: 0.3;
+    transform: translateY(-20px);
   }
   100% {
-    transform: translateY(0px) rotate(0deg);
-    opacity: 0.1;
+    transform: translateY(0px);
   }
 }
 
@@ -189,7 +186,7 @@ body {
 }
 
 .animate-float {
-  animation: float 8s ease-in-out infinite;
+  animation: float 6s ease-in-out infinite;
 }
 
 .animate-content-fade-in {
