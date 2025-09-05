@@ -1,3 +1,5 @@
+"use client";
+
 import { Pill, Plus, TestTube } from 'lucide-react';
 
 export function FloatingPharmacyIcons() {
