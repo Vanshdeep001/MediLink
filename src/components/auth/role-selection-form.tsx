@@ -18,7 +18,7 @@ const roles = [
     id: 'patient' as Role, 
     label: 'Patient', 
     image: {
-      src: "https://picsum.photos/200/200",
+      src: "https://picsum.photos/200/201",
       alt: "Patient illustration",
       hint: "patient"
     },
@@ -28,7 +28,7 @@ const roles = [
     id: 'doctor' as Role, 
     label: 'Doctor', 
     image: {
-      src: "https://picsum.photos/200/200",
+      src: "https://picsum.photos/200/202",
       alt: "Doctor illustration",
       hint: "doctor"
     },
@@ -38,7 +38,7 @@ const roles = [
     id: 'pharmacy' as Role, 
     label: 'Pharmacy', 
     image: {
-      src: "https://picsum.photos/200/200",
+      src: "https://picsum.photos/200/203",
       alt: "Pharmacy illustration",
       hint: "pharmacy"
     },
