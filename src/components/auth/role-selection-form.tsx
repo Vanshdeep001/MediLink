@@ -8,10 +8,8 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { FadeIn } from '../fade-in';
 import { useRouter } from 'next/navigation';
-import { PatientIcon } from './icons/patient-icon';
-import { DoctorIcon } from './icons/doctor-icon';
-import { PharmacyIcon } from './icons/pharmacy-icon';
 import TextFlipper from '../ui/text-effect-flipper';
+import Image from 'next/image';
 
 type Role = 'patient' | 'doctor' | 'pharmacy';
 
@@ -19,19 +17,31 @@ const roles = [
   { 
     id: 'patient' as Role, 
     label: 'Patient', 
-    icon: PatientIcon,
+    image: {
+      src: "https://picsum.photos/200/200",
+      alt: "Patient illustration",
+      hint: "patient"
+    },
     description: 'Consult doctors & manage health records'
   },
   { 
     id: 'doctor' as Role, 
     label: 'Doctor', 
-    icon: DoctorIcon,
+    image: {
+      src: "https://picsum.photos/200/200",
+      alt: "Doctor illustration",
+      hint: "doctor"
+    },
     description: 'Provide consultations and e-prescriptions'
   },
   { 
     id: 'pharmacy' as Role, 
     label: 'Pharmacy', 
-    icon: PharmacyIcon,
+    image: {
+      src: "https://picsum.photos/200/200",
+      alt: "Pharmacy illustration",
+      hint: "pharmacy"
+    },
     description: 'Manage medicine stock and deliveries'
   },
 ];
@@ -126,8 +136,15 @@ export function RoleSelectionForm() {
                   onClick={() => handleRoleSelect(role.id)}
                 >
                   <CardContent className="p-6 flex flex-col items-center justify-center">
-                    <div className="w-24 h-24 mb-4">
-                      <role.icon />
+                    <div className="w-24 h-24 mb-4 relative">
+                      <Image 
+                        src={role.image.src} 
+                        alt={role.image.alt}
+                        width={96}
+                        height={96}
+                        data-ai-hint={role.image.hint}
+                        className="rounded-full object-cover"
+                      />
                     </div>
                     <h3 className="text-xl font-semibold">{role.label}</h3>
                     <p className="text-sm text-muted-foreground mt-1 text-center">{role.description}</p>
