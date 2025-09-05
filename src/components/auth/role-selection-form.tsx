@@ -104,10 +104,10 @@ export function RoleSelectionForm() {
         )}
       >
         <h1 className="text-4xl md:text-5xl font-bold">
-          Choose Your Path in Our Healthcare Community
+          Are you joining as a...
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground mt-2">
-          Select your role to unlock a personalized experience and connect with our network.
+          Select your role to get started.
         </p>
       </div>
       
