@@ -28,7 +28,7 @@ const roles = [
     id: 'doctor' as Role, 
     label: 'Doctor', 
     image: {
-      src: "https://picsum.photos/200/202",
+      src: "https://firebasestudio.googleapis.com/v0/b/app-pro-25862.appspot.com/o/user_uploads%2Fd035d8e9-51a7-478a-a664-d50f588812c6.jpg?alt=media&token=3b342460-75b2-4d7a-8f61-39c87898858d",
       alt: "Doctor illustration",
       hint: "doctor"
     },
@@ -38,7 +38,7 @@ const roles = [
     id: 'pharmacy' as Role, 
     label: 'Pharmacy', 
     image: {
-      src: "https://picsum.photos/200/203",
+      src: "https://firebasestudio.googleapis.com/v0/b/app-pro-25862.appspot.com/o/user_uploads%2F091811a4-9de2-4ed0-8e6f-124110305886.jpg?alt=media&token=42e05785-5a5f-4a57-8531-97b7515582c6",
       alt: "Pharmacy illustration",
       hint: "pharmacy"
     },
