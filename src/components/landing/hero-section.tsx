@@ -1,33 +1,37 @@
 'use client';
 
+import { useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { Play } from 'lucide-react';
 import { FloatingIcons } from './floating-icons';
 import TextFlipper from '../ui/text-effect-flipper';
 import Link from 'next/link';
+import { LanguageContext } from '@/context/language-context';
 
 export function HeroSection() {
+  const { translations } = useContext(LanguageContext);
+
   return (
     <section className="relative container flex flex-col justify-center items-center min-h-screen text-center py-24 md:py-32 overflow-hidden">
       <FloatingIcons />
 
       <div className="relative z-10 flex flex-col items-center">
         <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-foreground">
-          <TextFlipper delay={0.8}>SMART</TextFlipper>{' '}
+          <TextFlipper delay={0.8}>{translations.hero.smart}</TextFlipper>{' '}
           <TextFlipper delay={1.0} className="font-cursive text-primary">
-            Rural
+            {translations.hero.rural}
           </TextFlipper>{' '}
-          <TextFlipper delay={1.2}>CARE</TextFlipper>
+          <TextFlipper delay={1.2}>{translations.hero.care}</TextFlipper>
         </h1>
 
         <p
           className="mt-8 max-w-xl text-lg text-muted-foreground animate-text-fade-in-scale"
           style={{ animationDelay: '1.8s' }}
         >
-          Get instant access to doctors, medicines, and emergency services.
+          {translations.hero.tagline}
           <br />
           <span className="font-bold text-foreground">
-            Healthcare, simplified and connected.
+            {translations.hero.subTagline}
           </span>
         </p>
 
@@ -42,7 +46,7 @@ export function HeroSection() {
           >
             <Link href="/auth">
               <Play className="mr-2 h-5 w-5 fill-current" />
-              Get Started Now
+              {translations.hero.getStarted}
             </Link>
           </Button>
         </div>

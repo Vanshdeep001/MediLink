@@ -1,0 +1,16 @@
+
+{
+  "header": {
+    "services": "Services",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "hero": {
+    "smart": "SMART",
+    "rural": "Rural",
+    "care": "CARE",
+    "tagline": "Get instant access to doctors, medicines, and emergency services.",
+    "subTagline": "Healthcare, simplified and connected.",
+    "getStarted": "Get Started Now"
+  }
+}

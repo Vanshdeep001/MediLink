@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Ubuntu, Dancing_Script, Lora } from 'next/font/google';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { SOSButton } from '@/components/sos-button';
+import { LanguageProvider } from '@/context/language-context';
 
 const ubuntu = Ubuntu({
   subsets: ['latin'],
@@ -42,9 +43,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          {children}
-          <Toaster />
-          <SOSButton />
+          <LanguageProvider>
+            {children}
+            <Toaster />
+            <SOSButton />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

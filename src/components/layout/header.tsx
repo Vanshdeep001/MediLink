@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import ThemeToggleButton from '../ui/theme-toggle-button';
@@ -18,29 +18,32 @@ import { usePathname } from 'next/navigation';
 import { SOSButtonDialog } from '../sos-button';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-
-type Language = 'English' | 'Hindi' | 'Punjabi';
+import { LanguageContext, Language } from '@/context/language-context';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>('English');
   const pathname = usePathname();
   const showSOSButton = pathname === '/patient';
   const { toast } = useToast();
+  const { language, setLanguage, translations } = useContext(LanguageContext);
 
   const navLinks = [
-    { href: "#services", label: "Services" },
-    { href: "#about", label: "About" },
-    { href: "#contact", label: "Contact" },
+    { href: "#services", key: "services" },
+    { href: "#about", key: "about" },
+    { href: "#contact", key: "contact" },
   ];
   
-  const languages: Language[] = ['English', 'Hindi', 'Punjabi'];
+  const languages: { id: Language; label: string }[] = [
+      { id: 'en', label: 'English' },
+      { id: 'hi', label: 'हिंदी' },
+      { id: 'pa', label: 'ਪੰਜਾਬੀ' }
+  ];
 
   const handleLanguageChange = (lang: Language) => {
-    setSelectedLanguage(lang);
+    setLanguage(lang);
     toast({
       title: "Language Changed",
-      description: `Switched to ${lang}.`,
+      description: `Switched to ${languages.find(l => l.id === lang)?.label}.`,
     });
   };
 
@@ -61,7 +64,7 @@ export function Header() {
               href={link.href}
               className="relative px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full hover:after:left-0"
             >
-              {link.label}
+              {translations.header[link.key]}
             </Link>
           ))}
         </nav>
@@ -76,9 +79,9 @@ export function Header() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {languages.map((lang) => (
-                <DropdownMenuItem key={lang} onSelect={() => handleLanguageChange(lang)}>
-                   <Check className={cn("mr-2 h-4 w-4", selectedLanguage === lang ? "opacity-100" : "opacity-0")} />
-                  {lang}
+                <DropdownMenuItem key={lang.id} onSelect={() => handleLanguageChange(lang.id)}>
+                   <Check className={cn("mr-2 h-4 w-4", language === lang.id ? "opacity-100" : "opacity-0")} />
+                  {lang.label}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -116,7 +119,7 @@ export function Header() {
                   <nav className="flex flex-col items-start space-y-2 p-4 mt-4">
                     {navLinks.map((link) => (
                       <Button key={link.href} variant="link" asChild className="text-lg w-full justify-start" onClick={() => setIsMenuOpen(false)}>
-                        <Link href={link.href}>{link.label}</Link>
+                        <Link href={link.href}>{translations.header[link.key]}</Link>
                       </Button>
                     ))}
                   </nav>
