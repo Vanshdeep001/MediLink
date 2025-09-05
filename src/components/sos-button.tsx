@@ -10,11 +10,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Siren } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 // This component is the dialog part, which can be triggered by any button
 export function SOSButtonDialog({ children }: { children: React.ReactNode }) {
@@ -30,21 +30,23 @@ export function SOSButtonDialog({ children }: { children: React.ReactNode }) {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you experiencing a medical emergency?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action will immediately alert the nearest available ambulance or local transport service to your location. Only confirm if you are in a genuine emergency.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm} className="bg-destructive hover:bg-destructive/90">
-            Confirm Emergency
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
+        <div className="contents" onClick={(e) => e.preventDefault()}>
+            <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+        </div>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+            <AlertDialogTitle>Are you experiencing a medical emergency?</AlertDialogTitle>
+            <AlertDialogDescription>
+                This action will immediately alert the nearest available ambulance or local transport service to your location. Only confirm if you are in a genuine emergency.
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirm} className="bg-destructive hover:bg-destructive/90">
+                Confirm Emergency
+            </AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
     </AlertDialog>
   );
 }
@@ -52,6 +54,11 @@ export function SOSButtonDialog({ children }: { children: React.ReactNode }) {
 
 // This is the main FAB component, visible on mobile
 export function SOSButton() {
+  const pathname = usePathname();
+  if (pathname !== '/patient') {
+    return null;
+  }
+  
   return (
     <div className="fixed bottom-6 right-6 z-50 md:hidden">
       <SOSButtonDialog>

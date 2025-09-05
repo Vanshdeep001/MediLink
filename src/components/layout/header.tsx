@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -13,11 +14,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 import { SOSButtonDialog } from '../sos-button';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const showSOSButton = pathname === '/patient';
 
   const navLinks = [
     { href: "#services", label: "Services" },
@@ -61,14 +64,16 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
           <ThemeToggleButton />
-
-          <SOSButtonDialog>
-            <Button variant="destructive" size="icon" className="hidden md:inline-flex h-9 w-9">
-              <Siren className="h-4 w-4" />
-              <span className="sr-only">Emergency SOS</span>
-            </Button>
-          </SOSButtonDialog>
           
+          {showSOSButton && (
+            <SOSButtonDialog>
+              <Button variant="destructive" size="icon" className="hidden md:inline-flex h-9 w-9">
+                <Siren className="h-4 w-4" />
+                <span className="sr-only">Emergency SOS</span>
+              </Button>
+            </SOSButtonDialog>
+          )}
+
           <div className="md:hidden">
             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <SheetTrigger asChild>
