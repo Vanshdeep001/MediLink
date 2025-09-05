@@ -12,5 +12,17 @@
     "tagline": "Get instant access to doctors, medicines, and emergency services.",
     "subTagline": "Healthcare, simplified and connected.",
     "getStarted": "Get Started Now"
+  },
+  "roleSelection": {
+    "areYou": "Are you",
+    "joiningAs": "joining as a...",
+    "selectRole": "Select your role to get started.",
+    "patient": "Patient",
+    "patientDescription": "Consult doctors & manage health records",
+    "doctor": "Doctor",
+    "doctorDescription": "Provide consultations and e-prescriptions",
+    "pharmacy": "Pharmacy",
+    "pharmacyDescription": "Manage medicine stock and deliveries",
+    "continueAs": "Continue as a"
   }
 }

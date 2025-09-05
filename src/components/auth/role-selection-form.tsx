@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -12,35 +12,37 @@ import TextFlipper from '../ui/text-effect-flipper';
 import { PatientIcon } from './icons/patient-icon';
 import { DoctorIcon } from './icons/doctor-icon';
 import { PharmacyIcon } from './icons/pharmacy-icon';
+import { LanguageContext } from '@/context/language-context';
 
 type Role = 'patient' | 'doctor' | 'pharmacy';
-
-const roles = [
-  { 
-    id: 'patient' as Role, 
-    label: 'Patient', 
-    icon: <PatientIcon />,
-    description: 'Consult doctors & manage health records'
-  },
-  { 
-    id: 'doctor' as Role, 
-    label: 'Doctor', 
-    icon: <DoctorIcon />,
-    description: 'Provide consultations and e-prescriptions'
-  },
-  { 
-    id: 'pharmacy' as Role, 
-    label: 'Pharmacy', 
-    icon: <PharmacyIcon />,
-    description: 'Manage medicine stock and deliveries'
-  },
-];
 
 export function RoleSelectionForm() {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [startAnimation, setStartAnimation] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { translations } = useContext(LanguageContext);
+
+  const roles = [
+    { 
+      id: 'patient' as Role, 
+      label: translations.roleSelection.patient,
+      icon: <PatientIcon />,
+      description: translations.roleSelection.patientDescription
+    },
+    { 
+      id: 'doctor' as Role, 
+      label: translations.roleSelection.doctor,
+      icon: <DoctorIcon />,
+      description: translations.roleSelection.doctorDescription
+    },
+    { 
+      id: 'pharmacy' as Role, 
+      label: translations.roleSelection.pharmacy,
+      icon: <PharmacyIcon />,
+      description: translations.roleSelection.pharmacyDescription
+    },
+  ];
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -96,6 +98,12 @@ export function RoleSelectionForm() {
         });
     }
   };
+  
+  const getRoleLabel = (role: Role | null) => {
+    if (!role) return '...';
+    const roleData = roles.find(r => r.id === role);
+    return roleData ? roleData.label : '...';
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -106,10 +114,10 @@ export function RoleSelectionForm() {
         )}
       >
         <h1 className="text-4xl md:text-5xl font-bold whitespace-nowrap">
-          <TextFlipper>Are you</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">joining as a...</TextFlipper>
+          <TextFlipper>{translations.roleSelection.areYou}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{translations.roleSelection.joiningAs}</TextFlipper>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground mt-2 font-serif">
-          Select your role to get started.
+          {translations.roleSelection.selectRole}
         </p>
       </div>
       
@@ -145,7 +153,7 @@ export function RoleSelectionForm() {
                 onClick={handleSubmit}
                 disabled={!selectedRole}
               >
-                Continue as a {selectedRole ? selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1) : '...'}
+                {translations.roleSelection.continueAs} {getRoleLabel(selectedRole)}
               </Button>
             </div>
           </FadeIn>
