@@ -70,6 +70,8 @@ export function RoleSelectionForm() {
         
         if (selectedRole === 'patient') {
           router.push('/patient/medical-history');
+        } else if (selectedRole === 'doctor') {
+          router.push('/doctor/register');
         } else {
           router.push(`/${selectedRole}`);
         }
