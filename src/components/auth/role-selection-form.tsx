@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -106,7 +107,7 @@ export function RoleSelectionForm() {
         <h1 className="text-4xl md:text-5xl font-bold whitespace-nowrap">
           Are you joining as a...
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground mt-2">
+        <p className="text-lg md:text-xl text-muted-foreground mt-2 font-serif">
           Select your role to get started.
         </p>
       </div>
