@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { LanguageContext } from "@/context/language-context";
+import TextFlipper from "../ui/text-effect-flipper";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -93,8 +94,10 @@ export function DoctorRegistrationForm() {
           startAnimation ? "top-[10rem] -translate-y-1/2" : "top-1/2 -translate-y-1/2 scale-125"
         )}
       >
-        <h1 className="text-4xl md:text-5xl font-bold">{translations.doctorRegForm.title}</h1>
-        <p className="text-lg md:text-xl text-muted-foreground mt-2">
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight whitespace-nowrap">
+          <TextFlipper>{translations.doctorRegForm.titleMain}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{translations.doctorRegForm.titleCursive}</TextFlipper>
+        </h1>
+        <p className="text-lg md:text-xl text-muted-foreground mt-2 font-serif">
           {translations.doctorRegForm.subtitle}
         </p>
       </div>

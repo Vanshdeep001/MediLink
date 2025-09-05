@@ -51,7 +51,8 @@
     "toastErrorRole": "Failed to save role. Please try again."
   },
   "doctorRegForm": {
-    "title": "Join as a Doctor",
+    "titleMain": "Join as a",
+    "titleCursive": "Doctor",
     "subtitle": "Complete your profile to start consulting patients.",
     "fullNameLabel": "Full Name",
     "emailLabel": "Email Address",
@@ -73,7 +74,8 @@
     "toastDescription": "Your profile is under review. We will notify you upon verification."
   },
   "pharmacyRegForm": {
-    "title": "Joining Pharmacy",
+    "title": "Joining",
+    "titleCursive": "Pharmacy",
     "subtitle": "Complete your profile to manage medicines, stock, and deliveries.",
     "pharmacyNameLabel": "Pharmacy Name",
     "licenseLabel": "License Number",
@@ -89,7 +91,8 @@
     "toastDescription": "Your pharmacy profile is under review. We will notify you upon verification."
   },
   "medicalHistory": {
-    "title": "Personalize Your Healthcare Journey",
+    "title": "Personalize Your Healthcare",
+    "titleCursive": "Journey",
     "subtitle": "Please share a few details about your medical history. This helps us provide you with the best care.",
     "step": "Step",
     "of": "of",
