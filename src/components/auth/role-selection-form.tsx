@@ -19,8 +19,8 @@ const roles = [
     label: 'Patient', 
     image: {
       src: "https://firebasestudio.googleapis.com/v0/b/app-pro-25862.appspot.com/o/user_uploads%2F8a45155f-8255-46c5-8f6b-3d604b901594.jpg?alt=media&token=8d2771d9-813c-4448-9c4c-4235e15152a5",
-      alt: "Patient in a hospital bed",
-      hint: "patient hospital"
+      alt: "Patient being cared for",
+      hint: "patient care"
     },
     description: 'Consult doctors & manage health records'
   },
@@ -29,8 +29,8 @@ const roles = [
     label: 'Doctor', 
     image: {
       src: "https://firebasestudio.googleapis.com/v0/b/app-pro-25862.appspot.com/o/user_uploads%2Fd035d8e9-51a7-478a-a664-d50f588812c6.jpg?alt=media&token=3b342460-75b2-4d7a-8f61-39c87898858d",
-      alt: "Doctor illustration",
-      hint: "doctor"
+      alt: "Doctor with a stethoscope",
+      hint: "doctor stethoscope"
     },
     description: 'Provide consultations and e-prescriptions'
   },
@@ -39,8 +39,8 @@ const roles = [
     label: 'Pharmacy', 
     image: {
       src: "https://firebasestudio.googleapis.com/v0/b/app-pro-25862.appspot.com/o/user_uploads%2F091811a4-9de2-4ed0-8e6f-124110305886.jpg?alt=media&token=42e05785-5a5f-4a57-8531-97b7515582c6",
-      alt: "Pharmacy illustration",
-      hint: "pharmacy"
+      alt: "Interior of a pharmacy",
+      hint: "pharmacy interior"
     },
     description: 'Manage medicine stock and deliveries'
   },
