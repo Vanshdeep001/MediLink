@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { PatientIcon } from './icons/patient-icon';
 import { DoctorIcon } from './icons/doctor-icon';
 import { PharmacyIcon } from './icons/pharmacy-icon';
+import TextFlipper from '../ui/text-effect-flipper';
 
 type Role = 'patient' | 'doctor' | 'pharmacy';
 
@@ -105,7 +106,7 @@ export function RoleSelectionForm() {
         )}
       >
         <h1 className="text-4xl md:text-5xl font-bold whitespace-nowrap">
-          Are you joining as a...
+          <TextFlipper>Are you</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">joining as a...</TextFlipper>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground mt-2 font-serif">
           Select your role to get started.
