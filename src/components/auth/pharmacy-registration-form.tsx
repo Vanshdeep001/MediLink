@@ -21,7 +21,6 @@ import { FadeIn } from "../fade-in";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 const formSchema = z.object({
   pharmacyName: z.string().min(2, { message: 'Pharmacy name is required.' }),
@@ -197,16 +196,6 @@ export function PharmacyRegistrationForm() {
                       </FormItem>
                     )}
                   />
-                  <div className="mt-4 rounded-lg overflow-hidden border">
-                    <Image 
-                      src="https://picsum.photos/800/400" 
-                      alt="Map placeholder"
-                      width={800}
-                      height={400}
-                      className="w-full h-auto"
-                      data-ai-hint="map"
-                    />
-                  </div>
                 </FadeIn>
               </div>
 
