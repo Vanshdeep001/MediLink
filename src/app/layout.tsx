@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
-import { Ubuntu, Dancing_Script } from 'next/font/google';
+import { Ubuntu, Dancing_Script, Lora } from 'next/font/google';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { SOSButton } from '@/components/sos-button';
 
@@ -17,6 +17,12 @@ const dancingScript = Dancing_Script({
   variable: '--font-dancing-script',
 });
 
+const lora = Lora({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-lora',
+});
+
 export const metadata: Metadata = {
   title: 'MediLink Healthcare',
   description: 'Smart Rural Care. Get instant access to doctors, medicines, and emergency services.',
@@ -29,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${ubuntu.variable} ${dancingScript.variable} font-sans antialiased bg-background text-foreground`}>
+      <body className={`${ubuntu.variable} ${dancingScript.variable} ${lora.variable} font-sans antialiased bg-background text-foreground`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

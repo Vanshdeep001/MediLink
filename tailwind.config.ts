@@ -19,6 +19,7 @@ export default {
       fontFamily: {
         sans: ['var(--font-ubuntu)'],
         cursive: ['var(--font-dancing-script)'],
+        serif: ['var(--font-lora)'],
       },
       backgroundImage: {
         'grid-pattern': 'linear-gradient(to right, hsl(var(--border) / 0.4) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border) / 0.4) 1px, transparent 1px)',

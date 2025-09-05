@@ -94,7 +94,7 @@ export function PharmacyRegistrationForm() {
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight whitespace-nowrap">
           <TextFlipper>Join as a</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">Pharmacy</TextFlipper>
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground mt-2">
+        <p className="text-lg md:text-xl text-muted-foreground mt-2 font-serif">
           Complete your profile to manage medicines, stock, and deliveries.
         </p>
       </div>
