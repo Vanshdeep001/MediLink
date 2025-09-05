@@ -21,6 +21,7 @@ import { FadeIn } from "../fade-in";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import TextFlipper from "../ui/text-effect-flipper";
 
 const formSchema = z.object({
   pharmacyName: z.string().min(2, { message: 'Pharmacy name is required.' }),
@@ -90,7 +91,9 @@ export function PharmacyRegistrationForm() {
           startAnimation ? "top-[10rem] -translate-y-1/2" : "top-1/2 -translate-y-1/2 scale-125"
         )}
       >
-        <h1 className="text-4xl md:text-5xl font-bold">Join as a Pharmacy</h1>
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight whitespace-nowrap">
+          <TextFlipper>Join as a</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">Pharmacy</TextFlipper>
+        </h1>
         <p className="text-lg md:text-xl text-muted-foreground mt-2">
           Complete your profile to manage medicines, stock, and deliveries.
         </p>
