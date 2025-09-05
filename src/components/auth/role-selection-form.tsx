@@ -103,7 +103,7 @@ export function RoleSelectionForm() {
           startAnimation ? "top-[10rem] -translate-y-1/2" : "top-1/2 -translate-y-1/2 scale-125"
         )}
       >
-        <h1 className="text-4xl md:text-5xl font-bold">
+        <h1 className="text-4xl md:text-5xl font-bold whitespace-nowrap">
           Are you joining as a...
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground mt-2">
