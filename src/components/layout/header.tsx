@@ -28,9 +28,9 @@ export function Header() {
   const { language, setLanguage, translations } = useContext(LanguageContext);
 
   const navLinks = [
-    { href: "#services", key: "services" },
-    { href: "#about", key: "about" },
-    { href: "#contact", key: "contact" },
+    { href: "/services", key: "services" },
+    { href: "/about", key: "about" },
+    { href: "/contact", key: "contact" },
   ];
   
   const languages: { id: Language; label: string }[] = [

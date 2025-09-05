@@ -74,8 +74,7 @@
     "toastDescription": "Your profile is under review. We will notify you upon verification."
   },
   "pharmacyRegForm": {
-    "title": "Joining",
-    "titleCursive": "Pharmacy",
+    "title": "Joining Pharmacy",
     "subtitle": "Complete your profile to manage medicines, stock, and deliveries.",
     "pharmacyNameLabel": "Pharmacy Name",
     "licenseLabel": "License Number",
@@ -252,5 +251,97 @@
     "toastTitle": "SOS Alert Sent!",
     "toastDescription": "The nearest ambulance has been notified and is on their way.",
     "buttonLabel": "Emergency SOS"
+  },
+  "services": {
+    "title": "Our",
+    "titleCursive": "Services",
+    "subtitle": "Explore the comprehensive features MediLink offers to revolutionize rural healthcare.",
+    "learnMore": "Learn More",
+    "aiDoctor": {
+      "title": "AI Doctor & Teleconsultation",
+      "description": "Get instant AI-driven consultations and connect with doctors via video."
+    },
+    "digitalPrescriptions": {
+      "title": "Digital Prescriptions & Records",
+      "description": "Access your prescriptions and health records securely, anytime, anywhere."
+    },
+    "medicineOrdering": {
+      "title": "Medicine Availability & Ordering",
+      "description": "Check local medicine availability and order them for pickup or delivery."
+    },
+    "pharmacyIntegration": {
+      "title": "Pharmacy Integration & Delivery",
+      "description": "Seamlessly connect with local pharmacies for quick medicine fulfillment."
+    },
+    "smartAlerts": {
+      "title": "Reminders & Smart Alerts",
+      "description": "Never miss a dose or an appointment with our intelligent reminder system."
+    },
+    "emergencySOS": {
+      "title": "Emergency SOS",
+      "description": "Alert the nearest ambulance with a single tap in case of an emergency."
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "About MediLink",
+      "subtitle": "Bridging rural healthcare gaps with AI-powered telemedicine."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "statement": "To make quality healthcare accessible, affordable, and actionable for every individual in rural India, leveraging technology to connect patients, doctors, and pharmacies seamlessly."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "statement": "We envision a future where geographical barriers no longer determine the quality of healthcare. Through innovation and a deep commitment to rural communities, MediLink aims to build a robust, intelligent, and interconnected healthcare ecosystem that empowers individuals and strengthens community well-being."
+    },
+    "impact": {
+      "title": "Our Impact",
+      "subtitle": "Creating a connected healthcare ecosystem for everyone.",
+      "patients": {
+        "title": "For Patients",
+        "description": "Instant access to medical advice, easy medicine ordering, and secure health records, all from their fingertips."
+      },
+      "doctors": {
+        "title": "For Doctors",
+        "description": "A streamlined platform to manage patient consultations, issue digital prescriptions, and extend their reach."
+      },
+      "pharmacies": {
+        "title": "For Pharmacies",
+        "description": "Efficiently manage inventory, process digital prescriptions, and coordinate local deliveries to serve the community better."
+      }
+    }
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have questions or need support? We're here to help.",
+    "form": {
+      "title": "Send us a Message",
+      "description": "Fill out the form and we'll get back to you shortly.",
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "message": "Your Message",
+      "submit": "Submit Message",
+      "toast": {
+        "title": "Message Sent!",
+        "description": "Thank you for reaching out. We'll get back to you soon."
+      }
+    },
+    "otherWays": {
+      "title": "Other Ways to Reach Us",
+      "email": {
+        "label": "Email",
+        "value": "support@medilink.in"
+      },
+      "phone": {
+        "label": "Phone",
+        "value": "+91-12345-67890"
+      },
+      "chatbot": {
+        "label": "AI Assistant",
+        "value": "Available 24/7 on our app for instant help."
+      }
+    }
   }
 }
