@@ -75,6 +75,8 @@
   },
   "pharmacyRegForm": {
     "title": "Joining Pharmacy",
+    "titleMain": "Joining",
+    "titleCursive": "Pharmacy",
     "subtitle": "Complete your profile to manage medicines, stock, and deliveries.",
     "pharmacyNameLabel": "Pharmacy Name",
     "licenseLabel": "License Number",
@@ -345,3 +347,5 @@
     }
   }
 }
+
+    
