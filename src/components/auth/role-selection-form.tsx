@@ -72,6 +72,8 @@ export function RoleSelectionForm() {
           router.push('/patient/medical-history');
         } else if (selectedRole === 'doctor') {
           router.push('/doctor/register');
+        } else if (selectedRole === 'pharmacy') {
+          router.push('/pharmacy/register');
         } else {
           router.push(`/${selectedRole}`);
         }
