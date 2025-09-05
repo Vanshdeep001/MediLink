@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import ThemeToggleButton from '../ui/theme-toggle-button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, X, Languages, Siren } from 'lucide-react';
+import { Menu, X, Languages, Siren, Check } from 'lucide-react';
 import Link from 'next/link';
 import {
   DropdownMenu,
@@ -16,17 +16,34 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { usePathname } from 'next/navigation';
 import { SOSButtonDialog } from '../sos-button';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+
+type Language = 'English' | 'Hindi' | 'Punjabi';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>('English');
   const pathname = usePathname();
   const showSOSButton = pathname === '/patient';
+  const { toast } = useToast();
 
   const navLinks = [
     { href: "#services", label: "Services" },
     { href: "#about", label: "About" },
     { href: "#contact", label: "Contact" },
   ];
+  
+  const languages: Language[] = ['English', 'Hindi', 'Punjabi'];
+
+  const handleLanguageChange = (lang: Language) => {
+    setSelectedLanguage(lang);
+    toast({
+      title: "Language Changed",
+      description: `Switched to ${lang}.`,
+    });
+  };
+
 
   return (
     <header className="fixed top-0 z-50 w-full bg-background/80 backdrop-blur-sm border-b border-border/40 animate-fade-in-down">
@@ -58,9 +75,12 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>English</DropdownMenuItem>
-              <DropdownMenuItem>Hindi</DropdownMenuItem>
-              <DropdownMenuItem>Punjabi</DropdownMenuItem>
+              {languages.map((lang) => (
+                <DropdownMenuItem key={lang} onSelect={() => handleLanguageChange(lang)}>
+                   <Check className={cn("mr-2 h-4 w-4", selectedLanguage === lang ? "opacity-100" : "opacity-0")} />
+                  {lang}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
           <ThemeToggleButton />
