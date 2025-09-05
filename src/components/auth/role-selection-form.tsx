@@ -18,9 +18,9 @@ const roles = [
     id: 'patient' as Role, 
     label: 'Patient', 
     image: {
-      src: "https://picsum.photos/200/201",
-      alt: "Patient illustration",
-      hint: "patient"
+      src: "https://firebasestudio.googleapis.com/v0/b/app-pro-25862.appspot.com/o/user_uploads%2F8a45155f-8255-46c5-8f6b-3d604b901594.jpg?alt=media&token=8d2771d9-813c-4448-9c4c-4235e15152a5",
+      alt: "Patient in a hospital bed",
+      hint: "patient hospital"
     },
     description: 'Consult doctors & manage health records'
   },
