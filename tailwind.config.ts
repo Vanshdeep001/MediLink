@@ -17,9 +17,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-ubuntu)'],
-        cursive: ['var(--font-dancing-script)'],
-        serif: ['var(--font-lora)'],
+        sans: ['var(--font-poppins)'],
+        cursive: ['var(--font-pacifico)'],
+        serif: ['var(--font-playfair-display)'],
       },
       backgroundImage: {
         'grid-pattern': 'linear-gradient(to right, hsl(var(--border) / 0.4) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border) / 0.4) 1px, transparent 1px)',

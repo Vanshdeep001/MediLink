@@ -1,27 +1,27 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
-import { Ubuntu, Dancing_Script, Lora } from 'next/font/google';
+import { Poppins, Playfair_Display, Pacifico } from 'next/font/google';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { SOSButton } from '@/components/sos-button';
 import { LanguageProvider } from '@/context/language-context';
 
-const ubuntu = Ubuntu({
+const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '700'],
-  variable: '--font-ubuntu',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-poppins',
 });
 
-const dancingScript = Dancing_Script({
+const pacifico = Pacifico({
   subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-dancing-script',
+  weight: ['400'],
+  variable: '--font-pacifico',
 });
 
-const lora = Lora({
+const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-lora',
+  variable: '--font-playfair-display',
 });
 
 export const metadata: Metadata = {
@@ -36,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${ubuntu.variable} ${dancingScript.variable} ${lora.variable} font-sans antialiased bg-background text-foreground`}>
+      <body className={`${poppins.variable} ${pacifico.variable} ${playfairDisplay.variable} font-sans antialiased bg-background text-foreground`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
