@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,6 +20,7 @@ import { FadeIn } from "../fade-in";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { LanguageContext } from "@/context/language-context";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -41,6 +42,7 @@ export function DoctorRegistrationForm() {
   const [files, setFiles] = useState<File[]>([]);
   const { toast } = useToast();
   const router = useRouter();
+  const { translations } = useContext(LanguageContext);
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -77,8 +79,8 @@ export function DoctorRegistrationForm() {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log({ ...values, files });
     toast({
-      title: "Registration Submitted",
-      description: "Your profile is under review. We will notify you upon verification.",
+      title: translations.doctorRegForm.toastTitle,
+      description: translations.doctorRegForm.toastDescription,
     });
     router.push("/doctor");
   };
@@ -91,9 +93,9 @@ export function DoctorRegistrationForm() {
           startAnimation ? "top-[10rem] -translate-y-1/2" : "top-1/2 -translate-y-1/2 scale-125"
         )}
       >
-        <h1 className="text-4xl md:text-5xl font-bold">Join as a Doctor</h1>
+        <h1 className="text-4xl md:text-5xl font-bold">{translations.doctorRegForm.title}</h1>
         <p className="text-lg md:text-xl text-muted-foreground mt-2">
-          Complete your profile to start consulting patients.
+          {translations.doctorRegForm.subtitle}
         </p>
       </div>
 
@@ -108,7 +110,7 @@ export function DoctorRegistrationForm() {
                     name="fullName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FormLabel>{translations.doctorRegForm.fullNameLabel}</FormLabel>
                         <div className="relative">
                           <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input className="pl-10 h-12" {...field} /></FormControl>
@@ -124,7 +126,7 @@ export function DoctorRegistrationForm() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email Address</FormLabel>
+                        <FormLabel>{translations.doctorRegForm.emailLabel}</FormLabel>
                         <div className="relative">
                           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input className="pl-10 h-12" {...field} /></FormControl>
@@ -140,7 +142,7 @@ export function DoctorRegistrationForm() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
+                        <FormLabel>{translations.doctorRegForm.phoneLabel}</FormLabel>
                         <div className="relative">
                           <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input className="pl-10 h-12" {...field} /></FormControl>
@@ -156,10 +158,10 @@ export function DoctorRegistrationForm() {
                     name="specialization"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Specialization</FormLabel>
+                        <FormLabel>{translations.doctorRegForm.specializationLabel}</FormLabel>
                         <div className="relative">
                           <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                          <FormControl><Input className="pl-10 h-12" placeholder="e.g., Cardiology" {...field} /></FormControl>
+                          <FormControl><Input className="pl-10 h-12" placeholder={translations.doctorRegForm.specializationPlaceholder} {...field} /></FormControl>
                         </div>
                         <FormMessage />
                       </FormItem>
@@ -172,7 +174,7 @@ export function DoctorRegistrationForm() {
                     name="experience"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Years of Experience</FormLabel>
+                        <FormLabel>{translations.doctorRegForm.experienceLabel}</FormLabel>
                         <div className="relative">
                           <Award className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input type="number" className="pl-10 h-12" {...field} /></FormControl>
@@ -188,10 +190,10 @@ export function DoctorRegistrationForm() {
                     name="degree"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Medical Degree</FormLabel>
+                        <FormLabel>{translations.doctorRegForm.degreeLabel}</FormLabel>
                         <div className="relative">
                           <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                          <FormControl><Input className="pl-10 h-12" placeholder="e.g., MBBS, MD" {...field} /></FormControl>
+                          <FormControl><Input className="pl-10 h-12" placeholder={translations.doctorRegForm.degreePlaceholder} {...field} /></FormControl>
                         </div>
                         <FormMessage />
                       </FormItem>
@@ -204,7 +206,7 @@ export function DoctorRegistrationForm() {
                     name="licenseNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Medical License Number</FormLabel>
+                        <FormLabel>{translations.doctorRegForm.licenseLabel}</FormLabel>
                         <FormControl><Input className="h-12" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
@@ -215,12 +217,12 @@ export function DoctorRegistrationForm() {
 
               <FadeIn delay={1300} direction="up">
                 <div className="space-y-2">
-                    <FormLabel>Upload Degree Photo</FormLabel>
+                    <FormLabel>{translations.doctorRegForm.uploadLabel}</FormLabel>
                     <div className="relative border-2 border-dashed border-muted-foreground/30 rounded-xl p-8 flex flex-col items-center justify-center text-center">
                       <UploadCloud className="w-12 h-12 text-muted-foreground mb-4" />
-                      <p className="text-muted-foreground mb-2">Drag & drop file here or</p>
+                      <p className="text-muted-foreground mb-2">{translations.doctorRegForm.dragDrop}</p>
                       <Button type="button" variant="outline" size="sm" asChild>
-                        <label htmlFor="file-upload" className="cursor-pointer">Browse File</label>
+                        <label htmlFor="file-upload" className="cursor-pointer">{translations.doctorRegForm.browse}</label>
                       </Button>
                       <Input id="file-upload" type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
                     </div>
@@ -251,7 +253,7 @@ export function DoctorRegistrationForm() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>{translations.doctorRegForm.passwordLabel}</FormLabel>
                         <div className="relative">
                           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input type="password" className="pl-10 h-12" {...field} /></FormControl>
@@ -267,7 +269,7 @@ export function DoctorRegistrationForm() {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
+                        <FormLabel>{translations.doctorRegForm.confirmPasswordLabel}</FormLabel>
                          <div className="relative">
                           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input type="password" className="pl-10 h-12" {...field} /></FormControl>
@@ -281,7 +283,7 @@ export function DoctorRegistrationForm() {
               
               <FadeIn delay={1600} direction="up">
                 <Button type="submit" className="w-full text-lg h-14">
-                  Submit for Verification
+                  {translations.doctorRegForm.submitButton}
                 </Button>
               </FadeIn>
             </form>

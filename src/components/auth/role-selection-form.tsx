@@ -58,8 +58,8 @@ export function RoleSelectionForm() {
   const handleSubmit = () => {
     if (!selectedRole) {
       toast({
-        title: "Selection Required",
-        description: "Please select a role to continue.",
+        title: translations.roleSelection.toastTitle,
+        description: translations.roleSelection.toastDescription,
         variant: "destructive",
       });
       return;
@@ -84,16 +84,16 @@ export function RoleSelectionForm() {
 
       } else {
         toast({
-          title: "Error",
-          description: "User data not found. Please register again.",
+          title: translations.roleSelection.toastErrorTitle,
+          description: translations.roleSelection.toastErrorUser,
           variant: "destructive",
         });
         router.push('/auth');
       }
     } catch (error) {
         toast({
-          title: "Error",
-          description: "Failed to save role. Please try again.",
+          title: translations.roleSelection.toastErrorTitle,
+          description: translations.roleSelection.toastErrorRole,
           variant: "destructive",
         });
     }

@@ -1,4 +1,7 @@
 
+'use client';
+
+import { useContext } from 'react';
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -6,8 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Pill, FileText, Heart, PlusCircle, Upload, Search, ChevronRight, BrainCircuit, BellRing, Video } from "lucide-react";
 import TextFlipper from "@/components/ui/text-effect-flipper";
+import { LanguageContext } from '@/context/language-context';
 
 export default function PatientDashboard() {
+  const { translations } = useContext(LanguageContext);
+  
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
@@ -16,52 +22,52 @@ export default function PatientDashboard() {
           
           <div className="text-center py-16 md:py-24 animate-fade-in-down">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-              <TextFlipper>Welcome back,</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">Patient!</TextFlipper>
+              <TextFlipper>{translations.patientDashboard.welcome}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{translations.patientDashboard.welcomeUser}</TextFlipper>
             </h1>
             <p className="mt-4 text-lg text-muted-foreground animate-text-fade-in-scale" style={{ animationDelay: '0.4s' }}>
-              Book your first appointment to get started with your healthcare journey.
+              {translations.patientDashboard.subtitle}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-content-fade-in" style={{ animationDelay: '0.6s' }}>
             <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Upcoming Appointments</CardTitle>
+                <CardTitle className="text-sm font-medium">{translations.patientDashboard.upcomingAppointments}</CardTitle>
                 <Calendar className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">3</div>
-                <p className="text-xs text-muted-foreground">View your schedule</p>
+                <p className="text-xs text-muted-foreground">{translations.patientDashboard.viewSchedule}</p>
               </CardContent>
             </Card>
             <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Active Medications</CardTitle>
+                <CardTitle className="text-sm font-medium">{translations.patientDashboard.activeMedications}</CardTitle>
                 <Pill className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">2</div>
-                <p className="text-xs text-muted-foreground">Manage prescriptions</p>
+                <p className="text-xs text-muted-foreground">{translations.patientDashboard.managePrescriptions}</p>
               </CardContent>
             </Card>
             <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Medical Reports</CardTitle>
+                <CardTitle className="text-sm font-medium">{translations.patientDashboard.medicalReports}</CardTitle>
                 <FileText className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">5</div>
-                <p className="text-xs text-muted-foreground">Access your files</p>
+                <p className="text-xs text-muted-foreground">{translations.patientDashboard.accessFiles}</p>
               </CardContent>
             </Card>
             <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Health Status</CardTitle>
+                <CardTitle className="text-sm font-medium">{translations.patientDashboard.healthStatus}</CardTitle>
                 <Heart className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">Good</div>
-                <p className="text-xs text-muted-foreground">Last updated yesterday</p>
+                <p className="text-xs text-muted-foreground">{translations.patientDashboard.lastUpdated}</p>
               </CardContent>
             </Card>
           </div>
@@ -69,30 +75,30 @@ export default function PatientDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.8s' }}>
             <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><BrainCircuit /> AI Symptom Checker</CardTitle>
-                <CardDescription>Describe your symptoms to get a primary diagnosis and find the right doctor.</CardDescription>
+                <CardTitle className="flex items-center gap-2"><BrainCircuit /> {translations.patientDashboard.symptomChecker}</CardTitle>
+                <CardDescription>{translations.patientDashboard.symptomCheckerDesc}</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full">Describe Your Symptoms</Button>
+                <Button className="w-full">{translations.patientDashboard.symptomCheckerButton}</Button>
               </CardContent>
             </Card>
             <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
                <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Video /> Video Consultation</CardTitle>
-                <CardDescription>Have a face-to-face consultation with your doctor from the comfort of your home.</CardDescription>
+                <CardTitle className="flex items-center gap-2"><Video /> {translations.patientDashboard.videoConsultation}</CardTitle>
+                <CardDescription>{translations.patientDashboard.videoConsultationDesc}</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full">Start Telemedicine Call</Button>
+                <Button className="w-full">{translations.patientDashboard.videoConsultationButton}</Button>
               </CardContent>
             </Card>
              <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
                <CardHeader>
-                <CardTitle className="flex items-center gap-2"><BellRing /> Smart Reminders</CardTitle>
-                <CardDescription>Get timely alerts for medicines, appointments, and follow-ups.</CardDescription>
+                <CardTitle className="flex items-center gap-2"><BellRing /> {translations.patientDashboard.smartReminders}</CardTitle>
+                <CardDescription>{translations.patientDashboard.smartRemindersDesc}</CardDescription>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                <p>• Take Metformin at 8:00 PM</p>
-                <p>• Follow-up with Dr. Sharma tomorrow</p>
+                <p>{translations.patientDashboard.reminder1}</p>
+                <p>{translations.patientDashboard.reminder2}</p>
               </CardContent>
             </Card>
           </div>
@@ -100,17 +106,17 @@ export default function PatientDashboard() {
           <div className="animate-content-fade-in" style={{ animationDelay: '1s' }}>
             <Tabs defaultValue="appointments" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="appointments">Appointments</TabsTrigger>
-                <TabsTrigger value="medications">Medications</TabsTrigger>
-                <TabsTrigger value="health_data">Health Data</TabsTrigger>
-                <TabsTrigger value="reports">Reports</TabsTrigger>
+                <TabsTrigger value="appointments">{translations.patientDashboard.appointments}</TabsTrigger>
+                <TabsTrigger value="medications">{translations.patientDashboard.medications}</TabsTrigger>
+                <TabsTrigger value="health_data">{translations.patientDashboard.healthData}</TabsTrigger>
+                <TabsTrigger value="reports">{translations.patientDashboard.reports}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="appointments" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Manage Your Appointments</CardTitle>
-                    <CardDescription>View upcoming consultations or book a new one.</CardDescription>
+                    <CardTitle>{translations.patientDashboard.manageAppointments}</CardTitle>
+                    <CardDescription>{translations.patientDashboard.manageAppointmentsDesc}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="flex justify-between items-center bg-muted/50 p-4 rounded-lg">
@@ -134,11 +140,11 @@ export default function PatientDashboard() {
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                         <Button className="w-full sm:w-auto">
                             <PlusCircle className="mr-2 h-5 w-5" />
-                            Book New Appointment
+                            {translations.patientDashboard.bookAppointment}
                         </Button>
                         <Button variant="outline" className="w-full sm:w-auto">
                             <Search className="mr-2 h-5 w-5" />
-                            Find Doctors
+                            {translations.patientDashboard.findDoctors}
                         </Button>
                     </div>
                   </CardContent>
@@ -148,8 +154,8 @@ export default function PatientDashboard() {
               <TabsContent value="medications" className="mt-6">
                  <Card>
                   <CardHeader>
-                    <CardTitle>Your Medications</CardTitle>
-                    <CardDescription>Keep track of your active prescriptions and set reminders.</CardDescription>
+                    <CardTitle>{translations.patientDashboard.yourMedications}</CardTitle>
+                    <CardDescription>{translations.patientDashboard.yourMedicationsDesc}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                      <div className="flex justify-between items-center bg-muted/50 p-4 rounded-lg">
@@ -157,17 +163,17 @@ export default function PatientDashboard() {
                         <p className="font-semibold">Metformin</p>
                         <p className="text-sm text-muted-foreground">500mg, Twice a day</p>
                       </div>
-                      <Button variant="outline">Set Reminder</Button>
+                      <Button variant="outline">{translations.patientDashboard.setReminder}</Button>
                     </div>
                     <div className="flex justify-between items-center bg-muted/50 p-4 rounded-lg">
                       <div>
                         <p className="font-semibold">Aspirin</p>
                         <p className="text-sm text-muted-foreground">81mg, Once a day</p>
                       </div>
-                       <Button variant="outline">Set Reminder</Button>
+                       <Button variant="outline">{translations.patientDashboard.setReminder}</Button>
                     </div>
                     <div className="pt-4">
-                      <Button>Order Medicines</Button>
+                      <Button>{translations.patientDashboard.orderMedicines}</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -176,8 +182,8 @@ export default function PatientDashboard() {
               <TabsContent value="reports" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Your Medical Reports</CardTitle>
-                    <CardDescription>All your uploaded health documents in one place.</CardDescription>
+                    <CardTitle>{translations.patientDashboard.yourReports}</CardTitle>
+                    <CardDescription>{translations.patientDashboard.yourReportsDesc}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                      <div className="flex justify-between items-center bg-muted/50 p-4 rounded-lg">
@@ -188,12 +194,12 @@ export default function PatientDashboard() {
                           <p className="text-sm text-muted-foreground">Uploaded on 15 Dec 2024</p>
                         </div>
                       </div>
-                      <Button variant="outline">View</Button>
+                      <Button variant="outline">{translations.patientDashboard.view}</Button>
                     </div>
                     <div className="pt-4">
                       <Button>
                         <Upload className="mr-2 h-5 w-5" />
-                        Upload New Report
+                        {translations.patientDashboard.uploadReport}
                       </Button>
                     </div>
                   </CardContent>
@@ -203,11 +209,11 @@ export default function PatientDashboard() {
                <TabsContent value="health_data" className="mt-6">
                  <Card>
                   <CardHeader>
-                    <CardTitle>Health Data</CardTitle>
-                    <CardDescription>View your basic health metrics.</CardDescription>
+                    <CardTitle>{translations.patientDashboard.yourHealthData}</CardTitle>
+                    <CardDescription>{translations.patientDashboard.yourHealthDataDesc}</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center text-muted-foreground py-12">
-                    <p>Health data from wearables and manual inputs will be available here in the future.</p>
+                    <p>{translations.patientDashboard.healthDataPlaceholder}</p>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -220,5 +226,3 @@ export default function PatientDashboard() {
     </div>
   );
 }
-
-    

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,6 +22,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
+import { LanguageContext } from "@/context/language-context";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -47,6 +48,7 @@ export function AuthForm() {
   const [startAnimation, setStartAnimation] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { translations } = useContext(LanguageContext);
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -72,16 +74,16 @@ export function AuthForm() {
       localStorage.setItem('temp_user', JSON.stringify(user));
       
       toast({
-        title: "Registration Successful",
-        description: "Please select your role.",
+        title: translations.authForm.toastSuccessTitle,
+        description: translations.authForm.toastSuccessDescription,
       });
 
       router.push('/role-selection');
 
     } catch (e) {
       toast({
-        title: "Registration Failed",
-        description: "An unexpected error occurred.",
+        title: translations.authForm.toastErrorTitle,
+        description: translations.authForm.toastErrorDescription,
         variant: "destructive",
       });
     }
@@ -95,9 +97,9 @@ export function AuthForm() {
           startAnimation ? "top-[10rem] -translate-y-1/2" : "top-1/2 -translate-y-1/2 scale-125"
         )}
       >
-          <h1 className="text-4xl md:text-5xl font-bold">Create Account</h1>
+          <h1 className="text-4xl md:text-5xl font-bold">{translations.authForm.title}</h1>
           <p className="text-lg md:text-xl text-muted-foreground mt-2">
-            Let's get you started with MediLink.
+            {translations.authForm.subtitle}
           </p>
       </div>
 
@@ -111,7 +113,7 @@ export function AuthForm() {
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-lg">Full Name</FormLabel>
+                      <FormLabel className="text-lg">{translations.authForm.fullNameLabel}</FormLabel>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <FormControl>
@@ -130,7 +132,7 @@ export function AuthForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-lg">Email Address</FormLabel>
+                      <FormLabel className="text-lg">{translations.authForm.emailLabel}</FormLabel>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <FormControl>
@@ -149,7 +151,7 @@ export function AuthForm() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-lg">Phone Number</FormLabel>
+                      <FormLabel className="text-lg">{translations.authForm.phoneLabel}</FormLabel>
                       <div className="relative">
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <FormControl>
@@ -168,7 +170,7 @@ export function AuthForm() {
                   name="dob"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel className="text-lg">Date of Birth</FormLabel>
+                      <FormLabel className="text-lg">{translations.authForm.dobLabel}</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -182,7 +184,7 @@ export function AuthForm() {
                               {field.value ? (
                                 format(field.value, "PPP")
                               ) : (
-                                <span>Pick a date</span>
+                                <span>{translations.authForm.dobPlaceholder}</span>
                               )}
                               <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
                             </Button>
@@ -211,7 +213,7 @@ export function AuthForm() {
               
               <FadeIn delay={1000} direction="up">
                 <Button type="submit" className="w-full text-lg h-14">
-                  Register & Continue
+                  {translations.authForm.submitButton}
                 </Button>
               </FadeIn>
             </form>

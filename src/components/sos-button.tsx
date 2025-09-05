@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useContext } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,20 +11,23 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Siren } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { LanguageContext } from "@/context/language-context";
 
 // This component is the dialog part, which can be triggered by any button
 export function SOSButtonDialog({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
+  const { translations } = useContext(LanguageContext);
 
   const handleConfirm = () => {
     toast({
-      title: "SOS Alert Sent!",
-      description: "The nearest ambulance has been notified and is on their way.",
+      title: translations.sos.toastTitle,
+      description: translations.sos.toastDescription,
       variant: "destructive",
     });
   };
@@ -35,15 +39,15 @@ export function SOSButtonDialog({ children }: { children: React.ReactNode }) {
         </div>
         <AlertDialogContent>
             <AlertDialogHeader>
-            <AlertDialogTitle>Are you experiencing a medical emergency?</AlertDialogTitle>
+            <AlertDialogTitle>{translations.sos.title}</AlertDialogTitle>
             <AlertDialogDescription>
-                This action will immediately alert the nearest available ambulance or local transport service to your location. Only confirm if you are in a genuine emergency.
+                {translations.sos.description}
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{translations.sos.cancel}</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirm} className="bg-destructive hover:bg-destructive/90">
-                Confirm Emergency
+                {translations.sos.confirm}
             </AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
@@ -55,6 +59,8 @@ export function SOSButtonDialog({ children }: { children: React.ReactNode }) {
 // This is the main FAB component, visible on mobile
 export function SOSButton() {
   const pathname = usePathname();
+  const { translations } = useContext(LanguageContext);
+  
   if (pathname !== '/patient') {
     return null;
   }
@@ -68,7 +74,7 @@ export function SOSButton() {
           className="w-16 h-16 rounded-full shadow-lg animate-pulse-slow"
         >
           <Siren className="w-8 h-8" />
-          <span className="sr-only">Emergency SOS</span>
+          <span className="sr-only">{translations.sos.buttonLabel}</span>
         </Button>
       </SOSButtonDialog>
     </div>

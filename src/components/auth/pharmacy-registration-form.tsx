@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import TextFlipper from "../ui/text-effect-flipper";
+import { LanguageContext } from "@/context/language-context";
 
 const formSchema = z.object({
   pharmacyName: z.string().min(2, { message: 'Pharmacy name is required.' }),
@@ -42,6 +43,7 @@ export function PharmacyRegistrationForm() {
   const [files, setFiles] = useState<File[]>([]);
   const { toast } = useToast();
   const router = useRouter();
+  const { translations } = useContext(LanguageContext);
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -77,8 +79,8 @@ export function PharmacyRegistrationForm() {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log({ ...values, files });
     toast({
-      title: "Registration Submitted",
-      description: "Your pharmacy profile is under review. We will notify you upon verification.",
+      title: translations.pharmacyRegForm.toastTitle,
+      description: translations.pharmacyRegForm.toastDescription,
     });
     router.push("/pharmacy");
   };
@@ -92,10 +94,10 @@ export function PharmacyRegistrationForm() {
         )}
       >
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight whitespace-nowrap">
-          <TextFlipper>Join as a</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">Pharmacy</TextFlipper>
+          <TextFlipper>{translations.roleSelection.joiningAs.split(' ')[0]}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{translations.roleSelection.pharmacy}</TextFlipper>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground mt-2 font-serif">
-          Complete your profile to manage medicines, stock, and deliveries.
+          {translations.pharmacyRegForm.subtitle}
         </p>
       </div>
 
@@ -110,7 +112,7 @@ export function PharmacyRegistrationForm() {
                     name="pharmacyName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Pharmacy Name</FormLabel>
+                        <FormLabel>{translations.pharmacyRegForm.pharmacyNameLabel}</FormLabel>
                         <div className="relative">
                           <Building className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input className="pl-10 h-12" {...field} /></FormControl>
@@ -126,7 +128,7 @@ export function PharmacyRegistrationForm() {
                     name="licenseNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>License Number</FormLabel>
+                        <FormLabel>{translations.pharmacyRegForm.licenseLabel}</FormLabel>
                         <div className="relative">
                           <Award className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input className="pl-10 h-12" {...field} /></FormControl>
@@ -142,7 +144,7 @@ export function PharmacyRegistrationForm() {
                     name="ownerName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Owner/Manager Name</FormLabel>
+                        <FormLabel>{translations.pharmacyRegForm.ownerNameLabel}</FormLabel>
                         <div className="relative">
                           <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input className="pl-10 h-12" {...field} /></FormControl>
@@ -158,7 +160,7 @@ export function PharmacyRegistrationForm() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Contact Number</FormLabel>
+                        <FormLabel>{translations.pharmacyRegForm.contactLabel}</FormLabel>
                         <div className="relative">
                           <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input className="pl-10 h-12" {...field} /></FormControl>
@@ -174,7 +176,7 @@ export function PharmacyRegistrationForm() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email Address</FormLabel>
+                        <FormLabel>{translations.pharmacyRegForm.emailLabel}</FormLabel>
                         <div className="relative">
                           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input className="pl-10 h-12" {...field} /></FormControl>
@@ -190,7 +192,7 @@ export function PharmacyRegistrationForm() {
                     name="address"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Store Address</FormLabel>
+                        <FormLabel>{translations.pharmacyRegForm.addressLabel}</FormLabel>
                         <div className="relative">
                           <MapPin className="absolute left-3 top-5 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Textarea className="pl-10" rows={3} {...field} /></FormControl>
@@ -204,12 +206,12 @@ export function PharmacyRegistrationForm() {
 
               <FadeIn delay={1200} direction="up">
                 <div className="space-y-2">
-                    <FormLabel>Upload Pharmacy License</FormLabel>
+                    <FormLabel>{translations.pharmacyRegForm.uploadLabel}</FormLabel>
                     <div className="relative border-2 border-dashed border-muted-foreground/30 rounded-xl p-8 flex flex-col items-center justify-center text-center">
                       <UploadCloud className="w-12 h-12 text-muted-foreground mb-4" />
-                      <p className="text-muted-foreground mb-2">Drag & drop file here or</p>
+                      <p className="text-muted-foreground mb-2">{translations.doctorRegForm.dragDrop}</p>
                       <Button type="button" variant="outline" size="sm" asChild>
-                        <label htmlFor="file-upload" className="cursor-pointer">Browse File</label>
+                        <label htmlFor="file-upload" className="cursor-pointer">{translations.doctorRegForm.browse}</label>
                       </Button>
                       <Input id="file-upload" type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
                     </div>
@@ -240,7 +242,7 @@ export function PharmacyRegistrationForm() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>{translations.pharmacyRegForm.passwordLabel}</FormLabel>
                         <div className="relative">
                           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input type="password" className="pl-10 h-12" {...field} /></FormControl>
@@ -256,7 +258,7 @@ export function PharmacyRegistrationForm() {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
+                        <FormLabel>{translations.pharmacyRegForm.confirmPasswordLabel}</FormLabel>
                          <div className="relative">
                           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <FormControl><Input type="password" className="pl-10 h-12" {...field} /></FormControl>
@@ -270,7 +272,7 @@ export function PharmacyRegistrationForm() {
               
               <FadeIn delay={1500} direction="up">
                 <Button type="submit" className="w-full text-lg h-14">
-                  Register as Pharmacy
+                  {translations.pharmacyRegForm.submitButton}
                 </Button>
               </FadeIn>
             </form>

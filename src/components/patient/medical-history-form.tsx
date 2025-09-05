@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { UploadCloud, File, X, Info, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -29,6 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Progress } from "@/components/ui/progress";
+import { LanguageContext } from "@/context/language-context";
 
 const formSchema = z.object({
   preExistingConditions: z.string().optional(),
@@ -38,19 +39,20 @@ const formSchema = z.object({
   otherNotes: z.string().optional(),
 });
 
-const formSteps = [
-  { id: 'conditions', title: 'Pre-existing Conditions' },
-  { id: 'medications', title: 'Current Medications' },
-  { id: 'allergies', title: 'Allergies' },
-  { id: 'familyHistory', title: 'Family History' },
-  { id: 'reports', title: 'Medical Reports' }
-];
-
 export function MedicalHistoryForm() {
   const router = useRouter();
   const { toast } = useToast();
   const [files, setFiles] = useState<File[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
+  const { translations } = useContext(LanguageContext);
+
+  const formSteps = [
+    { id: 'conditions', title: translations.medicalHistory.conditions },
+    { id: 'medications', title: translations.medicalHistory.medications },
+    { id: 'allergies', title: translations.medicalHistory.allergies },
+    { id: 'familyHistory', title: translations.medicalHistory.familyHistory },
+    { id: 'reports', title: translations.medicalHistory.reports }
+  ];
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,8 +78,8 @@ export function MedicalHistoryForm() {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log({ ...values, files });
     toast({
-      title: "Profile Updated!",
-      description: "Thanks for sharing. Your health profile is ready.",
+      title: translations.medicalHistory.toastTitle,
+      description: translations.medicalHistory.toastDescription,
     });
     router.push("/patient");
   };
@@ -93,7 +95,7 @@ export function MedicalHistoryForm() {
         <div className="mb-4">
           <Progress value={progress} className="w-full h-2" />
           <p className="text-sm text-muted-foreground mt-2 text-center">
-            Step {currentStep + 1} of {formSteps.length}: {formSteps[currentStep].title}
+            {translations.medicalHistory.step} {currentStep + 1} {translations.medicalHistory.of} {formSteps.length}: {formSteps[currentStep].title}
           </p>
         </div>
       </CardHeader>
@@ -114,10 +116,10 @@ export function MedicalHistoryForm() {
                     name="preExistingConditions"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-lg font-semibold">Do you have any pre-existing conditions?</FormLabel>
-                        <FormDescription>List any chronic or significant health issues you have.</FormDescription>
+                        <FormLabel className="text-lg font-semibold">{translations.medicalHistory.conditionsLabel}</FormLabel>
+                        <FormDescription>{translations.medicalHistory.conditionsDescription}</FormDescription>
                         <FormControl>
-                          <Textarea placeholder="e.g., Diabetes, Migraine, Thyroid disorder" {...field} rows={4} />
+                          <Textarea placeholder={translations.medicalHistory.conditionsPlaceholder} {...field} rows={4} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -130,10 +132,10 @@ export function MedicalHistoryForm() {
                     name="medications"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-lg font-semibold">Are you currently taking any medications?</FormLabel>
-                        <FormDescription>Please include the name, dosage, and frequency.</FormDescription>
+                        <FormLabel className="text-lg font-semibold">{translations.medicalHistory.medicationsLabel}</FormLabel>
+                        <FormDescription>{translations.medicalHistory.medicationsDescription}</FormDescription>
                         <FormControl>
-                          <Textarea placeholder="e.g., Metformin 500mg twice daily, Aspirin 81mg once daily" {...field} rows={4} />
+                          <Textarea placeholder={translations.medicalHistory.medicationsPlaceholder} {...field} rows={4} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -146,10 +148,10 @@ export function MedicalHistoryForm() {
                     name="allergies"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-lg font-semibold">Do you have any allergies?</FormLabel>
-                        <FormDescription>Include medications, food, or environmental allergies.</FormDescription>
+                        <FormLabel className="text-lg font-semibold">{translations.medicalHistory.allergiesLabel}</FormLabel>
+                        <FormDescription>{translations.medicalHistory.allergiesDescription}</FormDescription>
                         <FormControl>
-                          <Textarea placeholder="e.g., Penicillin (rash), Peanuts (anaphylaxis), Pollen (hay fever)" {...field} rows={4} />
+                          <Textarea placeholder={translations.medicalHistory.allergiesPlaceholder} {...field} rows={4} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -162,10 +164,10 @@ export function MedicalHistoryForm() {
                     name="familyHistory"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-lg font-semibold">Is there a family history of major diseases?</FormLabel>
-                        <FormDescription>Mention any significant health issues in your immediate family.</FormDescription>
+                        <FormLabel className="text-lg font-semibold">{translations.medicalHistory.familyHistoryLabel}</FormLabel>
+                        <FormDescription>{translations.medicalHistory.familyHistoryDescription}</FormDescription>
                         <FormControl>
-                          <Textarea placeholder="e.g., Heart disease (father), Diabetes (mother), Cancer (sibling)" {...field} rows={4} />
+                          <Textarea placeholder={translations.medicalHistory.familyHistoryPlaceholder} {...field} rows={4} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -175,25 +177,25 @@ export function MedicalHistoryForm() {
                 {currentStep === 4 && (
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-semibold">Upload Medical Reports</h3>
+                      <h3 className="text-lg font-semibold">{translations.medicalHistory.reportsLabel}</h3>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Info className="w-4 h-4 text-muted-foreground cursor-pointer" />
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Your data is stored securely and only shared with your doctor.</p>
+                            <p>{translations.medicalHistory.reportsTooltip}</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     </div>
-                    <FormDescription>Upload lab reports, prescriptions, or past diagnoses here.</FormDescription>
+                    <FormDescription>{translations.medicalHistory.reportsDescription}</FormDescription>
                     <div className="relative border-2 border-dashed border-muted-foreground/30 rounded-xl p-8 flex flex-col items-center justify-center text-center">
                       <UploadCloud className="w-12 h-12 text-muted-foreground mb-4" />
-                      <p className="text-muted-foreground mb-2">Drag & drop files here or</p>
+                      <p className="text-muted-foreground mb-2">{translations.medicalHistory.dragDrop}</p>
                       <Button type="button" variant="outline" size="sm" asChild>
                         <label htmlFor="file-upload" className="cursor-pointer">
-                          Browse Files
+                          {translations.medicalHistory.browse}
                         </label>
                       </Button>
                       <Input id="file-upload" type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" multiple onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
@@ -201,7 +203,7 @@ export function MedicalHistoryForm() {
                     
                     {files.length > 0 && (
                       <div className="space-y-2">
-                        <h4 className="font-medium">Uploaded Files:</h4>
+                        <h4 className="font-medium">{translations.medicalHistory.uploadedFiles}</h4>
                         <ul className="space-y-2">
                           {files.map((file, index) => (
                             <li key={index} className="flex items-center justify-between bg-muted p-2 rounded-md">
@@ -226,17 +228,17 @@ export function MedicalHistoryForm() {
               {currentStep > 0 ? (
                 <Button type="button" variant="outline" onClick={prevStep}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
+                  {translations.medicalHistory.back}
                 </Button>
               ) : <div></div>}
 
               {currentStep < formSteps.length - 1 ? (
                 <Button type="button" size="lg" onClick={nextStep}>
-                  Next
+                  {translations.medicalHistory.next}
                 </Button>
               ) : (
                 <Button type="submit" size="lg">
-                  Complete Profile & Continue
+                  {translations.medicalHistory.complete}
                 </Button>
               )}
             </div>
