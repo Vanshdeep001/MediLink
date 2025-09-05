@@ -1,4 +1,4 @@
-import { Pill, Plus, Capsule } from 'lucide-react';
+import { Pill, Plus, TestTube } from 'lucide-react';
 
 export function FloatingPharmacyIcons() {
   const iconClasses = "absolute text-primary/20 animate-float";
@@ -9,7 +9,7 @@ export function FloatingPharmacyIcons() {
         className={iconClasses}
         style={{ top: '15%', left: '10%', animationDelay: '0s', width: '64px', height: '64px' }}
       />
-      <Capsule
+      <TestTube
         className={iconClasses}
         style={{ top: '25%', right: '15%', animationDelay: '1s', width: '48px', height: '48px' }}
       />
@@ -21,7 +21,7 @@ export function FloatingPharmacyIcons() {
         className={iconClasses}
         style={{ bottom: '10%', right: '10%', animationDelay: '3s', width: '56px', height: '56px' }}
       />
-       <Capsule
+       <TestTube
         className={iconClasses}
         style={{ top: '60%', left: '5%', animationDelay: '4s', width: '32px', height: '32px' }}
       />
