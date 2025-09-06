@@ -67,8 +67,8 @@ export default function DoctorDashboard() {
   const handleSavePrescription = () => {
     if (!selectedPatient || medications.some(m => !m.name || !m.dosage || !m.duration)) {
       toast({
-        title: translations.doctorDashboard.prescription.validationErrorTitle,
-        description: translations.doctorDashboard.prescription.validationErrorDesc,
+        title: translations.doctorDashboard.prescriptions.validationErrorTitle,
+        description: translations.doctorDashboard.prescriptions.validationErrorDesc,
         variant: "destructive",
       });
       return;
@@ -112,8 +112,8 @@ export default function DoctorDashboard() {
     localStorage.setItem('notifications', JSON.stringify(allNotifications));
 
     toast({
-      title: translations.doctorDashboard.prescription.successTitle,
-      description: `${translations.doctorDashboard.prescription.successDesc} ${selectedPatient}.`,
+      title: translations.doctorDashboard.prescriptions.successTitle,
+      description: `${translations.doctorDashboard.prescriptions.successDesc} ${selectedPatient}.`,
     });
 
     // Reset form
@@ -242,15 +242,15 @@ export default function DoctorDashboard() {
                <TabsContent value="prescriptions" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><ClipboardEdit />{translations.doctorDashboard.prescription.title}</CardTitle>
-                    <CardDescription>{translations.doctorDashboard.prescription.description}</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><ClipboardEdit />{translations.doctorDashboard.prescriptions.title}</CardTitle>
+                    <CardDescription>{translations.doctorDashboard.prescriptions.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div>
-                      <label className="text-sm font-medium">{translations.doctorDashboard.prescription.selectPatient}</label>
+                      <label className="text-sm font-medium">{translations.doctorDashboard.prescriptions.selectPatient}</label>
                       <Select onValueChange={setSelectedPatient} value={selectedPatient}>
                           <SelectTrigger>
-                            <SelectValue placeholder={translations.doctorDashboard.prescription.patientPlaceholder} />
+                            <SelectValue placeholder={translations.doctorDashboard.prescriptions.patientPlaceholder} />
                           </SelectTrigger>
                           <SelectContent>
                               {patients.map((p) => (
@@ -265,16 +265,16 @@ export default function DoctorDashboard() {
                           <div key={index} className="flex flex-col md:flex-row gap-4 items-end bg-muted/50 p-4 rounded-lg">
                               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow">
                                   <div>
-                                    <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescription.medicineName}</label>
-                                    <Input value={med.name} onChange={(e) => handleMedicationChange(index, 'name', e.target.value)} placeholder={translations.doctorDashboard.prescription.medicinePlaceholder} />
+                                    <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescriptions.medicineName}</label>
+                                    <Input value={med.name} onChange={(e) => handleMedicationChange(index, 'name', e.target.value)} placeholder={translations.doctorDashboard.prescriptions.medicinePlaceholder} />
                                   </div>
                                   <div>
-                                    <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescription.dosage}</label>
-                                    <Input value={med.dosage} onChange={(e) => handleMedicationChange(index, 'dosage', e.target.value)} placeholder={translations.doctorDashboard.prescription.dosagePlaceholder} />
+                                    <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescriptions.dosage}</label>
+                                    <Input value={med.dosage} onChange={(e) => handleMedicationChange(index, 'dosage', e.target.value)} placeholder={translations.doctorDashboard.prescriptions.dosagePlaceholder} />
                                   </div>
                                   <div>
-                                    <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescription.duration}</label>
-                                    <Input value={med.duration} onChange={(e) => handleMedicationChange(index, 'duration', e.target.value)} placeholder={translations.doctorDashboard.prescription.durationPlaceholder} />
+                                    <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescriptions.duration}</label>
+                                    <Input value={med.duration} onChange={(e) => handleMedicationChange(index, 'duration', e.target.value)} placeholder={translations.doctorDashboard.prescriptions.durationPlaceholder} />
                                   </div>
                               </div>
                               <Button variant="ghost" size="icon" onClick={() => handleRemoveMedication(index)}>
@@ -287,11 +287,11 @@ export default function DoctorDashboard() {
                     <div className="flex flex-col sm:flex-row gap-4">
                        <Button onClick={handleAddMedication} variant="outline">
                         <PlusCircle className="mr-2 h-5 w-5" />
-                        {translations.doctorDashboard.prescription.addMedicine}
+                        {translations.doctorDashboard.prescriptions.addMedicine}
                       </Button>
                       <Button onClick={handleSavePrescription}>
                         <Save className="mr-2 h-5 w-5" />
-                        {translations.doctorDashboard.prescription.savePrescription}
+                        {translations.doctorDashboard.prescriptions.savePrescription}
                       </Button>
                     </div>
                   </CardContent>
