@@ -6,13 +6,22 @@ import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Users, FileText, HeartPulse, PlusCircle, MessageSquare, LineChart, ChevronRight } from "lucide-react";
+import { Calendar, Users, FileText, HeartPulse, PlusCircle, MessageSquare, LineChart, ChevronRight, Building, MapPin, Phone } from "lucide-react";
 import TextFlipper from "@/components/ui/text-effect-flipper";
 import { LanguageContext } from '@/context/language-context';
+
+interface Pharmacy {
+  pharmacyName: string;
+  address: string;
+  city: string;
+  pinCode: string;
+  phone: string;
+}
 
 export default function DoctorDashboard() {
   const { translations } = useContext(LanguageContext);
   const [doctorName, setDoctorName] = useState('');
+  const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
 
   useEffect(() => {
     const userString = localStorage.getItem('temp_user');
@@ -25,6 +34,11 @@ export default function DoctorDashboard() {
       }
     } else {
       setDoctorName('Doctor');
+    }
+    
+    const pharmaciesString = localStorage.getItem('pharmacies_list');
+    if (pharmaciesString) {
+      setPharmacies(JSON.parse(pharmaciesString));
     }
   }, []);
 
@@ -121,7 +135,7 @@ export default function DoctorDashboard() {
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="appointments">{translations.doctorDashboard.appointments}</TabsTrigger>
                 <TabsTrigger value="patients">{translations.doctorDashboard.patients}</TabsTrigger>
-                <TabsTrigger value="consultations">{translations.doctorDashboard.consultations}</TabsTrigger>
+                <TabsTrigger value="pharmacies">{translations.doctorDashboard.pharmacies}</TabsTrigger>
                 <TabsTrigger value="reports">{translations.doctorDashboard.reports}</TabsTrigger>
               </TabsList>
               
@@ -174,14 +188,28 @@ export default function DoctorDashboard() {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="consultations" className="mt-6">
+              <TabsContent value="pharmacies" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>{translations.doctorDashboard.pastConsultations}</CardTitle>
-                    <CardDescription>{translations.doctorDashboard.pastConsultationsDesc}</CardDescription>
+                    <CardTitle>{translations.doctorDashboard.nearbyPharmacies}</CardTitle>
+                    <CardDescription>{translations.doctorDashboard.nearbyPharmaciesDesc}</CardDescription>
                   </CardHeader>
-                   <CardContent className="text-center text-muted-foreground py-12">
-                    <p>{translations.doctorDashboard.consultationsPlaceholder}</p>
+                   <CardContent className="space-y-4">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {pharmacies.length > 0 ? pharmacies.map((pharmacy, index) => (
+                            <Card key={index} className="hover:shadow-lg transition-shadow">
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2"><Building className="text-primary"/> {pharmacy.pharmacyName}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-2 text-sm text-muted-foreground">
+                                    <p className="flex items-center gap-2"><MapPin className="w-4 h-4"/> {pharmacy.address}, {pharmacy.city} - {pharmacy.pinCode}</p>
+                                    <p className="flex items-center gap-2"><Phone className="w-4 h-4"/> {pharmacy.phone}</p>
+                                </CardContent>
+                            </Card>
+                        )) : (
+                             <p className="text-muted-foreground col-span-2 text-center py-8">{translations.doctorDashboard.noPharmaciesFound}</p>
+                        )}
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -206,3 +234,5 @@ export default function DoctorDashboard() {
     </div>
   );
 }
+
+    

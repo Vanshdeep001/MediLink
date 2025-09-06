@@ -92,6 +92,12 @@ export function PharmacyRegistrationForm() {
         console.error("Could not update temp_user with pharmacy name");
       }
     }
+    
+    // Store pharmacy details in localStorage for prototype
+    const pharmaciesString = localStorage.getItem('pharmacies_list');
+    const pharmacies = pharmaciesString ? JSON.parse(pharmaciesString) : [];
+    pharmacies.push(values);
+    localStorage.setItem('pharmacies_list', JSON.stringify(pharmacies));
 
     console.log({ ...values, files });
     toast({
@@ -330,3 +336,5 @@ export function PharmacyRegistrationForm() {
     </div>
   );
 }
+
+    

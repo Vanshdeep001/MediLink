@@ -163,10 +163,18 @@
     "medications": "ਦਵਾਈਆਂ",
     "healthData": "ਸਿਹਤ ਡਾਟਾ",
     "reports": "ਰਿਪੋਰਟਾਂ",
+    "doctors": "ਡਾਕਟਰ",
+    "pharmacies": "ਫਾਰਮੇਸੀਆਂ",
     "manageAppointments": "ਆਪਣੀਆਂ ਮੁਲਾਕਾਤਾਂ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ",
     "manageAppointmentsDesc": "ਆਉਣ ਵਾਲੀਆਂ ਸਲਾਹ-ਮਸ਼ਵਰੇ ਵੇਖੋ ਜਾਂ ਨਵਾਂ ਬੁੱਕ ਕਰੋ।",
-    "bookAppointment": "ਨਵੀਂ ਮੁਲਾਕਾਤ ਬੁੱਕ ਕਰੋ",
-    "findDoctors": "ਡਾਕਟਰ ਲੱਭੋ",
+    "findDoctors": "ਉਪਲਬਧ ਡਾਕਟਰ",
+    "findDoctorsDesc": "ਮੁਹਾਰਤ ਅਤੇ ਸਥਾਨ ਦੁਆਰਾ ਡਾਕਟਰ ਲੱਭੋ।",
+    "searchByLocation": "ਸ਼ਹਿਰ ਜਾਂ ਪਿੰਨ ਕੋਡ ਦੁਆਰਾ ਖੋਜ ਕਰੋ...",
+    "filterBySpecialization": "ਮੁਹਾਰਤ ਦੁਆਰਾ ਫਿਲਟਰ ਕਰੋ",
+    "noDoctorsFound": "ਤੁਹਾਡੇ ਮਾਪਦੰਡਾਂ ਨਾਲ ਮੇਲ ਖਾਂਦਾ ਕੋਈ ਡਾਕਟਰ ਨਹੀਂ ਮਿਲਿਆ।",
+    "nearbyPharmacies": "ਨੇੜਲੀਆਂ ਫਾਰਮੇਸੀਆਂ",
+    "nearbyPharmaciesDesc": "ਦਵਾਈ ਦੀ ਡਿਲੀਵਰੀ ਲਈ ਆਪਣੇ ਖੇਤਰ ਵਿੱਚ ਫਾਰਮੇਸੀਆਂ ਲੱਭੋ।",
+    "noPharmaciesFound": "ਤੁਹਾਡੇ ਖੇਤਰ ਵਿੱਚ ਕੋਈ ਫਾਰਮੇਸੀ ਨਹੀਂ ਮਿਲੀ।",
     "yourMedications": "ਤੁਹਾਡੀਆਂ ਦਵਾਈਆਂ",
     "yourMedicationsDesc": "ਆਪਣੇ ਕਿਰਿਆਸ਼ੀਲ ਨੁਸਖ਼ਿਆਂ 'ਤੇ ਨਜ਼ਰ ਰੱਖੋ ਅਤੇ ਰੀਮਾਈਂਡਰ ਸੈਟ ਕਰੋ।",
     "setReminder": "ਰੀਮਾਈਂਡਰ ਸੈਟ ਕਰੋ",
@@ -201,6 +209,7 @@
     "viewAnalytics": "ਵਿਸ਼ਲੇਸ਼ਣ ਵੇਖੋ",
     "appointments": "ਮੁਲਾਕਾਤਾਂ",
     "patients": "ਮਰੀਜ਼",
+    "pharmacies": "ਫਾਰਮੇਸੀਆਂ",
     "reports": "ਰਿਪੋਰਟਾਂ",
     "manageAppointments": "ਆਪਣੀਆਂ ਮੁਲਾਕਾਤਾਂ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ",
     "manageAppointmentsDesc": "ਆਪਣਾ ਕਾਰਜਕ੍ਰਮ ਵੇਖੋ ਜਾਂ ਨਵਾਂ ਸਲਾਹ-ਮਸ਼ਵਰਾ ਸ਼ਾਮਲ ਕਰੋ।",
@@ -211,6 +220,9 @@
     "pastConsultations": "ਪਿਛਲੇ ਸਲਾਹ-ਮਸ਼ਵਰੇ",
     "pastConsultationsDesc": "ਆਪਣੇ ਵੀਡੀਓ ਅਤੇ ਵਿਅਕਤੀਗਤ ਸਲਾਹ-ਮਸ਼ਵਰੇ ਦੇ ਇਤਿਹਾਸ ਦੀ ਸਮੀਖਿਆ ਕਰੋ।",
     "consultationsPlaceholder": "ਸਲਾਹ-ਮਸ਼ਵਰੇ ਦਾ ਇਤਿਹਾਸ ਇੱਥੇ ਉਪਲਬਧ ਹੋਵੇਗਾ।",
+    "nearbyPharmacies": "ਨੇੜਲੀਆਂ ਫਾਰਮੇਸੀਆਂ",
+    "nearbyPharmaciesDesc": "ਨੁਸਖੇ ਭੇਜਣ ਲਈ ਸਥਾਨਕ ਫਾਰਮੇਸੀਆਂ ਲੱਭੋ।",
+    "noPharmaciesFound": "ਤੁਹਾਡੇ ਕਲੀਨਿਕ ਦੇ ਖੇਤਰ ਵਿੱਚ ਕੋਈ ਫਾਰਮੇਸੀ ਨਹੀਂ ਮਿਲੀ।",
     "patientReports": "ਮਰੀਜ਼ਾਂ ਦੀਆਂ ਰਿਪੋਰਟਾਂ",
     "patientReportsDesc": "ਅਪਲੋਡ ਕੀਤੀਆਂ ਮਰੀਜ਼ਾਂ ਦੀਆਂ ਰਿਪੋਰਟਾਂ ਦੀ ਸਮੀਖਿਆ ਅਤੇ ਪ੍ਰਬੰਧਨ ਕਰੋ।",
     "reportsPlaceholder": "ਸਮੀਖਿਆ ਲਈ ਬਕਾਇਆ ਮਰੀਜ਼ਾਂ ਦੀਆਂ ਰਿਪੋਰਟਾਂ ਦੀ ਸੂਚੀ ਇੱਥੇ ਦਿਖਾਈ ਦੇਵੇਗੀ।"
@@ -356,3 +368,5 @@
     }
   }
 }
+
+    

@@ -163,10 +163,18 @@
     "medications": "दवाएं",
     "healthData": "स्वास्थ्य डेटा",
     "reports": "रिपोर्ट",
+    "doctors": "डॉक्टर",
+    "pharmacies": "फार्मेसियों",
     "manageAppointments": "अपनी नियुक्तियों का प्रबंधन करें",
     "manageAppointmentsDesc": "आगामी परामर्श देखें या एक नया बुक करें।",
-    "bookAppointment": "नई नियुक्ति बुक करें",
-    "findDoctors": "डॉक्टर खोजें",
+    "findDoctors": "उपलब्ध डॉक्टर",
+    "findDoctorsDesc": "विशेषज्ञता और स्थान के अनुसार डॉक्टर खोजें।",
+    "searchByLocation": "शहर या पिन कोड द्वारा खोजें...",
+    "filterBySpecialization": "विशेषज्ञता के अनुसार फ़िल्टर करें",
+    "noDoctorsFound": "आपके मानदंडों से मेल खाने वाले कोई डॉक्टर नहीं मिले।",
+    "nearbyPharmacies": "आस-पास की फार्मेसियों",
+    "nearbyPharmaciesDesc": "दवा वितरण के लिए अपने क्षेत्र में फार्मेसियों का पता लगाएं।",
+    "noPharmaciesFound": "आपके क्षेत्र में कोई फार्मेसी नहीं मिली।",
     "yourMedications": "आपकी दवाएं",
     "yourMedicationsDesc": "अपने सक्रिय नुस्खों पर नज़र रखें और अनुस्मारक सेट करें।",
     "setReminder": "अनुस्मारक सेट करें",
@@ -201,6 +209,7 @@
     "viewAnalytics": "विश्लेषिकी देखें",
     "appointments": "नियुक्तियाँ",
     "patients": "मरीजों",
+    "pharmacies": "फार्मेसियों",
     "reports": "रिपोर्ट",
     "manageAppointments": "अपनी नियुक्तियों का प्रबंधन करें",
     "manageAppointmentsDesc": "अपना कार्यक्रम देखें या एक नया परामर्श जोड़ें।",
@@ -211,6 +220,9 @@
     "pastConsultations": "पिछला परामर्श",
     "pastConsultationsDesc": "अपने वीडियो और व्यक्तिगत परामर्श के इतिहास की समीक्षा करें।",
     "consultationsPlaceholder": "परामर्श इतिहास यहां उपलब्ध होगा।",
+    "nearbyPharmacies": "आस-पास की फार्मेसियों",
+    "nearbyPharmaciesDesc": "नुस्खे भेजने के लिए स्थानीय फार्मेसियों का पता लगाएं।",
+    "noPharmaciesFound": "आपके क्लिनिक के क्षेत्र में कोई फार्मेसी नहीं मिली।",
     "patientReports": "रोगी रिपोर्ट",
     "patientReportsDesc": "अपलोड की गई रोगी रिपोर्ट की समीक्षा और प्रबंधन करें।",
     "reportsPlaceholder": "समीक्षा के लिए लंबित रोगी रिपोर्टों की एक सूची यहां दिखाई देगी।"
@@ -356,3 +368,5 @@
     }
   }
 }
+
+    

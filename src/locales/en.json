@@ -163,10 +163,18 @@
     "medications": "Medications",
     "healthData": "Health Data",
     "reports": "Reports",
+    "doctors": "Doctors",
+    "pharmacies": "Pharmacies",
     "manageAppointments": "Manage Your Appointments",
     "manageAppointmentsDesc": "View upcoming consultations or book a new one.",
-    "bookAppointment": "Book New Appointment",
-    "findDoctors": "Find Doctors",
+    "findDoctors": "Available Doctors",
+    "findDoctorsDesc": "Find doctors by specialty and location.",
+    "searchByLocation": "Search by City or Pin Code...",
+    "filterBySpecialization": "Filter by specialization",
+    "noDoctorsFound": "No doctors found matching your criteria.",
+    "nearbyPharmacies": "Nearby Pharmacies",
+    "nearbyPharmaciesDesc": "Find pharmacies in your area for medicine delivery.",
+    "noPharmaciesFound": "No pharmacies found in your area.",
     "yourMedications": "Your Medications",
     "yourMedicationsDesc": "Keep track of your active prescriptions and set reminders.",
     "setReminder": "Set Reminder",
@@ -201,6 +209,7 @@
     "viewAnalytics": "View Analytics",
     "appointments": "Appointments",
     "patients": "Patients",
+    "pharmacies": "Pharmacies",
     "reports": "Reports",
     "manageAppointments": "Manage Your Appointments",
     "manageAppointmentsDesc": "View your schedule or add a new consultation.",
@@ -211,6 +220,9 @@
     "pastConsultations": "Past Consultations",
     "pastConsultationsDesc": "Review history of your video and in-person consultations.",
     "consultationsPlaceholder": "Consultation history will be available here.",
+    "nearbyPharmacies": "Nearby Pharmacies",
+    "nearbyPharmaciesDesc": "Find local pharmacies to send prescriptions to.",
+    "noPharmaciesFound": "No pharmacies found in your clinic's area.",
     "patientReports": "Patient Reports",
     "patientReportsDesc": "Review and manage uploaded patient reports.",
     "reportsPlaceholder": "A list of patient reports pending review will appear here."
@@ -356,3 +368,5 @@
     }
   }
 }
+
+    

@@ -85,7 +85,12 @@ export function DoctorRegistrationForm() {
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log({ ...values, files });
+    // Store doctor details in localStorage for prototype
+    const doctorsString = localStorage.getItem('doctors_list');
+    const doctors = doctorsString ? JSON.parse(doctorsString) : [];
+    doctors.push(values);
+    localStorage.setItem('doctors_list', JSON.stringify(doctors));
+
     toast({
       title: translations.doctorRegForm.toastTitle,
       description: translations.doctorRegForm.toastDescription,
@@ -345,3 +350,5 @@ export function DoctorRegistrationForm() {
     </div>
   );
 }
+
+    
