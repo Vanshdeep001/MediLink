@@ -1,7 +1,6 @@
 "use server";
 
 import { generateResourceSummary } from "@/ai/flows/generate-resource-summary";
-import { symptomChecker, type SymptomCheckerInput } from "@/ai/flows/symptom-checker-flow";
 import { signIn, getCurrentUser } from "@/lib/firebase/auth";
 import { addUser, updateUserRole as updateUserRoleInDb } from "@/lib/firebase/firestore";
 import { redirect } from "next/navigation";
@@ -124,14 +123,4 @@ export async function updateUserRole(formData: FormData) {
   }
 
   redirect(`/${validatedFields.data.role}`);
-}
-
-export async function getSymptomAnalysis(input: SymptomCheckerInput) {
-  try {
-    const result = await symptomChecker(input);
-    return { result };
-  } catch (error) {
-    console.error("Error in symptom checker flow:", error);
-    return { error: "Failed to get analysis. Please try again." };
-  }
 }

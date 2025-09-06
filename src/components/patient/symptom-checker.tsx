@@ -13,27 +13,46 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { getSymptomAnalysis } from '@/app/actions';
-import type { SymptomCheckerOutput } from '@/ai/flows/symptom-checker-flow';
 import { Loader2, AlertTriangle, Lightbulb, ListChecks, Sparkles, HeartPulse } from 'lucide-react';
 import { LanguageContext } from '@/context/language-context';
+import { symptomData } from '@/lib/symptom-data';
 
 const formSchema = z.object({
-  mainSymptom: z.string().min(5, { message: 'Please describe your symptom in more detail.' }),
+  mainSymptom: z.string().min(3, { message: 'Please describe your symptom in more detail.' }),
   bodyPart: z.string({ required_error: 'Please select an affected body part.' }),
   duration: z.string().min(2, { message: 'Please specify the duration.' }),
-  severity: z.enum(['Mild', 'Moderate', 'Severe']),
+  severity: z.enum(['Mild', 'Moderate', 'Severe'], { required_error: 'Please select a severity level.' }),
   additionalSymptoms: z.array(z.string()).default([]),
   additionalInfo: z.string().optional(),
 });
 
 type SymptomFormValues = z.infer<typeof formSchema>;
+type SymptomAnalysis = (typeof symptomData)['fever'];
 
 const additionalSymptomOptions = ['Fever', 'Headache', 'Fatigue', 'Nausea', 'Cough', 'Dizziness'];
 
+const getSymptomAnalysis = (values: SymptomFormValues): Promise<{ result?: SymptomAnalysis; error?: string }> => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const allSymptoms = [values.mainSymptom.toLowerCase(), ...values.additionalSymptoms.map(s => s.toLowerCase())];
+      
+      for (const symptom of allSymptoms) {
+        for (const key in symptomData) {
+          if (symptom.includes(key)) {
+            resolve({ result: symptomData[key as keyof typeof symptomData] });
+            return;
+          }
+        }
+      }
+      
+      resolve({ error: "We couldn't find a match for your symptoms. Please try describing them differently or consult a doctor." });
+    }, 1500); // Simulate network delay
+  });
+};
+
 export function SymptomChecker() {
   const [isPending, startTransition] = useTransition();
-  const [analysis, setAnalysis] = useState<SymptomCheckerOutput | null>(null);
+  const [analysis, setAnalysis] = useState<SymptomAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { translations } = useContext(LanguageContext);
 
@@ -41,6 +60,9 @@ export function SymptomChecker() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       additionalSymptoms: [],
+      mainSymptom: '',
+      duration: '',
+      additionalInfo: '',
     },
   });
 
@@ -51,14 +73,19 @@ export function SymptomChecker() {
       const response = await getSymptomAnalysis(values);
       if (response.error) {
         setError(response.error);
-      } else {
-        setAnalysis(response.result!);
+      } else if (response.result) {
+        setAnalysis({
+            conditions: response.result.conditions,
+            recommendation: response.result.recommendation,
+            seekHelp: response.result.seekHelp,
+            advice: response.result.advice,
+        });
       }
     });
   };
 
   const resetChecker = () => {
-    form.reset({ additionalSymptoms: [] });
+    form.reset();
     setAnalysis(null);
     setError(null);
   }
@@ -275,24 +302,20 @@ export function SymptomChecker() {
                    <div className="p-4 bg-muted/50 rounded-lg">
                         <h4 className="font-semibold flex items-center gap-2"><ListChecks className="text-primary"/> Possible Conditions</h4>
                         <ul className="list-disc list-inside pl-2 mt-2 text-sm space-y-1">
-                            {analysis.possibleConditions.map((item, i) => <li key={i}>{item}</li>)}
+                            {analysis.conditions.map((item, i) => <li key={i}>{item}</li>)}
                         </ul>
                    </div>
                     <div className="p-4 bg-muted/50 rounded-lg">
                         <h4 className="font-semibold flex items-center gap-2"><Lightbulb className="text-primary"/> Recommendations</h4>
-                        <ul className="list-disc list-inside pl-2 mt-2 text-sm space-y-1">
-                            {analysis.recommendations.map((item, i) => <li key={i}>{item}</li>)}
-                        </ul>
+                         <p className="mt-2 text-sm">{analysis.recommendation}</p>
                    </div>
                    <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/20">
                         <h4 className="font-semibold flex items-center gap-2 text-destructive"><AlertTriangle/> When to Seek Medical Help</h4>
-                        <ul className="list-disc list-inside pl-2 mt-2 text-sm space-y-1 text-destructive/90">
-                            {analysis.whenToSeekHelp.map((item, i) => <li key={i}>{item}</li>)}
-                        </ul>
+                        <p className="mt-2 text-sm text-destructive/90">{analysis.seekHelp}</p>
                    </div>
                     <div className="p-4 bg-muted/50 rounded-lg">
                         <h4 className="font-semibold flex items-center gap-2"><HeartPulse className="text-primary"/> Good Health Advice</h4>
-                        <p className="mt-2 text-sm">{analysis.goodHealthAdvice}</p>
+                        <p className="mt-2 text-sm">{analysis.advice}</p>
                    </div>
                 </div>
 
