@@ -66,49 +66,51 @@ export default function VideoConsultationPage() {
               </Card>
             </FadeIn>
             
-            <FadeIn delay={300}>
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><Calendar /> Upcoming Appointments</CardTitle>
-                  <CardDescription>Your scheduled video calls.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {upcomingAppointments.map((appt, index) => (
-                      <div key={index} className="p-4 bg-muted/50 rounded-lg">
-                        <div className="flex justify-between items-center">
-                          <div>
-                              <p className="font-semibold">{appt.doctor}</p>
-                              <p className="text-sm text-muted-foreground">{appt.specialization}</p>
-                          </div>
-                          <Button onClick={handleJoinCall}>Join Call</Button>
-                        </div>
-                        <Separator className="my-2" />
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {appt.date}</span>
-                          <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {appt.time}</span>
-                        </div>
-                      </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </FadeIn>
-
-            <FadeIn delay={400}>
-              <Card className="shadow-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <FadeIn delay={300}>
+                <Card className="shadow-lg h-full">
                   <CardHeader>
-                      <CardTitle className="flex items-center gap-2"><History /> Consultation History</CardTitle>
-                      <CardDescription>Review your past video consultations.</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><Calendar /> Upcoming Appointments</CardTitle>
+                    <CardDescription>Your scheduled video calls.</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                      {consultationHistory.map((item, index) => (
-                          <div key={index} className="p-3 bg-muted/50 rounded-lg text-sm">
-                              <p className="font-semibold">Dr. {item.doctor} - <span className="font-normal text-muted-foreground">{item.date}</span></p>
-                              <p className="text-muted-foreground mt-1">{item.summary}</p>
+                    {upcomingAppointments.map((appt, index) => (
+                        <div key={index} className="p-4 bg-muted/50 rounded-lg">
+                          <div className="flex justify-between items-center">
+                            <div>
+                                <p className="font-semibold">{appt.doctor}</p>
+                                <p className="text-sm text-muted-foreground">{appt.specialization}</p>
+                            </div>
+                            <Button onClick={handleJoinCall}>Join Call</Button>
                           </div>
-                      ))}
+                          <Separator className="my-2" />
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {appt.date}</span>
+                            <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {appt.time}</span>
+                          </div>
+                        </div>
+                    ))}
                   </CardContent>
-              </Card>
-            </FadeIn>
+                </Card>
+              </FadeIn>
+
+              <FadeIn delay={400}>
+                <Card className="shadow-lg h-full">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><History /> Consultation History</CardTitle>
+                        <CardDescription>Review your past video consultations.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {consultationHistory.map((item, index) => (
+                            <div key={index} className="p-3 bg-muted/50 rounded-lg text-sm">
+                                <p className="font-semibold">Dr. {item.doctor} - <span className="font-normal text-muted-foreground">{item.date}</span></p>
+                                <p className="text-muted-foreground mt-1">{item.summary}</p>
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+              </FadeIn>
+            </div>
           </div>
         </div>
       </main>
