@@ -1,11 +1,9 @@
 'use client';
 
 import { useContext } from 'react';
-import { Button } from '@/components/ui/button';
-import { Play } from 'lucide-react';
+import WrapButton from '../ui/wrap-button';
 import { FloatingIcons } from './floating-icons';
 import TextFlipper from '../ui/text-effect-flipper';
-import Link from 'next/link';
 import { LanguageContext } from '@/context/language-context';
 
 export function HeroSection() {
@@ -39,16 +37,7 @@ export function HeroSection() {
           className="mt-10 flex items-center gap-4 animate-button-press-in"
           style={{ animationDelay: '2.1s' }}
         >
-          <Button
-            size="lg"
-            className="rounded-full shadow-lg text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground transform transition-transform hover:scale-105"
-            asChild
-          >
-            <Link href="/auth">
-              <Play className="mr-2 h-5 w-5 fill-current" />
-              {translations.hero.getStarted}
-            </Link>
-          </Button>
+          <WrapButton href="/auth">{translations.hero.getStarted}</WrapButton>
         </div>
       </div>
     </section>
