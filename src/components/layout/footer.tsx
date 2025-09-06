@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Logo } from '@/components/logo';
 import { LanguageContext } from '@/context/language-context';
 import { Github, Twitter, Linkedin } from 'lucide-react';
-import { Button } from '../ui/button';
+import ShareButton from '../ui/share-button';
 
 export function Footer() {
   const { translations } = useContext(LanguageContext);
@@ -28,13 +28,9 @@ export function Footer() {
               {translations.footer.tagline}
             </p>
              <div className="flex items-center gap-2">
-              {socialLinks.map((link) => (
-                <Button key={link.label} variant="ghost" size="icon" asChild>
-                  <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label}>
-                    <link.icon className="w-5 h-5" />
-                  </a>
-                </Button>
-              ))}
+                <ShareButton links={socialLinks.map(link => ({...link, href: link.href, onClick: () => window.open(link.href, '_blank')}))}>
+                    Follow us
+                </ShareButton>
             </div>
           </div>
           <div className="md:col-start-2">
