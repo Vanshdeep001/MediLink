@@ -59,6 +59,12 @@ export default function PatientDashboard() {
     setFilteredPharmacies(pharmacies);
 
     loadPrescriptionsAndReminders();
+  }, []);
+
+  useEffect(() => {
+    if (userName) {
+      loadPrescriptionsAndReminders();
+    }
   }, [userName]);
 
   const loadPrescriptionsAndReminders = () => {
@@ -203,7 +209,9 @@ export default function PatientDashboard() {
                 <CardDescription>{translations.patientDashboard.videoConsultationDesc}</CardDescription>
               </CardHeader>
               <CardContent className="flex-grow flex items-end">
-                <Button className="w-full">{translations.patientDashboard.videoConsultationButton}</Button>
+                <Button className="w-full" asChild>
+                  <Link href="/patient/video-consultation">{translations.patientDashboard.videoConsultationButton}</Link>
+                </Button>
               </CardContent>
             </Card>
             <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
