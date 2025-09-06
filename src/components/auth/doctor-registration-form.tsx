@@ -462,5 +462,3 @@ export function DoctorRegistrationForm() {
     </div>
   );
 }
-
-    
