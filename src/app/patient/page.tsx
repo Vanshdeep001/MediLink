@@ -176,43 +176,38 @@ export default function PatientDashboard() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.8s' }}>
-            <Card className="md:col-span-2 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+            <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
                <CardHeader>
-                <div className="flex items-center gap-3">
-                    <BrainCircuit className="w-8 h-8 text-primary" />
-                    <div>
-                        <CardTitle>{translations.patientDashboard.symptomChecker}</CardTitle>
-                        <CardDescription>{translations.patientDashboard.symptomCheckerDesc}</CardDescription>
-                    </div>
-                </div>
+                <CardTitle className="flex items-center gap-2"><BrainCircuit /> {translations.patientDashboard.symptomChecker}</CardTitle>
+                <CardDescription>{translations.patientDashboard.symptomCheckerDesc}</CardDescription>
               </CardHeader>
-              <CardContent className="flex-grow flex flex-col justify-end">
-                <Button className="w-full mt-auto" asChild>
+              <CardContent className="flex-grow flex items-end">
+                <Button className="w-full" asChild>
                   <Link href="/patient/symptom-checker">{translations.patientDashboard.symptomCheckerButton}</Link>
                 </Button>
               </CardContent>
             </Card>
-            <div className="md:col-span-1 flex flex-col gap-8">
-              <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex-grow flex flex-col">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><Video /> {translations.patientDashboard.videoConsultation}</CardTitle>
-                  <CardDescription>{translations.patientDashboard.videoConsultationDesc}</CardDescription>
-                </CardHeader>
-                <CardContent className="mt-auto">
-                  <Button className="w-full">{translations.patientDashboard.videoConsultationButton}</Button>
-                </CardContent>
-              </Card>
-              <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex-grow flex flex-col">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><BellRing /> {translations.patientDashboard.smartReminders}</CardTitle>
-                  <CardDescription>{translations.patientDashboard.smartRemindersDesc}</CardDescription>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground mt-auto">
-                  <p>{translations.patientDashboard.reminder1}</p>
-                  <p>{translations.patientDashboard.reminder2}</p>
-                </CardContent>
-              </Card>
-            </div>
+            <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Video /> {translations.patientDashboard.videoConsultation}</CardTitle>
+                <CardDescription>{translations.patientDashboard.videoConsultationDesc}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow flex items-end">
+                <Button className="w-full">{translations.patientDashboard.videoConsultationButton}</Button>
+              </CardContent>
+            </Card>
+            <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><BellRing /> {translations.patientDashboard.smartReminders}</CardTitle>
+                <CardDescription>{translations.patientDashboard.smartRemindersDesc}</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground flex-grow">
+                <ul className="space-y-2">
+                  <li>{translations.patientDashboard.reminder1}</li>
+                  <li>{translations.patientDashboard.reminder2}</li>
+                </ul>
+              </CardContent>
+            </Card>
           </div>
 
           <div className="animate-content-fade-in" style={{ animationDelay: '1s' }}>
