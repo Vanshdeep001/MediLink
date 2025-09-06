@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -13,6 +13,21 @@ import { LanguageContext } from '@/context/language-context';
 
 export default function PatientDashboard() {
   const { translations } = useContext(LanguageContext);
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    const userString = localStorage.getItem('temp_user');
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        setUserName(user.fullName || 'Patient');
+      } catch (e) {
+        setUserName('Patient');
+      }
+    } else {
+      setUserName('Patient');
+    }
+  }, []);
   
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -22,7 +37,7 @@ export default function PatientDashboard() {
           
           <div className="text-center py-16 md:py-24 animate-fade-in-down">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-              <TextFlipper>{translations.patientDashboard.welcome}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{translations.patientDashboard.welcomeUser}</TextFlipper>
+              <TextFlipper>{translations.patientDashboard.welcome}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{userName}!</TextFlipper>
             </h1>
             <p className="mt-4 text-lg text-muted-foreground animate-text-fade-in-scale" style={{ animationDelay: '0.4s' }}>
               {translations.patientDashboard.subtitle}
@@ -226,5 +241,3 @@ export default function PatientDashboard() {
     </div>
   );
 }
-
-    

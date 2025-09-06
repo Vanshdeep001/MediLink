@@ -77,6 +77,18 @@ export function PharmacyRegistrationForm() {
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    // Also save the pharmacyName to local storage to be displayed on dashboard
+    const userString = localStorage.getItem('temp_user');
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        user.pharmacyName = values.pharmacyName;
+        localStorage.setItem('temp_user', JSON.stringify(user));
+      } catch (e) {
+        console.error("Could not update temp_user with pharmacy name");
+      }
+    }
+
     console.log({ ...values, files });
     toast({
       title: translations.pharmacyRegForm.toastTitle,

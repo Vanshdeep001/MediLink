@@ -75,8 +75,6 @@
   },
   "pharmacyRegForm": {
     "title": "Joining Pharmacy",
-    "titleMain": "Joining",
-    "titleCursive": "Pharmacy",
     "subtitle": "Complete your profile to manage medicines, stock, and deliveries.",
     "pharmacyNameLabel": "Pharmacy Name",
     "licenseLabel": "License Number",
@@ -128,7 +126,6 @@
   },
   "patientDashboard": {
     "welcome": "Welcome back,",
-    "welcomeUser": "Patient!",
     "subtitle": "Book your first appointment to get started with your healthcare journey.",
     "upcomingAppointments": "Upcoming Appointments",
     "viewSchedule": "View your schedule",
@@ -170,7 +167,6 @@
   },
   "doctorDashboard": {
     "welcome": "Welcome back,",
-    "welcomeUser": "Doctor!",
     "subtitle": "Manage your appointments, patients, and reports all in one place.",
     "todaysAppointments": "Today's Appointments",
     "viewSchedule": "View your schedule",
@@ -207,7 +203,6 @@
   },
   "pharmacyDashboard": {
     "welcome": "Welcome back,",
-    "welcomeUser": "Pharmacy!",
     "subtitle": "Manage prescriptions, inventory, orders, and deliveries easily.",
     "todaysPrescriptions": "Today's Prescriptions",
     "pendingVerification": "Pending verification",
@@ -347,5 +342,3 @@
     }
   }
 }
-
-    

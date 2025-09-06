@@ -75,8 +75,6 @@
   },
   "pharmacyRegForm": {
     "title": "ਫਾਰਮੇਸੀ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣਾ",
-    "titleMain": "ਸ਼ਾਮਲ ਹੋ ਰਹੇ ਹੋ",
-    "titleCursive": "ਫਾਰਮੇਸੀ",
     "subtitle": "ਦਵਾਈਆਂ, ਸਟਾਕ ਅਤੇ ਡਿਲੀਵਰੀ ਦੇ ਪ੍ਰਬੰਧਨ ਲਈ ਆਪਣੀ ਪ੍ਰੋਫਾਈਲ ਨੂੰ ਪੂਰਾ ਕਰੋ।",
     "pharmacyNameLabel": "ਫਾਰਮੇਸੀ ਦਾ ਨਾਮ",
     "licenseLabel": "ਲਾਇਸੈਂਸ ਨੰਬਰ",
@@ -128,7 +126,6 @@
   },
   "patientDashboard": {
     "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ,",
-    "welcomeUser": "ਮਰੀਜ਼!",
     "subtitle": "ਆਪਣੀ ਸਿਹਤ ਸੰਭਾਲ ਯਾਤਰਾ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ ਪਹਿਲੀ ਮੁਲਾਕਾਤ ਬੁੱਕ ਕਰੋ।",
     "upcomingAppointments": "ਆਗਾਮੀ ਮੁਲਾਕਾਤਾਂ",
     "viewSchedule": "ਆਪਣਾ ਕਾਰਜਕ੍ਰਮ ਵੇਖੋ",
@@ -170,7 +167,6 @@
   },
   "doctorDashboard": {
     "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ,",
-    "welcomeUser": "ਡਾਕਟਰ!",
     "subtitle": "ਆਪਣੀਆਂ ਮੁਲਾਕਾਤਾਂ, ਮਰੀਜ਼ਾਂ ਅਤੇ ਰਿਪੋਰਟਾਂ ਨੂੰ ਇੱਕੋ ਥਾਂ 'ਤੇ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
     "todaysAppointments": "ਅੱਜ ਦੀਆਂ ਮੁਲਾਕਾਤਾਂ",
     "viewSchedule": "ਆਪਣਾ ਕਾਰਜਕ੍ਰਮ ਵੇਖੋ",
@@ -207,7 +203,6 @@
   },
   "pharmacyDashboard": {
     "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ,",
-    "welcomeUser": "ਫਾਰਮੇਸੀ!",
     "subtitle": "ਨੁਸਖ਼ੇ, ਵਸਤੂ-ਸੂਚੀ, ਆਰਡਰ ਅਤੇ ਡਿਲੀਵਰੀ ਆਸਾਨੀ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
     "todaysPrescriptions": "ਅੱਜ ਦੇ ਨੁਸਖ਼ੇ",
     "pendingVerification": "ਤਸਦੀਕ ਬਕਾਇਆ ਹੈ",
@@ -347,5 +342,3 @@
     }
   }
 }
-
-    
