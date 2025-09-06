@@ -30,7 +30,7 @@ export function HowItWorksSection() {
   ];
 
   return (
-    <section className="py-20 md:py-32 bg-background">
+    <section className="py-20 md:py-32 bg-[hsl(224,71%,10%)] text-white">
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
@@ -56,7 +56,7 @@ export function HowItWorksSection() {
                 delay={200 * (index + 1)}
                 direction={index % 2 === 0 ? 'up' : 'down'}
               >
-                <div className="text-center relative bg-background px-4">
+                <div className="text-center relative bg-[hsl(224,71%,10%)] px-4">
                   <div className="flex items-center justify-center w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/20 mb-6 mx-auto">
                     {step.icon}
                   </div>
