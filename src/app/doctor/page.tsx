@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import type { Patient, Pharmacy, Prescription, Medication } from '@/lib/types';
+import Image from 'next/image';
 
 export default function DoctorDashboard() {
   const { translations } = useContext(LanguageContext);
@@ -127,13 +128,22 @@ export default function DoctorDashboard() {
       <main className="flex-grow container mx-auto px-4 pt-20 pb-24">
         <div className="max-w-5xl mx-auto">
           
-          <div className="text-center py-16 md:py-24 animate-fade-in-down">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-              <TextFlipper>{translations.doctorDashboard.welcome}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">Dr. {doctorName}!</TextFlipper>
-            </h1>
-            <p className="mt-4 text-lg text-muted-foreground animate-text-fade-in-scale" style={{ animationDelay: '0.4s' }}>
-              {translations.doctorDashboard.subtitle}
-            </p>
+          <div className="relative text-center py-16 md:py-24 animate-fade-in-down overflow-hidden rounded-lg">
+             <Image
+                src="https://picsum.photos/1200/400"
+                alt="Doctor background"
+                fill
+                className="object-cover object-center z-0 opacity-20"
+                data-ai-hint="doctor background"
+              />
+            <div className="relative z-10">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+                <TextFlipper>{translations.doctorDashboard.welcome}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">Dr. {doctorName}!</TextFlipper>
+              </h1>
+              <p className="mt-4 text-lg text-muted-foreground animate-text-fade-in-scale" style={{ animationDelay: '0.4s' }}>
+                {translations.doctorDashboard.subtitle}
+              </p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-content-fade-in" style={{ animationDelay: '0.6s' }}>
