@@ -31,7 +31,7 @@
     "confirmPasswordLabel": "पासवर्ड की पुष्टि कीजिये",
     "submitButton": "पंजीकरण करें और जारी रखें",
     "toastSuccessTitle": "पंजीकरण सफल",
-    "toastSuccessDescription": "कृपया अपना चिकित्सा इतिहास प्रदान करें।",
+    "toastSuccessDescription": "जारी रखने के लिए कृपया अपनी भूमिका चुनें।",
     "toastErrorTitle": "पंजीकरण विफल",
     "toastErrorDescription": "एक अप्रत्याशित त्रुटि हुई।",
     "tabs": {

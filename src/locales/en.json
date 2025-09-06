@@ -31,7 +31,7 @@
     "confirmPasswordLabel": "Confirm Password",
     "submitButton": "Register & Continue",
     "toastSuccessTitle": "Registration Successful",
-    "toastSuccessDescription": "Please provide your medical history.",
+    "toastSuccessDescription": "Please select your role to continue.",
     "toastErrorTitle": "Registration Failed",
     "toastErrorDescription": "An unexpected error occurred.",
     "tabs": {
