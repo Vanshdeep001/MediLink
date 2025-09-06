@@ -27,28 +27,27 @@ export function Logo({ className }: { className?: string }) {
             </linearGradient>
           </defs>
           <path
-            d="M6 8V14C6 17.3137 8.68629 20 12 20H13"
+            d="M18 10V5C18 3.89543 17.1046 3 16 3H8C6.89543 3 6 3.89543 6 5V10"
             stroke="url(#logo-gradient)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          <path
-            d="M18 8V14C18 17.3137 15.3137 20 12 20H11"
-            stroke="url(#logo-gradient)"
-            strokeWidth="2"
-            strokeLinecap="round"
+           <path 
+            d="M6 10C6 12.2091 7.79086 14 10 14H14C16.2091 14 18 12.2091 18 10"
+            stroke="url(#logo-gradient)" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            />
+            <path 
+            d="M14 14V19C14 20.1046 14.8954 21 16 21H17C18.1046 21 19 20.1046 19 19V17C19 15.8954 18.1046 15 17 15C15.8954 15 15.4549 15.2227 15 15.5" 
+            stroke="url(#logo-gradient)" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
             strokeLinejoin="round"
-          />
-          <circle cx="6" cy="6" r="2" stroke="url(#logo-gradient)" strokeWidth="2" />
-          <circle cx="18" cy="6" r="2" stroke="url(#logo-gradient)" strokeWidth="2" />
-          <path
-            d="M12 20V24"
-            stroke="url(#logo-gradient)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+            />
+             <circle cx="19" cy="12.5" r="2.5" stroke="url(#logo-gradient)" strokeWidth="2" />
         </g>
       </svg>
       <div>
