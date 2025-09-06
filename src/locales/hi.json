@@ -19,6 +19,20 @@
     "rights": "सर्वाधिकार सुरक्षित।",
     "tagline": "स्वास्थ्य सेवा को सहजता से जोड़ना।"
   },
+   "authPortal": {
+    "patient": {
+      "titleMain": "रोगी",
+      "titleCursive": "पोर्टल"
+    },
+    "doctor": {
+      "titleMain": "चिकित्सक",
+      "titleCursive": "पोर्टल"
+    },
+    "pharmacy": {
+      "titleMain": "फार्मेसी",
+      "titleCursive": "पोर्टल"
+    }
+  },
   "authForm": {
     "title": "खाता बनाएं",
     "subtitle": "आइए आपको मेडीलिंक के साथ शुरू करें।",

@@ -19,6 +19,20 @@
     "rights": "ਸਾਰੇ ਹੱਕ ਰਾਖਵੇਂ ਹਨ।",
     "tagline": "ਸਿਹਤ ਸੰਭਾਲ ਨੂੰ ਨਿਰਵਿਘਨ ਜੋੜਨਾ।"
   },
+   "authPortal": {
+    "patient": {
+      "titleMain": "ਮਰੀਜ਼",
+      "titleCursive": "ਪੋਰਟਲ"
+    },
+    "doctor": {
+      "titleMain": "ਡਾਕਟਰ",
+      "titleCursive": "ਪੋਰਟਲ"
+    },
+    "pharmacy": {
+      "titleMain": "ਫਾਰਮੇਸੀ",
+      "titleCursive": "ਪੋਰਟਲ"
+    }
+  },
   "authForm": {
     "title": "ਖਾਤਾ ਬਣਾਓ",
     "subtitle": "ਆਓ ਤੁਹਾਨੂੰ ਮੇਡੀਲਿੰਕ ਨਾਲ ਸ਼ੁਰੂਆਤ ਕਰੀਏ।",
