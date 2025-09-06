@@ -176,7 +176,7 @@ export default function PatientDashboard() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.8s' }}>
-            <Card className="md:col-span-2 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
+            <Card className="md:col-span-2 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
                <CardHeader>
                 <div className="flex items-center gap-3">
                     <BrainCircuit className="w-8 h-8 text-primary" />
@@ -186,28 +186,28 @@ export default function PatientDashboard() {
                     </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <Button className="w-full" asChild>
+              <CardContent className="flex-grow flex flex-col justify-end">
+                <Button className="w-full mt-auto" asChild>
                   <Link href="/patient/symptom-checker">{translations.patientDashboard.symptomCheckerButton}</Link>
                 </Button>
               </CardContent>
             </Card>
-            <div className="md:col-span-1 space-y-8">
-              <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
+            <div className="md:col-span-1 flex flex-col gap-8">
+              <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex-grow flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2"><Video /> {translations.patientDashboard.videoConsultation}</CardTitle>
                   <CardDescription>{translations.patientDashboard.videoConsultationDesc}</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="mt-auto">
                   <Button className="w-full">{translations.patientDashboard.videoConsultationButton}</Button>
                 </CardContent>
               </Card>
-              <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300">
+              <Card className="hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex-grow flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2"><BellRing /> {translations.patientDashboard.smartReminders}</CardTitle>
                   <CardDescription>{translations.patientDashboard.smartRemindersDesc}</CardDescription>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
+                <CardContent className="text-sm text-muted-foreground mt-auto">
                   <p>{translations.patientDashboard.reminder1}</p>
                   <p>{translations.patientDashboard.reminder2}</p>
                 </CardContent>
