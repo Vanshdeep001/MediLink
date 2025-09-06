@@ -42,7 +42,7 @@ export function FeaturesSection() {
             <TextFlipper>Why Choose</TextFlipper>{' '}
             <TextFlipper
               delay={0.2}
-              className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-foreground/70"
+              className="font-cursive text-primary"
             >
               MediLink?
             </TextFlipper>

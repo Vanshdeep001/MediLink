@@ -30,18 +30,17 @@ export function HowItWorksSection() {
   ];
 
   return (
-    <section className="py-20 md:py-32">
+    <section className="py-20 md:py-32 bg-background">
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-            <TextFlipper>How</TextFlipper>{' '}
+            <TextFlipper>How MediLink</TextFlipper>{' '}
             <TextFlipper
               delay={0.2}
-              className="bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-blue-500"
+              className="font-cursive text-primary"
             >
-              MediLink
-            </TextFlipper>{' '}
-            <TextFlipper delay={0.4}>Works</TextFlipper>
+              Works
+            </TextFlipper>
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Your journey to better health in four simple steps.
