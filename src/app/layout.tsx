@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
-import { Poppins, Playfair_Display, Pacifico } from 'next/font/google';
+import { Poppins, Playfair_Display, Dancing_Script } from 'next/font/google';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { SOSButton } from '@/components/sos-button';
 import { LanguageProvider } from '@/context/language-context';
@@ -12,10 +12,10 @@ const poppins = Poppins({
   variable: '--font-poppins',
 });
 
-const pacifico = Pacifico({
+const dancingScript = Dancing_Script({
   subsets: ['latin'],
-  weight: ['400'],
-  variable: '--font-pacifico',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-dancing-script',
 });
 
 const playfairDisplay = Playfair_Display({
@@ -36,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.variable} ${pacifico.variable} ${playfairDisplay.variable} font-sans antialiased bg-background text-foreground`}>
+      <body className={`${poppins.variable} ${dancingScript.variable} ${playfairDisplay.variable} font-sans antialiased bg-background text-foreground`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

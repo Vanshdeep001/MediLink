@@ -18,7 +18,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['var(--font-poppins)'],
-        cursive: ['var(--font-pacifico)'],
+        cursive: ['var(--font-dancing-script)'],
         serif: ['var(--font-playfair-display)'],
       },
       backgroundImage: {
