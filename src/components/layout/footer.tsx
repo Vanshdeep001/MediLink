@@ -5,9 +5,17 @@ import Link from 'next/link';
 import { Logo } from '@/components/logo';
 import { LanguageContext } from '@/context/language-context';
 import { Github, Twitter, Linkedin } from 'lucide-react';
+import ShareButton from '../ui/share-button';
 
 export function Footer() {
   const { translations } = useContext(LanguageContext);
+  
+  const socialLinks = [
+    { icon: Github, href: "https://github.com" },
+    { icon: Twitter, href: "https://twitter.com" },
+    { icon: Linkedin, href: "https://linkedin.com" },
+  ];
+
   return (
     <footer className="border-t border-border/40 bg-card">
       <div className="container py-12">
@@ -48,17 +56,9 @@ export function Footer() {
           </div>
           <div>
             <h4 className="font-semibold mb-3">Follow Us</h4>
-            <div className="flex space-x-4">
-              <Link href="#" className="text-muted-foreground hover:text-primary">
-                <Github size={20} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary">
-                <Twitter size={20} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary">
-                <Linkedin size={20} />
-              </Link>
-            </div>
+             <ShareButton links={socialLinks.map(link => ({...link, onClick: () => window.open(link.href, '_blank')}))}>
+                Follow Us
+            </ShareButton>
           </div>
         </div>
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
