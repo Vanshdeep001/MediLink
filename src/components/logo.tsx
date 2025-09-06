@@ -13,7 +13,7 @@ export function Logo({ className }: { className?: string }) {
       >
         <defs>
           <linearGradient
-            id="logo-gradient"
+            id="logo-gradient-1"
             x1="50%"
             y1="0%"
             x2="50%"
@@ -28,6 +28,22 @@ export function Logo({ className }: { className?: string }) {
               stopColor="hsl(var(--logo-color-1))"
             />
           </linearGradient>
+           <linearGradient
+            id="logo-gradient-2"
+            x1="50%"
+            y1="0%"
+            x2="50%"
+            y2="100%"
+          >
+            <stop
+              offset="0%"
+              stopColor="hsl(var(--logo-color-1))"
+            />
+            <stop
+              offset="100%"
+              stopColor="hsl(var(--logo-color-2))"
+            />
+          </linearGradient>
         </defs>
         <path
           fillRule="evenodd"
@@ -35,19 +51,8 @@ export function Logo({ className }: { className?: string }) {
           d="M0 8C0 3.58172 3.58172 0 8 0H40C44.4183 0 48 3.58172 48 8V40C48 44.4183 44.4183 48 40 48H8C3.58172 48 0 44.4183 0 40V8Z"
           fill="hsl(var(--logo-color-3))"
         />
-        <path
-          d="M24.5 18H28.5V23.5H34V27.5H28.5V34H24.5V27.5H18.5V23.5H24.5V18Z"
-          fill="url(#logo-gradient)"
-          fillOpacity="0.3"
-        />
-        <path
-          d="M8 13L21.5 29.5V13H8Z"
-          fill="url(#logo-gradient)"
-        />
-        <path
-          d="M40 13L26.5 29.5V13H40Z"
-          fill="url(#logo-gradient)"
-        />
+        <path d="M14 20L24 28L34 20V25L24 33L14 25V20Z" fill="url(#logo-gradient-1)" />
+        <path d="M14 15L24 23L34 15V20L24 28L14 20V15Z" fill="url(#logo-gradient-2)" />
       </svg>
       <div>
         <h1 className="text-2xl font-bold text-foreground tracking-tighter">MediLink</h1>
