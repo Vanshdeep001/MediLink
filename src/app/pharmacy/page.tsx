@@ -1,6 +1,7 @@
 
 'use client';
 import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -15,12 +16,17 @@ import Image from 'next/image';
 
 export default function PharmacyDashboard() {
   const { translations } = useContext(LanguageContext);
+  const router = useRouter();
   const [pharmacyName, setPharmacyName] = useState('');
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
 
   useEffect(() => {
-    // In a real app, you'd fetch this from a user session or context
     const userString = localStorage.getItem('temp_user');
+    if (!userString) {
+      router.push('/auth');
+      return;
+    }
+    
     if (userString) {
       try {
         const user = JSON.parse(userString);
@@ -48,7 +54,7 @@ export default function PharmacyDashboard() {
 
     return () => clearInterval(interval);
 
-  }, []);
+  }, [router]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">

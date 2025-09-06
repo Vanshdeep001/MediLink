@@ -1,6 +1,7 @@
 
 'use client';
 import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -19,6 +20,7 @@ import { JitsiCall } from '@/components/jitsi-call';
 export default function DoctorDashboard() {
   const { translations } = useContext(LanguageContext);
   const { toast } = useToast();
+  const router = useRouter();
   const [doctorName, setDoctorName] = useState('');
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -32,6 +34,11 @@ export default function DoctorDashboard() {
 
   useEffect(() => {
     const userString = localStorage.getItem('temp_user');
+    if (!userString) {
+      router.push('/auth');
+      return;
+    }
+
     let currentDoctorName = 'Doctor';
     if (userString) {
       try {
@@ -61,7 +68,7 @@ export default function DoctorDashboard() {
       const doctorConsultations = allConsultations.filter((c: Consultation) => c.doctorName.includes(currentDoctorName));
       setConsultations(doctorConsultations);
     }
-  }, []);
+  }, [router]);
 
   const handleAddMedication = () => {
     setMedications([...medications, { name: '', dosage: '', duration: '' }]);
