@@ -52,7 +52,7 @@ export default function PharmacyDashboard() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
-      <main className="flex-grow container mx-auto px-4 pt-20 pb-16">
+      <main className="flex-grow container mx-auto px-4 pt-20 pb-24">
         <div className="max-w-5xl mx-auto">
           
           <div className="text-center py-16 md:py-24 animate-fade-in-down">

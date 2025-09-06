@@ -34,7 +34,7 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
-      <main className="flex-grow pb-16">
+      <main className="flex-grow pb-24">
         {/* Hero Section */}
         <section className="relative py-24 md:py-40 text-center bg-card">
           <div className="container mx-auto px-4 animate-fade-in-down">

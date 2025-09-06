@@ -6,7 +6,7 @@ export default function AuthPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
-      <main className="flex-grow flex items-center justify-center p-4 pt-24 md:pt-32 pb-16">
+      <main className="flex-grow flex items-center justify-center p-4 pt-24 md:pt-32 pb-24">
         <AuthForm />
       </main>
       <Footer />

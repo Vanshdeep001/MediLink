@@ -22,7 +22,7 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-24 md:py-32 pb-16">
+      <main className="flex-grow container mx-auto px-4 py-24 md:py-32 pb-24">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 animate-fade-in-down">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">

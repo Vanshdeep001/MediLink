@@ -7,7 +7,7 @@ export default function DoctorRegistrationPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
-      <main className="flex-grow flex items-center justify-center p-4 pt-32 md:pt-40 relative overflow-hidden pb-16">
+      <main className="flex-grow flex items-center justify-center p-4 pt-32 md:pt-40 relative overflow-hidden pb-24">
         <FloatingDoctorIcons />
         <DoctorRegistrationForm />
       </main>
