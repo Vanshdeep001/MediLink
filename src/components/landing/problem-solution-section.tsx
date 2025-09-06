@@ -57,12 +57,12 @@ export function ProblemSolutionSection() {
           {challenges.map((item, index) => (
             <FadeIn key={index} delay={200 * (index + 1)} direction="up">
               <Card className="group bg-card h-full flex flex-col transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10">
-                <CardContent className="p-6 text-center flex flex-col items-center">
+                <CardContent className="p-6 text-center flex flex-col flex-grow items-center">
                   {/* Problem Section */}
                   <div className="flex flex-col items-center">
                     {item.problemIcon}
                     <h3 className="mt-4 text-xl font-semibold text-destructive/80">{item.problemTitle}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground h-16">{item.problemDescription}</p>
+                    <p className="mt-2 text-sm text-muted-foreground min-h-[4rem]">{item.problemDescription}</p>
                   </div>
                   
                   <Separator className="my-6" />
@@ -74,7 +74,7 @@ export function ProblemSolutionSection() {
                         <CheckCircle className="absolute -bottom-1 -right-1 w-5 h-5 text-green-500 bg-card rounded-full" />
                      </div>
                     <h3 className="text-xl font-bold text-primary">{item.solutionTitle}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground h-16">{item.solutionDescription}</p>
+                    <p className="mt-2 text-sm text-muted-foreground min-h-[4rem]">{item.solutionDescription}</p>
                   </div>
 
                 </CardContent>
