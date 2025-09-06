@@ -55,9 +55,9 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-3">Follow Us</h4>
+             <h4 className="font-semibold mb-3">Follow Us</h4>
             <ShareButton links={socialLinks.map(link => ({...link, onClick: () => window.open(link.href, '_blank')}))}>
-                Follow Us
+                Follow us on
             </ShareButton>
           </div>
         </div>
