@@ -18,7 +18,7 @@ export default function MedicalHistoryPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-24 md:py-28">
+      <main className="flex-grow container mx-auto px-4 py-24 md:py-28 pb-16">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10 animate-fade-in-down">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
