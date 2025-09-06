@@ -6,14 +6,15 @@ import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Users, FileText, HeartPulse, PlusCircle, MessageSquare, LineChart, ChevronRight, Building, MapPin, Phone, ClipboardEdit, Trash2, Save } from "lucide-react";
+import { Calendar, Users, FileText, HeartPulse, PlusCircle, MessageSquare, LineChart, ChevronRight, Building, MapPin, Phone, ClipboardEdit, Trash2, Save, Video, Clock } from "lucide-react";
 import TextFlipper from "@/components/ui/text-effect-flipper";
 import { LanguageContext } from '@/context/language-context';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import type { Patient, Pharmacy, Prescription, Medication } from '@/lib/types';
+import type { Patient, Pharmacy, Prescription, Medication, Consultation } from '@/lib/types';
 import Image from 'next/image';
+import { JitsiCall } from '@/components/jitsi-call';
 
 export default function DoctorDashboard() {
   const { translations } = useContext(LanguageContext);
@@ -21,6 +22,9 @@ export default function DoctorDashboard() {
   const [doctorName, setDoctorName] = useState('');
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [activeCall, setActiveCall] = useState<Consultation | null>(null);
+
 
   // Prescription State
   const [selectedPatient, setSelectedPatient] = useState('');
@@ -28,10 +32,12 @@ export default function DoctorDashboard() {
 
   useEffect(() => {
     const userString = localStorage.getItem('temp_user');
+    let currentDoctorName = 'Doctor';
     if (userString) {
       try {
         const user = JSON.parse(userString);
-        setDoctorName(user.fullName || 'Doctor');
+        currentDoctorName = user.fullName || 'Doctor';
+        setDoctorName(currentDoctorName);
       } catch (e) {
         setDoctorName('Doctor');
       }
@@ -47,6 +53,13 @@ export default function DoctorDashboard() {
     const patientsString = localStorage.getItem('users_list');
     if (patientsString) {
       setPatients(JSON.parse(patientsString).filter((u: any) => u.role === 'patient'));
+    }
+
+    const consultationsString = localStorage.getItem('consultations_list');
+    if (consultationsString) {
+      const allConsultations = JSON.parse(consultationsString);
+      const doctorConsultations = allConsultations.filter((c: Consultation) => c.doctorName.includes(currentDoctorName));
+      setConsultations(doctorConsultations);
     }
   }, []);
 
@@ -121,6 +134,9 @@ export default function DoctorDashboard() {
     setSelectedPatient('');
     setMedications([{ name: '', dosage: '', duration: '' }]);
   };
+  
+  const upcomingConsultations = consultations.filter(c => new Date(c.date) >= new Date());
+  const pastConsultations = consultations.filter(c => new Date(c.date) < new Date());
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -153,7 +169,7 @@ export default function DoctorDashboard() {
                 <Calendar className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">5</div>
+                <div className="text-2xl font-bold">{upcomingConsultations.length}</div>
                 <p className="text-xs text-muted-foreground">{translations.doctorDashboard.viewSchedule}</p>
               </CardContent>
             </Card>
@@ -163,7 +179,7 @@ export default function DoctorDashboard() {
                 <Users className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">120</div>
+                <div className="text-2xl font-bold">{patients.length}</div>
                 <p className="text-xs text-muted-foreground">{translations.doctorDashboard.managePatientRecords}</p>
               </CardContent>
             </Card>
@@ -183,7 +199,7 @@ export default function DoctorDashboard() {
                 <HeartPulse className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">25</div>
+                <div className="text-2xl font-bold">{consultations.length}</div>
                 <p className="text-xs text-muted-foreground">{translations.doctorDashboard.thisMonth}</p>
               </CardContent>
             </Card>
@@ -223,10 +239,10 @@ export default function DoctorDashboard() {
             <Tabs defaultValue="appointments" className="w-full">
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="appointments">{translations.doctorDashboard.appointments}</TabsTrigger>
+                <TabsTrigger value="video-consultation">Video Consultation</TabsTrigger>
                 <TabsTrigger value="prescriptions">{translations.doctorDashboard.prescriptions.tabTitle}</TabsTrigger>
                 <TabsTrigger value="patients">{translations.doctorDashboard.patients}</TabsTrigger>
                 <TabsTrigger value="pharmacies">{translations.doctorDashboard.pharmacies}</TabsTrigger>
-                <TabsTrigger value="reports">{translations.doctorDashboard.reports}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="appointments" className="mt-6">
@@ -245,6 +261,56 @@ export default function DoctorDashboard() {
                             {translations.doctorDashboard.scheduleAppointment}
                         </Button>
                     </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="video-consultation" className="mt-6">
+                 <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Video /> Video Consultations</CardTitle>
+                    <CardDescription>Manage your scheduled video calls with patients.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                     <div>
+                       <h3 className="font-semibold mb-2">Incoming Consultations</h3>
+                        {upcomingConsultations.length > 0 ? (
+                           <div className="space-y-4">
+                            {upcomingConsultations.map(consult => (
+                                <div key={consult.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-muted/50 p-4 rounded-lg">
+                                    <div>
+                                        <p className="font-semibold">{consult.patientName}</p>
+                                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                                            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {new Date(consult.date).toLocaleDateString()}</span>
+                                            <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {consult.time}</span>
+                                        </div>
+                                    </div>
+                                    <Button className="mt-2 sm:mt-0" onClick={() => setActiveCall(consult)}>Join Call</Button>
+                                </div>
+                            ))}
+                           </div>
+                        ) : (
+                           <p className="text-sm text-muted-foreground text-center py-4">No upcoming consultations.</p>
+                        )}
+                     </div>
+                      <div>
+                       <h3 className="font-semibold mb-2">Past Consultations</h3>
+                        {pastConsultations.length > 0 ? (
+                           <div className="space-y-4">
+                            {pastConsultations.map(consult => (
+                                <div key={consult.id} className="flex justify-between items-center bg-muted/30 p-4 rounded-lg opacity-70">
+                                    <div>
+                                        <p className="font-semibold">{consult.patientName}</p>
+                                        <p className="text-sm text-muted-foreground">{new Date(consult.date).toLocaleDateString()} at {consult.time}</p>
+                                    </div>
+                                    <Button variant="outline" disabled>View Details</Button>
+                                </div>
+                            ))}
+                           </div>
+                        ) : (
+                           <p className="text-sm text-muted-foreground text-center py-4">No past consultations.</p>
+                        )}
+                     </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -315,24 +381,17 @@ export default function DoctorDashboard() {
                     <CardDescription>{translations.doctorDashboard.yourPatientsDesc}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                     <div className="flex justify-between items-center bg-muted/50 p-4 rounded-lg">
-                      <div>
-                        <p className="font-semibold">Ravi Kumar</p>
-                        <p className="text-sm text-muted-foreground">Last visit: 12 Dec 2024</p>
+                    {patients.map(p => (
+                      <div key={p.email} className="flex justify-between items-center bg-muted/50 p-4 rounded-lg">
+                        <div>
+                          <p className="font-semibold">{p.fullName}</p>
+                          <p className="text-sm text-muted-foreground">{p.email}</p>
+                        </div>
+                        <Button variant="ghost" size="icon">
+                          <ChevronRight className="w-5 h-5" />
+                        </Button>
                       </div>
-                      <Button variant="ghost" size="icon">
-                        <ChevronRight className="w-5 h-5" />
-                      </Button>
-                    </div>
-                    <div className="flex justify-between items-center bg-muted/50 p-4 rounded-lg">
-                      <div>
-                        <p className="font-semibold">Priya Sharma</p>
-                        <p className="text-sm text-muted-foreground">Last visit: 10 Dec 2024</p>
-                      </div>
-                       <Button variant="ghost" size="icon">
-                        <ChevronRight className="w-5 h-5" />
-                      </Button>
-                    </div>
+                    ))}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -363,23 +422,18 @@ export default function DoctorDashboard() {
                 </Card>
               </TabsContent>
 
-               <TabsContent value="reports" className="mt-6">
-                 <Card>
-                  <CardHeader>
-                    <CardTitle>{translations.doctorDashboard.patientReports}</CardTitle>
-                    <CardDescription>{translations.doctorDashboard.patientReportsDesc}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-center text-muted-foreground py-12">
-                    <p>{translations.doctorDashboard.reportsPlaceholder}</p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
             </Tabs>
           </div>
         </div>
       </main>
       <Footer />
+      {activeCall && (
+        <JitsiCall 
+            roomName={activeCall.jitsiLink.split('/').pop()!}
+            userName={doctorName}
+            onClose={() => setActiveCall(null)}
+        />
+      )}
     </div>
   );
 }

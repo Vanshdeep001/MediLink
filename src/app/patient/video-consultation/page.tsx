@@ -1,47 +1,69 @@
 
 'use client';
 
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { LanguageContext } from '@/context/language-context';
 import TextFlipper from '@/components/ui/text-effect-flipper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, History, PlusCircle, Mic, MicOff, VideoOff, PhoneOff, Upload, Send, Video } from 'lucide-react';
+import { Calendar, Clock, History, PlusCircle, Video } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { VideoConsultationBooking } from '@/components/patient/video-consultation-booking';
 import { FadeIn } from '@/components/fade-in';
 import { FeedbackForm } from '@/components/patient/feedback-form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import type { Consultation, Doctor } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
+import { JitsiCall } from '@/components/jitsi-call';
 
 
 export default function VideoConsultationPage() {
   const { translations } = useContext(LanguageContext);
-  const [isCallActive, setIsCallActive] = useState(false);
-  const [isMicMuted, setIsMicMuted] = useState(false);
-  const [isCameraOff, setIsCameraOff] = useState(false);
-
-  const upcomingAppointments = [
-    { doctor: "Dr. Anjali Sharma", specialization: "Cardiology", date: "Tomorrow", time: "10:30 AM" },
-    { doctor: "Dr. Vikram Singh", specialization: "General Physician", date: "25 Dec 2024", time: "02:00 PM" },
-  ];
-
-  const consultationHistory = [
-    { id: 'consult1', doctor: "Dr. Priya Desai", date: "15 Nov 2024", summary: "Discussed routine check-up results. All clear." },
-    { id: 'consult2', doctor: "Dr. Vikram Singh", date: "02 Oct 2024", summary: "Follow-up on seasonal flu. Prescribed rest and fluids." },
-  ];
-
-  const handleJoinCall = () => {
-    setIsCallActive(true);
-  };
+  const { toast } = useToast();
   
-  const handleEndCall = () => {
-    setIsCallActive(false);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [userName, setUserName] = useState('');
+  const [activeCall, setActiveCall] = useState<Consultation | null>(null);
+
+  useEffect(() => {
+    const userString = localStorage.getItem('temp_user');
+    let currentUserName = '';
+    if (userString) {
+      const user = JSON.parse(userString);
+      currentUserName = user.fullName;
+      setUserName(currentUserName);
+    }
+
+    const doctorsString = localStorage.getItem('doctors_list');
+    if (doctorsString) {
+      setDoctors(JSON.parse(doctorsString));
+    }
+    
+    loadConsultations(currentUserName);
+  }, []);
+  
+  const loadConsultations = (currentUserName: string) => {
+     const consultationsString = localStorage.getItem('consultations_list');
+    if (consultationsString) {
+      const allConsultations: Consultation[] = JSON.parse(consultationsString);
+      setConsultations(allConsultations.filter(c => c.patientName === currentUserName));
+    }
+  }
+
+  const handleBookingConfirmed = () => {
+    toast({
+        title: "Booking Confirmed!",
+        description: `Your appointment has been scheduled.`
+    });
+    loadConsultations(userName);
   };
 
+  const upcomingAppointments = consultations.filter(c => new Date(c.date) >= new Date());
+  const consultationHistory = consultations.filter(c => new Date(c.date) < new Date());
+  
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
@@ -64,7 +86,7 @@ export default function VideoConsultationPage() {
                   <CardDescription>Book a new video call with a doctor.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <VideoConsultationBooking />
+                  <VideoConsultationBooking doctors={doctors} patientName={userName} onBookingConfirmed={handleBookingConfirmed} />
                 </CardContent>
               </Card>
             </FadeIn>
@@ -81,18 +103,19 @@ export default function VideoConsultationPage() {
                         <div key={index} className="p-4 bg-muted/50 rounded-lg">
                           <div className="flex justify-between items-center">
                             <div>
-                                <p className="font-semibold">{appt.doctor}</p>
+                                <p className="font-semibold">{appt.doctorName}</p>
                                 <p className="text-sm text-muted-foreground">{appt.specialization}</p>
                             </div>
-                            <Button onClick={handleJoinCall}>Join Call</Button>
+                            <Button onClick={() => setActiveCall(appt)}>Join Call</Button>
                           </div>
                           <Separator className="my-2" />
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {appt.date}</span>
+                            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {new Date(appt.date).toLocaleDateString()}</span>
                             <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {appt.time}</span>
                           </div>
                         </div>
                     ))}
+                    {upcomingAppointments.length === 0 && <p className="text-sm text-muted-foreground text-center">No upcoming appointments.</p>}
                   </CardContent>
                 </Card>
               </FadeIn>
@@ -105,11 +128,11 @@ export default function VideoConsultationPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <Accordion type="single" collapsible className="w-full">
-                        {consultationHistory.map((item) => (
-                            <div key={item.id} className="p-3 bg-muted/50 rounded-lg text-sm">
-                                <p className="font-semibold">Dr. {item.doctor} - <span className="font-normal text-muted-foreground">{item.date}</span></p>
-                                <p className="text-muted-foreground mt-1">{item.summary}</p>
-                                <AccordionItem value={item.id} className="border-none">
+                        {consultationHistory.map((item, index) => (
+                            <div key={index} className="p-3 bg-muted/50 rounded-lg text-sm">
+                                <p className="font-semibold">{item.doctorName} - <span className="font-normal text-muted-foreground">{new Date(item.date).toLocaleDateString()}</span></p>
+                                <p className="text-muted-foreground mt-1">Video consultation regarding {item.specialization}.</p>
+                                <AccordionItem value={`item-${index}`} className="border-none">
                                     <AccordionTrigger className="text-xs pt-2 pb-0 text-primary hover:no-underline justify-start gap-1">Leave Feedback</AccordionTrigger>
                                     <AccordionContent className="pt-4">
                                         <FeedbackForm />
@@ -118,6 +141,7 @@ export default function VideoConsultationPage() {
                             </div>
                         ))}
                         </Accordion>
+                         {consultationHistory.length === 0 && <p className="text-sm text-muted-foreground text-center">No past consultations.</p>}
                     </CardContent>
                 </Card>
               </FadeIn>
@@ -127,51 +151,13 @@ export default function VideoConsultationPage() {
       </main>
       <Footer />
       
-      {/* Mock Video Call Dialog */}
-      <Dialog open={isCallActive} onOpenChange={setIsCallActive}>
-        <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0 gap-0">
-          <DialogHeader className="p-4 border-b">
-            <DialogTitle>Video Call with Dr. Anjali Sharma</DialogTitle>
-          </DialogHeader>
-          <div className="flex-grow grid grid-cols-1 md:grid-cols-3 overflow-hidden">
-            <div className="col-span-2 bg-black flex items-center justify-center relative">
-              <p className="text-white">Doctor's Video Feed</p>
-              <div className="absolute bottom-4 right-4 w-40 h-32 bg-muted/20 border-2 border-primary rounded-lg flex items-center justify-center">
-                  <p className="text-white text-sm">Your Video</p>
-              </div>
-            </div>
-            <div className="col-span-1 flex flex-col border-l">
-              <div className="flex-grow p-4 space-y-4 overflow-y-auto">
-                  <h4 className="font-semibold">Live Chat</h4>
-                  <div className="text-sm p-2 bg-muted rounded-md">
-                    <p className="font-bold">Dr. Sharma</p>
-                    <p>Hello! How are you feeling today?</p>
-                  </div>
-                  <div className="text-sm p-2 bg-primary/10 rounded-md text-right">
-                    <p className="font-bold">You</p>
-                    <p>I have a slight headache.</p>
-                  </div>
-              </div>
-              <div className="p-4 border-t flex gap-2 items-center">
-                <Button variant="outline" size="icon"><Upload className="w-4 h-4"/></Button>
-                <Input placeholder="Type a message..." />
-                <Button size="icon"><Send className="w-4 h-4" /></Button>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-center items-center gap-4 p-4 border-t bg-background">
-            <Button variant={isMicMuted ? "secondary" : "outline"} size="icon" className="w-12 h-12 rounded-full" onClick={() => setIsMicMuted(p => !p)}>
-                {isMicMuted ? <MicOff /> : <Mic />}
-            </Button>
-            <Button variant={isCameraOff ? "secondary" : "outline"} size="icon" className="w-12 h-12 rounded-full" onClick={() => setIsCameraOff(p => !p)}>
-                {isCameraOff ? <VideoOff /> : <Video />}
-            </Button>
-            <Button variant="destructive" size="icon" className="w-16 h-12 rounded-full" onClick={handleEndCall}>
-                <PhoneOff />
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {activeCall && (
+        <JitsiCall 
+            roomName={activeCall.jitsiLink.split('/').pop()!}
+            userName={userName}
+            onClose={() => setActiveCall(null)}
+        />
+      )}
     </div>
   );
 }

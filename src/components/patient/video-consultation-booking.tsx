@@ -14,8 +14,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import type { Doctor } from '@/lib/types';
+import type { Doctor, Consultation } from '@/lib/types';
 
 const bookingSchema = z.object({
   doctor: z.string({ required_error: 'Please select a doctor.' }),
@@ -24,31 +23,57 @@ const bookingSchema = z.object({
   time: z.string({ required_error: 'Please select a time slot.' }),
 });
 
-export function VideoConsultationBooking() {
+interface VideoConsultationBookingProps {
+    doctors: Doctor[];
+    patientName: string;
+    onBookingConfirmed: () => void;
+}
+
+export function VideoConsultationBooking({ doctors, patientName, onBookingConfirmed }: VideoConsultationBookingProps) {
   const { translations } = useContext(LanguageContext);
-  const { toast } = useToast();
-  const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [specializations, setSpecializations] = useState<string[]>([]);
-  
+  const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
+
   useEffect(() => {
-    const doctorsString = localStorage.getItem('doctors_list');
-    const allDoctors = doctorsString ? JSON.parse(doctorsString) : [];
-    setDoctors(allDoctors);
-    const uniqueSpecs = [...new Set(allDoctors.map((d: Doctor) => d.specialization))];
+    const uniqueSpecs = [...new Set(doctors.map((d: Doctor) => d.specialization))];
     setSpecializations(uniqueSpecs);
-  }, []);
+    setFilteredDoctors(doctors);
+  }, [doctors]);
 
   const form = useForm<z.infer<typeof bookingSchema>>({
     resolver: zodResolver(bookingSchema),
   });
+
+  const onSpecializationChange = (spec: string) => {
+    form.setValue('specialization', spec);
+    form.resetField('doctor');
+    if (spec === 'all') {
+      setFilteredDoctors(doctors);
+    } else {
+      setFilteredDoctors(doctors.filter(d => d.specialization === spec));
+    }
+  }
   
   const onSubmit = (values: z.infer<typeof bookingSchema>) => {
-    console.log(values);
-    // In a real app, you would send this to a backend and create a notification for the doctor
-    toast({
-      title: "Booking Confirmed!",
-      description: `Your appointment with ${values.doctor} is scheduled for ${format(values.date, 'PPP')} at ${values.time}.`,
-    });
+    const dateString = format(values.date, 'yyyy-MM-dd');
+    const roomName = `MediLink-${patientName.replace(/\s/g, '')}-${values.doctor.replace(/\s/g, '')}-${dateString}`;
+    
+    const newConsultation: Consultation = {
+      id: `CONS-${Date.now()}`,
+      patientName,
+      doctorName: values.doctor,
+      specialization: values.specialization,
+      date: values.date.toISOString(),
+      time: values.time,
+      jitsiLink: `https://meet.jit.si/${roomName}`
+    };
+
+    const consultationsString = localStorage.getItem('consultations_list');
+    const allConsultations = consultationsString ? JSON.parse(consultationsString) : [];
+    allConsultations.push(newConsultation);
+    localStorage.setItem('consultations_list', JSON.stringify(allConsultations));
+
+    onBookingConfirmed();
     form.reset();
   };
   
@@ -63,7 +88,7 @@ export function VideoConsultationBooking() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Specialization</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={onSpecializationChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger><SelectValue placeholder="Select a specialization" /></SelectTrigger>
                 </FormControl>
@@ -81,12 +106,12 @@ export function VideoConsultationBooking() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Doctor</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!doctors.length}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                 <FormControl>
                   <SelectTrigger><SelectValue placeholder="Select a doctor" /></SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {doctors.map(doc => <SelectItem key={doc.fullName} value={doc.fullName}>Dr. {doc.fullName}</SelectItem>)}
+                  {filteredDoctors.map(doc => <SelectItem key={doc.fullName} value={`Dr. ${doc.fullName}`}>Dr. {doc.fullName}</SelectItem>)}
                 </SelectContent>
               </Select>
               <FormMessage />

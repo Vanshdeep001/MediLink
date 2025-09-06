@@ -7,15 +7,17 @@ import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Pill, FileText, Heart, PlusCircle, Upload, Search, ChevronRight, BellRing, Video, Building, Stethoscope, MapPin, Phone, Trash2, BrainCircuit } from "lucide-react";
+import { Calendar, Pill, FileText, Heart, PlusCircle, Upload, Search, ChevronRight, BellRing, Video, Building, Stethoscope, MapPin, Phone, Trash2, BrainCircuit, Clock } from "lucide-react";
 import TextFlipper from "@/components/ui/text-effect-flipper";
 import { LanguageContext } from '@/context/language-context';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import type { Doctor, Pharmacy, Prescription, Reminder } from '@/lib/types';
+import type { Doctor, Pharmacy, Prescription, Reminder, Consultation } from '@/lib/types';
 import Link from 'next/link';
 import Image from 'next/image';
+import { VideoConsultationBooking } from '@/components/patient/video-consultation-booking';
+import { JitsiCall } from '@/components/jitsi-call';
 
 export default function PatientDashboard() {
   const { translations } = useContext(LanguageContext);
@@ -30,6 +32,8 @@ export default function PatientDashboard() {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [newReminder, setNewReminder] = useState('');
+  const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [activeCall, setActiveCall] = useState<Consultation | null>(null);
 
   const [specializationFilter, setSpecializationFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('');
@@ -37,10 +41,12 @@ export default function PatientDashboard() {
   useEffect(() => {
     // Fetch user, doctors, and pharmacies data from localStorage
     const userString = localStorage.getItem('temp_user');
+    let currentUserName = 'Patient';
     if (userString) {
       try {
         const user = JSON.parse(userString);
-        setUserName(user.fullName || 'Patient');
+        currentUserName = user.fullName || 'Patient';
+        setUserName(currentUserName);
       } catch (e) {
         setUserName('Patient');
       }
@@ -58,26 +64,25 @@ export default function PatientDashboard() {
     setAllPharmacies(pharmacies);
     setFilteredPharmacies(pharmacies);
 
-    loadPrescriptionsAndReminders();
+    loadData(currentUserName);
   }, []);
 
-  useEffect(() => {
-    if (userName) {
-      loadPrescriptionsAndReminders();
-    }
-  }, [userName]);
-
-  const loadPrescriptionsAndReminders = () => {
-    if (!userName) return;
+  const loadData = (currentUserName: string) => {
+    if (!currentUserName) return;
     const prescriptionsString = localStorage.getItem('prescriptions_list');
     const allPrescriptions = prescriptionsString ? JSON.parse(prescriptionsString) : [];
-    const userPrescriptions = allPrescriptions.filter((p: Prescription) => p.patientName === userName);
+    const userPrescriptions = allPrescriptions.filter((p: Prescription) => p.patientName === currentUserName);
     setPrescriptions(userPrescriptions);
 
     const remindersString = localStorage.getItem('reminders_list');
     const allReminders = remindersString ? JSON.parse(remindersString) : [];
-    const userReminders = allReminders.filter((r: Reminder) => r.patientName === userName);
+    const userReminders = allReminders.filter((r: Reminder) => r.patientName === currentUserName);
     setReminders(userReminders);
+
+    const consultationsString = localStorage.getItem('consultations_list');
+    const allConsultations = consultationsString ? JSON.parse(consultationsString) : [];
+    const userConsultations = allConsultations.filter((c: Consultation) => c.patientName === currentUserName);
+    setConsultations(userConsultations);
   };
 
   const handleAddReminder = () => {
@@ -107,6 +112,10 @@ export default function PatientDashboard() {
       variant: "destructive"
     });
   }
+  
+  const handleBookingConfirmed = () => {
+      loadData(userName);
+  };
 
   useEffect(() => {
     let doctors = allDoctors;
@@ -121,6 +130,9 @@ export default function PatientDashboard() {
     }
     setFilteredDoctors(doctors);
   }, [specializationFilter, locationFilter, allDoctors]);
+  
+  const upcomingConsultations = consultations.filter(c => new Date(c.date) >= new Date());
+  const pastConsultations = consultations.filter(c => new Date(c.date) < new Date());
 
   const uniqueSpecializations = ['all', ...Array.from(new Set(allDoctors.map(d => d.specialization.toLowerCase())))];
   
@@ -155,7 +167,7 @@ export default function PatientDashboard() {
                 <Calendar className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">3</div>
+                <div className="text-2xl font-bold">{upcomingConsultations.length}</div>
                 <p className="text-xs text-muted-foreground">{translations.patientDashboard.viewSchedule}</p>
               </CardContent>
             </Card>
@@ -165,7 +177,7 @@ export default function PatientDashboard() {
                 <Pill className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">2</div>
+                <div className="text-2xl font-bold">{prescriptions.reduce((acc, p) => acc + p.medications.length, 0)}</div>
                 <p className="text-xs text-muted-foreground">{translations.patientDashboard.managePrescriptions}</p>
               </CardContent>
             </Card>
@@ -209,7 +221,7 @@ export default function PatientDashboard() {
                 <CardDescription>{translations.patientDashboard.videoConsultationDesc}</CardDescription>
               </CardHeader>
               <CardContent className="flex-grow flex items-end">
-                <Button className="w-full" asChild>
+                 <Button className="w-full" asChild>
                   <Link href="/patient/video-consultation">{translations.patientDashboard.videoConsultationButton}</Link>
                 </Button>
               </CardContent>
@@ -232,10 +244,10 @@ export default function PatientDashboard() {
             <Tabs defaultValue="appointments" className="w-full">
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="appointments">{translations.patientDashboard.appointments}</TabsTrigger>
+                <TabsTrigger value="video-consultation">Video Consultation</TabsTrigger>
                 <TabsTrigger value="reminders">{translations.patientDashboard.reminders.tabTitle}</TabsTrigger>
                 <TabsTrigger value="doctors">{translations.patientDashboard.doctors}</TabsTrigger>
                 <TabsTrigger value="pharmacies">{translations.patientDashboard.pharmacies}</TabsTrigger>
-                <TabsTrigger value="reports">{translations.patientDashboard.reports}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="appointments" className="mt-6">
@@ -245,26 +257,76 @@ export default function PatientDashboard() {
                     <CardDescription>{translations.patientDashboard.manageAppointmentsDesc}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="flex justify-between items-center bg-muted/50 p-4 rounded-lg">
-                      <div>
-                        <p className="font-semibold">Dr. Anjali Sharma</p>
-                        <p className="text-sm text-muted-foreground">Cardiology | Tomorrow at 10:30 AM</p>
+                    {upcomingConsultations.map((consult, index) => (
+                       <div key={index} className="flex justify-between items-center bg-muted/50 p-4 rounded-lg">
+                        <div>
+                          <p className="font-semibold">{consult.doctorName}</p>
+                          <p className="text-sm text-muted-foreground">{consult.specialization} | {new Date(consult.date).toLocaleDateString()} at {consult.time}</p>
+                        </div>
+                        <Button variant="ghost" size="icon">
+                          <ChevronRight className="w-5 h-5" />
+                        </Button>
                       </div>
-                      <Button variant="ghost" size="icon">
-                        <ChevronRight className="w-5 h-5" />
-                      </Button>
-                    </div>
-                     <div className="flex justify-between items-center bg-muted/50 p-4 rounded-lg">
-                      <div>
-                        <p className="font-semibold">Dr. Vikram Singh</p>
-                        <p className="text-sm text-muted-foreground">General Checkup | 25 Dec 2024, 02:00 PM</p>
-                      </div>
-                      <Button variant="ghost" size="icon">
-                        <ChevronRight className="w-5 h-5" />
-                      </Button>
-                    </div>
+                    ))}
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="video-consultation" className="mt-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-1">
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Start New Consultation</CardTitle>
+                            <CardDescription>Book a new video call with a doctor.</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                              <VideoConsultationBooking 
+                                patientName={userName}
+                                doctors={allDoctors} 
+                                onBookingConfirmed={handleBookingConfirmed}
+                              />
+                          </CardContent>
+                        </Card>
+                    </div>
+                    <div className="lg:col-span-2 space-y-8">
+                       <Card>
+                        <CardHeader>
+                          <CardTitle>Upcoming Consultations</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            {upcomingConsultations.length > 0 ? upcomingConsultations.map(consult => (
+                                <div key={consult.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-muted/50 p-4 rounded-lg">
+                                    <div>
+                                        <p className="font-semibold">{consult.doctorName} <span className="text-sm font-normal text-muted-foreground">({consult.specialization})</span></p>
+                                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                                            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {new Date(consult.date).toLocaleDateString()}</span>
+                                            <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {consult.time}</span>
+                                        </div>
+                                    </div>
+                                    <Button className="mt-2 sm:mt-0" onClick={() => setActiveCall(consult)}>Join Call</Button>
+                                </div>
+                            )) : <p className="text-sm text-muted-foreground text-center py-4">No upcoming consultations.</p>}
+                        </CardContent>
+                       </Card>
+                       <Card>
+                        <CardHeader>
+                          <CardTitle>Consultation History</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                           {pastConsultations.length > 0 ? pastConsultations.map(consult => (
+                                <div key={consult.id} className="flex justify-between items-center bg-muted/30 p-4 rounded-lg opacity-70">
+                                    <div>
+                                        <p className="font-semibold">{consult.doctorName}</p>
+                                        <p className="text-sm text-muted-foreground">{new Date(consult.date).toLocaleDateString()} at {consult.time}</p>
+                                    </div>
+                                    <Button variant="outline" disabled>View Summary</Button>
+                                </div>
+                            )) : <p className="text-sm text-muted-foreground text-center py-4">No past consultations.</p>}
+                        </CardContent>
+                       </Card>
+                    </div>
+                </div>
               </TabsContent>
 
                <TabsContent value="reminders" className="mt-6">
@@ -403,6 +465,13 @@ export default function PatientDashboard() {
         </div>
       </main>
       <Footer />
+       {activeCall && (
+        <JitsiCall 
+            roomName={activeCall.jitsiLink.split('/').pop()!}
+            userName={userName}
+            onClose={() => setActiveCall(null)}
+        />
+      )}
     </div>
   );
 }

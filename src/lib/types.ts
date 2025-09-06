@@ -52,3 +52,13 @@ export interface Notification {
     message: string;
     read: boolean;
 }
+
+export interface Consultation {
+    id: string;
+    patientName: string;
+    doctorName: string;
+    specialization: string;
+    date: string; // ISO string
+    time: string;
+    jitsiLink: string;
+}
