@@ -58,11 +58,11 @@ export default function PharmacyDashboard() {
           
           <div className="relative text-center py-16 md:py-24 animate-fade-in-down overflow-hidden rounded-lg">
              <Image
-                src="https://picsum.photos/1200/400"
+                src="/pharmacy.jpg"
                 alt="Pharmacy background"
                 fill
                 className="object-cover object-center z-0 opacity-20"
-                data-ai-hint="pharmacy background"
+                data-ai-hint="pharmacy interior"
               />
             <div className="relative z-10">
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
