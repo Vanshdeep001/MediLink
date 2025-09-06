@@ -8,12 +8,15 @@ import { LanguageContext } from '@/context/language-context';
 import TextFlipper from '@/components/ui/text-effect-flipper';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, Stethoscope, Video, History, PlusCircle, Mic, MicOff, VideoOff, PhoneOff, Upload, Send } from 'lucide-react';
+import { Calendar, Clock, History, PlusCircle, Mic, MicOff, VideoOff, PhoneOff, Upload, Send, Video } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { VideoConsultationBooking } from '@/components/patient/video-consultation-booking';
 import { FadeIn } from '@/components/fade-in';
+import { FeedbackForm } from '@/components/patient/feedback-form';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
 
 export default function VideoConsultationPage() {
   const { translations } = useContext(LanguageContext);
@@ -27,8 +30,8 @@ export default function VideoConsultationPage() {
   ];
 
   const consultationHistory = [
-    { doctor: "Dr. Priya Desai", date: "15 Nov 2024", summary: "Discussed routine check-up results. All clear." },
-    { doctor: "Dr. Vikram Singh", date: "02 Oct 2024", summary: "Follow-up on seasonal flu. Prescribed rest and fluids." },
+    { id: 'consult1', doctor: "Dr. Priya Desai", date: "15 Nov 2024", summary: "Discussed routine check-up results. All clear." },
+    { id: 'consult2', doctor: "Dr. Vikram Singh", date: "02 Oct 2024", summary: "Follow-up on seasonal flu. Prescribed rest and fluids." },
   ];
 
   const handleJoinCall = () => {
@@ -101,12 +104,20 @@ export default function VideoConsultationPage() {
                         <CardDescription>Review your past video consultations.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        {consultationHistory.map((item, index) => (
-                            <div key={index} className="p-3 bg-muted/50 rounded-lg text-sm">
+                        <Accordion type="single" collapsible className="w-full">
+                        {consultationHistory.map((item) => (
+                            <div key={item.id} className="p-3 bg-muted/50 rounded-lg text-sm">
                                 <p className="font-semibold">Dr. {item.doctor} - <span className="font-normal text-muted-foreground">{item.date}</span></p>
                                 <p className="text-muted-foreground mt-1">{item.summary}</p>
+                                <AccordionItem value={item.id} className="border-none">
+                                    <AccordionTrigger className="text-xs pt-2 pb-0 text-primary hover:no-underline justify-start gap-1">Leave Feedback</AccordionTrigger>
+                                    <AccordionContent className="pt-4">
+                                        <FeedbackForm />
+                                    </AccordionContent>
+                                </AccordionItem>
                             </div>
                         ))}
+                        </Accordion>
                     </CardContent>
                 </Card>
               </FadeIn>
