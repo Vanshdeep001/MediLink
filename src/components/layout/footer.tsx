@@ -54,8 +54,9 @@ export function Footer() {
               <li>support@medilink.com</li>
             </ul>
           </div>
-          <div className="pt-9">
-             <ShareButton links={socialLinks.map(link => ({...link, onClick: () => window.open(link.href, '_blank')}))}>
+          <div>
+            <h4 className="font-semibold mb-3 invisible">Follow Us</h4>
+            <ShareButton links={socialLinks.map(link => ({...link, onClick: () => window.open(link.href, '_blank')}))}>
                 Follow Us
             </ShareButton>
           </div>
