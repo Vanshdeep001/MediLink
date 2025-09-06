@@ -69,7 +69,8 @@ export default function PatientDashboard() {
     setPrescriptions(userPrescriptions);
 
     const remindersString = localStorage.getItem('reminders_list');
-    const allReminders = remindersString ? JSON.parse(localStorage.getItem('reminders_list') || '[]').filter((r: Reminder) => r.patientName === userName);
+    const allReminders = remindersString ? JSON.parse(remindersString) : [];
+    const userReminders = allReminders.filter((r: Reminder) => r.patientName === userName);
     setReminders(userReminders);
   };
 
@@ -125,7 +126,7 @@ export default function PatientDashboard() {
           
           <div className="relative text-center py-16 md:py-24 animate-fade-in-down overflow-hidden rounded-lg">
              <Image
-                src="https://picsum.photos/1200/400"
+                src="/patient.jpg"
                 alt="Patient background"
                 fill
                 className="object-cover object-center z-0 opacity-20"
