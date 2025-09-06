@@ -27,11 +27,24 @@
     "phoneLabel": "फ़ोन नंबर",
     "dobLabel": "जन्म की तारीख",
     "dobPlaceholder": "एक तारीख चुनें",
+    "passwordLabel": "पासवर्ड",
+    "confirmPasswordLabel": "पासवर्ड की पुष्टि कीजिये",
     "submitButton": "पंजीकरण करें और जारी रखें",
     "toastSuccessTitle": "पंजीकरण सफल",
     "toastSuccessDescription": "कृपया अपनी भूमिका चुनें।",
     "toastErrorTitle": "पंजीकरण विफल",
-    "toastErrorDescription": "एक अप्रत्याशित त्रुटि हुई।"
+    "toastErrorDescription": "एक अप्रत्याशित त्रुटि हुई।",
+    "tabs": {
+      "register": "नया पंजीकरण",
+      "login": "लॉग इन करें"
+    },
+    "login": {
+      "loginButton": "अपने खाते में लॉग इन करें",
+      "toastSuccessTitle": "लॉगिन सफल",
+      "toastSuccessDescription": "आपके डैशबोर्ड पर पुनः निर्देशित किया जा रहा है...",
+      "toastErrorTitle": "लॉगिन विफल",
+      "toastErrorDescription": "अमान्य विवरण, कृपया पुनः प्रयास करें।"
+    }
   },
   "roleSelection": {
     "areYou": "क्या आप",
@@ -74,7 +87,18 @@
     "confirmPasswordLabel": "पासवर्ड की पुष्टि कीजिये",
     "submitButton": "सत्यापन के लिए जमा करें",
     "toastTitle": "पंजीकरण प्रस्तुत किया गया",
-    "toastDescription": "आपकी प्रोफ़ाइल समीक्षाधीन है। सत्यापन होने पर हम आपको सूचित करेंगे।"
+    "toastDescription": "आपकी प्रोफ़ाइल समीक्षाधीन है। सत्यापन होने पर हम आपको सूचित करेंगे।",
+    "tabs": {
+      "register": "नया पंजीकरण",
+      "login": "लॉग इन करें"
+    },
+    "login": {
+      "loginButton": "अपने खाते में लॉग इन करें",
+      "toastSuccessTitle": "लॉगिन सफल",
+      "toastSuccessDescription": "आपके डैशबोर्ड पर पुनः निर्देशित किया जा रहा है...",
+      "toastErrorTitle": "लॉगिन विफल",
+      "toastErrorDescription": "अमान्य विवरण, कृपया पुनः प्रयास करें।"
+    }
   },
   "pharmacyRegForm": {
     "title": "फार्मेसी में शामिल होना",

@@ -27,11 +27,24 @@
     "phoneLabel": "ਫੋਨ ਨੰਬਰ",
     "dobLabel": "ਜਨਮ ਤਾਰੀਖ",
     "dobPlaceholder": "ਇੱਕ ਮਿਤੀ ਚੁਣੋ",
+    "passwordLabel": "ਪਾਸਵਰਡ",
+    "confirmPasswordLabel": "ਪਾਸਵਰਡ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ",
     "submitButton": "ਰਜਿਸਟਰ ਕਰੋ ਅਤੇ ਜਾਰੀ ਰੱਖੋ",
     "toastSuccessTitle": "ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਸਫਲ",
     "toastSuccessDescription": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਭੂਮਿਕਾ ਚੁਣੋ।",
     "toastErrorTitle": "ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਅਸਫਲ",
-    "toastErrorDescription": "ਇੱਕ ਅਚਾਨਕ ਗਲਤੀ ਆਈ।"
+    "toastErrorDescription": "ਇੱਕ ਅਚਾਨਕ ਗਲਤੀ ਆਈ।",
+    "tabs": {
+      "register": "ਨਵੀਂ ਰਜਿਸਟ੍ਰੇਸ਼ਨ",
+      "login": "ਲਾਗਿਨ ਕਰੋ"
+    },
+    "login": {
+      "loginButton": "ਆਪਣੇ ਖਾਤੇ ਵਿੱਚ ਲਾਗਇਨ ਕਰੋ",
+      "toastSuccessTitle": "ਲੌਗਇਨ ਸਫਲ",
+      "toastSuccessDescription": "ਤੁਹਾਨੂੰ ਤੁਹਾਡੇ ਡੈਸ਼ਬੋਰਡ 'ਤੇ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ...",
+      "toastErrorTitle": "ਲੌਗਇਨ ਅਸਫਲ",
+      "toastErrorDescription": "ਅਵੈਧ ਵੇਰਵੇ, ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"
+    }
   },
   "roleSelection": {
     "areYou": "ਤੁਸੀਂ ਕੀ ਹੋ",
@@ -74,7 +87,18 @@
     "confirmPasswordLabel": "ਪਾਸਵਰਡ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ",
     "submitButton": "ਤਸਦੀਕ ਲਈ ਜਮ੍ਹਾਂ ਕਰੋ",
     "toastTitle": "ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਜਮ੍ਹਾਂ ਕੀਤੀ ਗਈ",
-    "toastDescription": "ਤੁਹਾਡੀ ਪ੍ਰੋਫਾਈਲ ਸਮੀਖਿਆ ਅਧੀਨ ਹੈ। ਤਸਦੀਕ ਹੋਣ 'ਤੇ ਅਸੀਂ ਤੁਹਾਨੂੰ ਸੂਚਿਤ ਕਰਾਂਗੇ।"
+    "toastDescription": "ਤੁਹਾਡੀ ਪ੍ਰੋਫਾਈਲ ਸਮੀਖਿਆ ਅਧੀਨ ਹੈ। ਤਸਦੀਕ ਹੋਣ 'ਤੇ ਅਸੀਂ ਤੁਹਾਨੂੰ ਸੂਚਿਤ ਕਰਾਂਗੇ।",
+    "tabs": {
+      "register": "ਨਵੀਂ ਰਜਿਸਟ੍ਰੇਸ਼ਨ",
+      "login": "ਲਾਗਿਨ ਕਰੋ"
+    },
+    "login": {
+      "loginButton": "ਆਪਣੇ ਖਾਤੇ ਵਿੱਚ ਲਾਗਇਨ ਕਰੋ",
+      "toastSuccessTitle": "ਲੌਗਇਨ ਸਫਲ",
+      "toastSuccessDescription": "ਤੁਹਾਨੂੰ ਤੁਹਾਡੇ ਡੈਸ਼ਬੋਰਡ 'ਤੇ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ...",
+      "toastErrorTitle": "ਲੌਗਇਨ ਅਸਫਲ",
+      "toastErrorDescription": "ਅਵੈਧ ਵੇਰਵੇ, ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"
+    }
   },
   "pharmacyRegForm": {
     "title": "ਫਾਰਮੇਸੀ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣਾ",

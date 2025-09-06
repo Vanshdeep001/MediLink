@@ -27,11 +27,24 @@
     "phoneLabel": "Phone Number",
     "dobLabel": "Date of Birth",
     "dobPlaceholder": "Pick a date",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
     "submitButton": "Register & Continue",
     "toastSuccessTitle": "Registration Successful",
     "toastSuccessDescription": "Please select your role.",
     "toastErrorTitle": "Registration Failed",
-    "toastErrorDescription": "An unexpected error occurred."
+    "toastErrorDescription": "An unexpected error occurred.",
+    "tabs": {
+      "register": "New Registration",
+      "login": "Login"
+    },
+    "login": {
+      "loginButton": "Login to your Account",
+      "toastSuccessTitle": "Login Successful",
+      "toastSuccessDescription": "Redirecting to your dashboard...",
+      "toastErrorTitle": "Login Failed",
+      "toastErrorDescription": "Invalid details, please try again."
+    }
   },
   "roleSelection": {
     "areYou": "Are you",
@@ -74,7 +87,18 @@
     "confirmPasswordLabel": "Confirm Password",
     "submitButton": "Submit for Verification",
     "toastTitle": "Registration Submitted",
-    "toastDescription": "Your profile is under review. We will notify you upon verification."
+    "toastDescription": "Your profile is under review. We will notify you upon verification.",
+    "tabs": {
+      "register": "New Registration",
+      "login": "Login"
+    },
+    "login": {
+      "loginButton": "Login to your Account",
+      "toastSuccessTitle": "Login Successful",
+      "toastSuccessDescription": "Redirecting to your dashboard...",
+      "toastErrorTitle": "Login Failed",
+      "toastErrorDescription": "Invalid details, please try again."
+    }
   },
   "pharmacyRegForm": {
     "title": "Joining Pharmacy",
