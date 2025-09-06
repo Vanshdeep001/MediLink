@@ -13,9 +13,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, AlertTriangle, Lightbulb, ListChecks, Sparkles, HeartPulse } from 'lucide-react';
+import { Loader2, AlertTriangle, Lightbulb, ListChecks, Sparkles, HeartPulse, BrainCircuit } from 'lucide-react';
 import { LanguageContext } from '@/context/language-context';
 import { symptomData } from '@/lib/symptom-data';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 
 const formSchema = z.object({
   mainSymptom: z.string().min(3, { message: 'Please describe your symptom in more detail.' }),
@@ -91,17 +92,7 @@ export function SymptomChecker() {
   }
 
   return (
-    <>
-      <CardHeader>
-        <div className="flex items-center gap-3">
-            <HeartPulse className="w-8 h-8 text-primary" />
-            <div>
-                <CardTitle>{translations.patientDashboard.symptomChecker}</CardTitle>
-                <CardDescription>{translations.patientDashboard.symptomCheckerDesc}</CardDescription>
-            </div>
-        </div>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 md:p-8">
         <AnimatePresence mode="wait">
           {!analysis && !isPending && !error && (
             <motion.div
@@ -112,7 +103,7 @@ export function SymptomChecker() {
               transition={{ duration: 0.3 }}
             >
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
                       control={form.control}
                       name="mainSymptom"
@@ -120,13 +111,13 @@ export function SymptomChecker() {
                         <FormItem>
                           <FormLabel>Main Symptom</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="Describe your main symptom in detail…" {...field} />
+                            <Textarea rows={4} placeholder="Describe your main symptom in detail…" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                      <FormField
                       control={form.control}
                       name="bodyPart"
@@ -174,18 +165,32 @@ export function SymptomChecker() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Severity Level</FormLabel>
-                             <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select severity" />
-                                </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="Mild">Mild</SelectItem>
-                                    <SelectItem value="Moderate">Moderate</SelectItem>
-                                    <SelectItem value="Severe">Severe</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <FormControl>
+                               <RadioGroup
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                                className="flex gap-4 pt-2"
+                                >
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl>
+                                    <RadioGroupItem value="Mild" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">Mild</FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl>
+                                    <RadioGroupItem value="Moderate" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">Moderate</FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl>
+                                    <RadioGroupItem value="Severe" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">Severe</FormLabel>
+                                </FormItem>
+                                </RadioGroup>
+                            </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -250,7 +255,7 @@ export function SymptomChecker() {
                       )}
                     />
 
-                  <Button type="submit" className="w-full" disabled={isPending}>
+                  <Button type="submit" className="w-full h-12" disabled={isPending}>
                     Analyze Symptoms
                   </Button>
                 </form>
@@ -263,7 +268,7 @@ export function SymptomChecker() {
               key="loading"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center justify-center text-center space-y-4 py-8"
+              className="flex flex-col items-center justify-center text-center space-y-4 py-8 min-h-[400px]"
             >
               <Loader2 className="w-12 h-12 animate-spin text-primary" />
               <p className="font-semibold text-muted-foreground">Analyzing your symptoms...</p>
@@ -276,7 +281,7 @@ export function SymptomChecker() {
               key="error"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center justify-center text-center space-y-4 py-8 text-destructive"
+              className="flex flex-col items-center justify-center text-center space-y-4 py-8 min-h-[400px] text-destructive"
             >
                 <AlertTriangle className="w-12 h-12" />
                 <p className="font-semibold">Analysis Failed</p>
@@ -290,7 +295,7 @@ export function SymptomChecker() {
               key="analysis"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="space-y-6"
+              className="space-y-6 min-h-[400px]"
             >
                 <div className="text-center">
                     <Sparkles className="w-10 h-10 text-primary/80 mx-auto mb-2" />
@@ -319,11 +324,10 @@ export function SymptomChecker() {
                    </div>
                 </div>
 
-                <Button onClick={resetChecker} className="w-full">Start a New Check</Button>
+                <Button onClick={resetChecker} className="w-full h-12">Start a New Check</Button>
             </motion.div>
           )}
         </AnimatePresence>
       </CardContent>
-    </>
   );
 }
