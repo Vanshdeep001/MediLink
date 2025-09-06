@@ -10,7 +10,6 @@ import { BrainCircuit, Stethoscope, Pill, Truck, BellRing, Siren, ArrowRight } f
 import { LanguageContext } from '@/context/language-context';
 import { FadeIn } from '@/components/fade-in';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
 
 export default function ServicesPage() {
   const { translations } = useContext(LanguageContext);
