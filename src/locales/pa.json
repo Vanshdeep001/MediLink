@@ -220,7 +220,19 @@
     "uploadReport": "ਨਵੀਂ ਰਿਪੋਰਟ ਅਪਲੋਡ ਕਰੋ",
     "yourHealthData": "ਸਿਹਤ ਡਾਟਾ",
     "yourHealthDataDesc": "ਆਪਣੇ ਮੁੱਢਲੇ ਸਿਹਤ ਮਾਪਦੰਡ ਵੇਖੋ।",
-    "healthDataPlaceholder": "ਪਹਿਨਣਯੋਗ ਚੀਜ਼ਾਂ ਅਤੇ ਮੈਨੂਅਲ ਇਨਪੁਟਸ ਤੋਂ ਸਿਹਤ ਡੇਟਾ ਭਵਿੱਖ ਵਿੱਚ ਇੱਥੇ ਉਪਲਬਧ ਹੋਵੇਗਾ।"
+    "healthDataPlaceholder": "ਪਹਿਨਣਯੋਗ ਚੀਜ਼ਾਂ ਅਤੇ ਮੈਨੂਅਲ ਇਨਪੁਟਸ ਤੋਂ ਸਿਹਤ ਡੇਟਾ ਭਵਿੱਖ ਵਿੱਚ ਇੱਥੇ ਉਪਲਬਧ ਹੋਵੇਗਾ।",
+    "reminders": {
+      "tabTitle": "ਰੀਮਾਈਂਡਰ",
+      "title": "ਸਿਹਤ ਰੀਮਾਈਂਡਰ",
+      "description": "ਕਸਟਮ ਰੀਮਾਈਂਡਰ ਸ਼ਾਮਲ ਕਰੋ ਜਾਂ ਆਪਣੇ ਨੁਸਖਿਆਂ ਤੋਂ ਸਵੈਚਲਿਤ ਵੇਖੋ।",
+      "placeholder": "ਜਿਵੇਂ ਕਿ, ਕੱਲ੍ਹ ਸਵੇਰੇ 10 ਵਜੇ ਡਾਕਟਰ ਨਾਲ ਫਾਲੋ-ਅੱਪ",
+      "add": "ਸ਼ਾਮਲ ਕਰੋ",
+      "successTitle": "ਰੀਮਾਈਂਡਰ ਸ਼ਾਮਲ ਕੀਤਾ ਗਿਆ",
+      "successDesc": "ਤੁਹਾਡਾ ਨਵਾਂ ਰੀਮਾਈਂਡਰ ਸੁਰੱਖਿਅਤ ਹੋ ਗਿਆ ਹੈ।",
+      "deletedTitle": "ਰੀਮਾਈਂਡਰ ਮਿਟਾਇਆ ਗਿਆ",
+      "take": "ਲਓ",
+      "from": "ਤੋਂ"
+    }
   },
   "doctorDashboard": {
     "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ,",
@@ -260,7 +272,26 @@
     "noPharmaciesFound": "ਤੁਹਾਡੇ ਕਲੀਨਿਕ ਦੇ ਖੇਤਰ ਵਿੱਚ ਕੋਈ ਫਾਰਮੇਸੀ ਨਹੀਂ ਮਿਲੀ।",
     "patientReports": "ਮਰੀਜ਼ਾਂ ਦੀਆਂ ਰਿਪੋਰਟਾਂ",
     "patientReportsDesc": "ਅਪਲੋਡ ਕੀਤੀਆਂ ਮਰੀਜ਼ਾਂ ਦੀਆਂ ਰਿਪੋਰਟਾਂ ਦੀ ਸਮੀਖਿਆ ਅਤੇ ਪ੍ਰਬੰਧਨ ਕਰੋ।",
-    "reportsPlaceholder": "ਸਮੀਖਿਆ ਲਈ ਬਕਾਇਆ ਮਰੀਜ਼ਾਂ ਦੀਆਂ ਰਿਪੋਰਟਾਂ ਦੀ ਸੂਚੀ ਇੱਥੇ ਦਿਖਾਈ ਦੇਵੇਗੀ।"
+    "reportsPlaceholder": "ਸਮੀਖਿਆ ਲਈ ਬਕਾਇਆ ਮਰੀਜ਼ਾਂ ਦੀਆਂ ਰਿਪੋਰਟਾਂ ਦੀ ਸੂਚੀ ਇੱਥੇ ਦਿਖਾਈ ਦੇਵੇਗੀ।",
+    "prescriptions": {
+      "tabTitle": "ਨੁਸਖ਼ੇ",
+      "title": "ਇੱਕ ਡਿਜੀਟਲ ਨੁਸਖ਼ਾ ਲਿਖੋ",
+      "description": "ਇੱਕ ਨਵਾਂ ਨੁਸਖ਼ਾ ਬਣਾਉਣ ਲਈ ਇੱਕ ਮਰੀਜ਼ ਦੀ ਚੋਣ ਕਰੋ ਅਤੇ ਦਵਾਈਆਂ ਸ਼ਾਮਲ ਕਰੋ।",
+      "selectPatient": "ਇੱਕ ਮਰੀਜ਼ ਦੀ ਚੋਣ ਕਰੋ",
+      "patientPlaceholder": "ਆਪਣੀ ਸੂਚੀ ਵਿੱਚੋਂ ਇੱਕ ਮਰੀਜ਼ ਚੁਣੋ...",
+      "medicineName": "ਦਵਾਈ ਦਾ ਨਾਮ",
+      "medicinePlaceholder": "ਜਿਵੇਂ ਕਿ, ਪੈਰਾਸੀਟਾਮੋਲ 500 ਮਿਲੀਗ੍ਰਾਮ",
+      "dosage": "ਖੁਰਾਕ",
+      "dosagePlaceholder": "ਜਿਵੇਂ ਕਿ, 1 ਗੋਲੀ ਦਿਨ ਵਿੱਚ ਦੋ ਵਾਰ",
+      "duration": "ਅਵਧੀ",
+      "durationPlaceholder": "ਜਿਵੇਂ ਕਿ, 5 ਦਿਨ",
+      "addMedicine": "ਇੱਕ ਹੋਰ ਦਵਾਈ ਸ਼ਾਮਲ ਕਰੋ",
+      "savePrescription": "ਨੁਸਖ਼ਾ ਸੁਰੱਖਿਅਤ ਕਰੋ ਅਤੇ ਭੇਜੋ",
+      "validationErrorTitle": "ਅਧੂਰਾ ਨੁਸਖ਼ਾ",
+      "validationErrorDesc": "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਮਰੀਜ਼ ਦੀ ਚੋਣ ਕਰੋ ਅਤੇ ਸਾਰੇ ਦਵਾਈ ਦੇ ਵੇਰਵੇ ਭਰੋ।",
+      "successTitle": "ਨੁਸਖ਼ਾ ਸੁਰੱਖਿਅਤ ਕੀਤਾ ਗਿਆ",
+      "successDesc": "ਡਿਜੀਟਲ ਨੁਸਖ਼ਾ ਭੇਜਿਆ ਗਿਆ ਹੈ"
+    }
   },
   "pharmacyDashboard": {
     "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ,",
@@ -281,6 +312,7 @@
     "prescriptionQueueDesc": "ਮਰੀਜ਼ਾਂ ਅਤੇ ਡਾਕਟਰਾਂ ਤੋਂ ਆਉਣ ਵਾਲੇ ਨੁਸਖ਼ਿਆਂ ਨੂੰ ਵੇਖੋ ਅਤੇ ਪ੍ਰਕਿਰਿਆ ਕਰੋ।",
     "searchPlaceholder": "ਮਰੀਜ਼ ਦੇ ਨਾਮ ਜਾਂ ਨੁਸਖ਼ੇ ਦੀ ਆਈਡੀ ਦੁਆਰਾ ਖੋਜ ਕਰੋ...",
     "verifyButton": "ਤਸਦੀਕ ਕਰੋ ਅਤੇ ਪ੍ਰਕਿਰਿਆ ਕਰੋ",
+    "noPrescriptions": "ਕਤਾਰ ਵਿੱਚ ਕੋਈ ਨਵਾਂ ਨੁਸਖ਼ਾ ਨਹੀਂ ਹੈ।",
     "manageInventory": "ਵਸਤੂ-ਸੂਚੀ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ",
     "manageInventoryDesc": "ਆਪਣੇ ਦਵਾਈ ਦੇ ਸਟਾਕ ਅਤੇ ਮਿਆਦ ਪੁੱਗਣ ਦੀਆਂ ਤਾਰੀਖਾਂ 'ਤੇ ਨਜ਼ਰ ਰੱਖੋ।",
     "addMedicine": "ਦਵਾਈ ਸ਼ਾਮਲ ਕਰੋ",
@@ -415,5 +447,13 @@
       "titleMain": "ਫਾਰਮੇਸੀ",
       "titleCursive": "ਪੋਰਟਲ"
     }
+  },
+  "notifications": {
+    "title": "ਸੂਚਨਾਵਾਂ",
+    "noNotifications": "ਕੋਈ ਨਵੀਂ ਸੂਚਨਾ ਨਹੀਂ।",
+    "newPrescriptionPatient": "ਤੁਹਾਡੇ ਕੋਲ ਤੋਂ ਇੱਕ ਨਵਾਂ ਨੁਸਖਾ ਹੈ",
+    "newPrescriptionPharmacy": "ਲਈ ਨਵਾਂ ਨੁਸਖਾ ਪ੍ਰਾਪਤ ਹੋਇਆ"
   }
 }
+
+    

@@ -1,31 +1,65 @@
 
 'use client';
 
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import ThemeToggleButton from '../ui/theme-toggle-button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, X, Languages, Siren, Check } from 'lucide-react';
+import { Menu, X, Languages, Siren, Check, Bell } from 'lucide-react';
 import Link from 'next/link';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { usePathname } from 'next/navigation';
 import { SOSButtonDialog } from '../sos-button';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { LanguageContext, Language } from '@/context/language-context';
+import type { Notification } from '@/lib/types';
+import { Badge } from '../ui/badge';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const showSOSButton = pathname === '/patient';
   const { toast } = useToast();
   const { language, setLanguage, translations } = useContext(LanguageContext);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  const isDashboard = pathname.startsWith('/patient') || pathname.startsWith('/doctor') || pathname.startsWith('/pharmacy');
+
+  useEffect(() => {
+    const userString = localStorage.getItem('temp_user');
+    if (userString) {
+      setCurrentUser(JSON.parse(userString));
+    }
+    
+    if (isDashboard) {
+      const interval = setInterval(loadNotifications, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isDashboard, pathname]);
+
+  const loadNotifications = () => {
+    const notifsString = localStorage.getItem('notifications');
+    if (notifsString) {
+      const allNotifs = JSON.parse(notifsString);
+      const userRole = currentUser?.role;
+      const userName = currentUser?.fullName || currentUser?.pharmacyName;
+      
+      const filteredNotifs = allNotifs.filter((n: Notification) => {
+        if (n.for === 'pharmacy' && userRole === 'pharmacy') return true;
+        if (n.for === 'patient' && userRole === 'patient' && n.patientName === userName) return true;
+        return false;
+      });
+      setNotifications(filteredNotifs.reverse());
+    }
+  };
 
   const navLinks = [
     { href: "/services", key: "services" },
@@ -47,6 +81,7 @@ export function Header() {
     });
   };
 
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <header className="fixed top-0 z-50 w-full bg-background/80 backdrop-blur-sm border-b border-border/40 animate-fade-in-down">
@@ -70,6 +105,29 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {isDashboard && (
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className='h-9 w-9 relative'>
+                  <Bell className="h-4 w-4" />
+                  {unreadCount > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center">{unreadCount}</Badge>}
+                  <span className="sr-only">Notifications</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80">
+                  <div className="p-2 font-semibold">{translations.notifications.title}</div>
+                  <DropdownMenuSeparator />
+                  {notifications.length > 0 ? notifications.map(n => (
+                     <DropdownMenuItem key={n.id} className="whitespace-normal">
+                       {n.message}
+                     </DropdownMenuItem>
+                  )) : (
+                     <DropdownMenuItem disabled>{translations.notifications.noNotifications}</DropdownMenuItem>
+                  )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon" className='h-9 w-9'>
@@ -88,7 +146,7 @@ export function Header() {
           </DropdownMenu>
           <ThemeToggleButton />
           
-          {showSOSButton && (
+          {pathname === '/patient' && (
             <SOSButtonDialog>
               <Button variant="destructive" size="icon" className="hidden md:inline-flex h-9 w-9">
                 <Siren className="h-4 w-4" />
@@ -132,3 +190,5 @@ export function Header() {
     </header>
   );
 }
+
+    

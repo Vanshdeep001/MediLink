@@ -7,40 +7,27 @@ import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Pill, FileText, Heart, PlusCircle, Upload, Search, ChevronRight, BrainCircuit, BellRing, Video, Building, Stethoscope, MapPin, Phone } from "lucide-react";
+import { Calendar, Pill, FileText, Heart, PlusCircle, Upload, Search, ChevronRight, BrainCircuit, BellRing, Video, Building, Stethoscope, MapPin, Phone, Trash2 } from "lucide-react";
 import TextFlipper from "@/components/ui/text-effect-flipper";
 import { LanguageContext } from '@/context/language-context';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-// Mock data structures - in a real app, these would be defined in a types file
-interface Doctor {
-  fullName: string;
-  specialization: string;
-  address: string;
-  city: string;
-  pinCode: string;
-  phone: string;
-}
-
-interface Pharmacy {
-  pharmacyName: string;
-  address: string;
-  city: string;
-  pinCode: string;
-  phone: string;
-}
+import { useToast } from '@/hooks/use-toast';
+import type { Doctor, Pharmacy, Prescription, Reminder } from '@/lib/types';
 
 export default function PatientDashboard() {
   const { translations } = useContext(LanguageContext);
+  const { toast } = useToast();
   const [userName, setUserName] = useState('');
-  const [userLocation, setUserLocation] = useState({ city: '', pinCode: '' });
   
   const [allDoctors, setAllDoctors] = useState<Doctor[]>([]);
   const [allPharmacies, setAllPharmacies] = useState<Pharmacy[]>([]);
   
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
   const [filteredPharmacies, setFilteredPharmacies] = useState<Pharmacy[]>([]);
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [newReminder, setNewReminder] = useState('');
 
   const [specializationFilter, setSpecializationFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('');
@@ -52,7 +39,6 @@ export default function PatientDashboard() {
       try {
         const user = JSON.parse(userString);
         setUserName(user.fullName || 'Patient');
-        setUserLocation({ city: user.city || '', pinCode: user.pinCode || '' });
       } catch (e) {
         setUserName('Patient');
       }
@@ -68,20 +54,51 @@ export default function PatientDashboard() {
     const pharmaciesString = localStorage.getItem('pharmacies_list');
     const pharmacies = pharmaciesString ? JSON.parse(pharmaciesString) : [];
     setAllPharmacies(pharmacies);
-    
-    // Initially filter pharmacies by user's location if available
-    if (userString) {
-       const user = JSON.parse(userString);
-       if(user.pinCode) {
-         setFilteredPharmacies(pharmacies.filter((p: Pharmacy) => p.pinCode === user.pinCode));
-       } else {
-         setFilteredPharmacies(pharmacies);
-       }
-    } else {
-       setFilteredPharmacies(pharmacies);
-    }
+    setFilteredPharmacies(pharmacies);
 
-  }, []);
+    loadPrescriptionsAndReminders();
+  }, [userName]);
+
+  const loadPrescriptionsAndReminders = () => {
+    if (!userName) return;
+    const prescriptionsString = localStorage.getItem('prescriptions_list');
+    const allPrescriptions = prescriptionsString ? JSON.parse(prescriptionsString) : [];
+    const userPrescriptions = allPrescriptions.filter((p: Prescription) => p.patientName === userName);
+    setPrescriptions(userPrescriptions);
+
+    const remindersString = localStorage.getItem('reminders_list');
+    const allReminders = remindersString ? JSON.parse(remindersString) : [];
+    const userReminders = allReminders.filter((r: Reminder) => r.patientName === userName);
+    setReminders(userReminders);
+  };
+
+  const handleAddReminder = () => {
+    if (!newReminder.trim()) return;
+    const newReminderObj: Reminder = {
+      id: `REM-${Date.now()}`,
+      patientName: userName,
+      text: newReminder,
+      type: 'custom',
+    };
+    const updatedReminders = [...reminders, newReminderObj];
+    setReminders(updatedReminders);
+    localStorage.setItem('reminders_list', JSON.stringify([...(JSON.parse(localStorage.getItem('reminders_list') || '[]').filter((r: Reminder) => r.patientName !== userName)), ...updatedReminders]));
+    setNewReminder('');
+    toast({
+      title: translations.patientDashboard.reminders.successTitle,
+      description: translations.patientDashboard.reminders.successDesc,
+    });
+  };
+
+  const handleDeleteReminder = (id: string) => {
+    const updatedReminders = reminders.filter(r => r.id !== id);
+    setReminders(updatedReminders);
+    localStorage.setItem('reminders_list', JSON.stringify([...(JSON.parse(localStorage.getItem('reminders_list') || '[]').filter((r: Reminder) => r.patientName !== userName)), ...updatedReminders]));
+     toast({
+      title: translations.patientDashboard.reminders.deletedTitle,
+      variant: "destructive"
+    });
+  }
 
   useEffect(() => {
     let doctors = allDoctors;
@@ -190,8 +207,9 @@ export default function PatientDashboard() {
 
           <div className="animate-content-fade-in" style={{ animationDelay: '1s' }}>
             <Tabs defaultValue="appointments" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="appointments">{translations.patientDashboard.appointments}</TabsTrigger>
+                <TabsTrigger value="reminders">{translations.patientDashboard.reminders.tabTitle}</TabsTrigger>
                 <TabsTrigger value="doctors">{translations.patientDashboard.doctors}</TabsTrigger>
                 <TabsTrigger value="pharmacies">{translations.patientDashboard.pharmacies}</TabsTrigger>
                 <TabsTrigger value="reports">{translations.patientDashboard.reports}</TabsTrigger>
@@ -222,6 +240,41 @@ export default function PatientDashboard() {
                         <ChevronRight className="w-5 h-5" />
                       </Button>
                     </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+               <TabsContent value="reminders" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{translations.patientDashboard.reminders.title}</CardTitle>
+                    <CardDescription>{translations.patientDashboard.reminders.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                     <div className="flex gap-2">
+                        <Input value={newReminder} onChange={(e) => setNewReminder(e.target.value)} placeholder={translations.patientDashboard.reminders.placeholder} />
+                        <Button onClick={handleAddReminder}>
+                           <PlusCircle className="mr-2 h-5 w-5" /> {translations.patientDashboard.reminders.add}
+                        </Button>
+                     </div>
+                     <div className="space-y-2">
+                       {prescriptions.map(presc => presc.medications.map((med, index) => (
+                           <div key={`${presc.id}-${index}`} className="flex justify-between items-center bg-blue-100/50 dark:bg-blue-900/20 p-3 rounded-lg">
+                              <p className="font-medium text-sm">
+                                {translations.patientDashboard.reminders.take} <span className="text-primary">{med.name}</span> ({med.dosage}) - {med.duration}
+                              </p>
+                              <p className="text-xs text-muted-foreground">{translations.patientDashboard.reminders.from} Dr. {presc.doctorName}</p>
+                           </div>
+                       )))}
+                       {reminders.map(rem => (
+                         <div key={rem.id} className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
+                            <p className="font-medium text-sm">{rem.text}</p>
+                            <Button variant="ghost" size="icon" onClick={() => handleDeleteReminder(rem.id)}>
+                                <Trash2 className="w-4 h-4 text-destructive" />
+                            </Button>
+                         </div>
+                       ))}
+                     </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -330,3 +383,5 @@ export default function PatientDashboard() {
     </div>
   );
 }
+
+    

@@ -220,7 +220,19 @@
     "uploadReport": "Upload New Report",
     "yourHealthData": "Health Data",
     "yourHealthDataDesc": "View your basic health metrics.",
-    "healthDataPlaceholder": "Health data from wearables and manual inputs will be available here in the future."
+    "healthDataPlaceholder": "Health data from wearables and manual inputs will be available here in the future.",
+    "reminders": {
+      "tabTitle": "Reminders",
+      "title": "Health Reminders",
+      "description": "Add custom reminders or view automated ones from your prescriptions.",
+      "placeholder": "e.g., Doctor follow-up tomorrow at 10 AM",
+      "add": "Add",
+      "successTitle": "Reminder Added",
+      "successDesc": "Your new reminder has been saved.",
+      "deletedTitle": "Reminder Deleted",
+      "take": "Take",
+      "from": "from"
+    }
   },
   "doctorDashboard": {
     "welcome": "Welcome back,",
@@ -260,7 +272,26 @@
     "noPharmaciesFound": "No pharmacies found in your clinic's area.",
     "patientReports": "Patient Reports",
     "patientReportsDesc": "Review and manage uploaded patient reports.",
-    "reportsPlaceholder": "A list of patient reports pending review will appear here."
+    "reportsPlaceholder": "A list of patient reports pending review will appear here.",
+    "prescriptions": {
+      "tabTitle": "Prescriptions",
+      "title": "Write a Digital Prescription",
+      "description": "Select a patient and add medications to create a new prescription.",
+      "selectPatient": "Select a Patient",
+      "patientPlaceholder": "Choose a patient from your list...",
+      "medicineName": "Medicine Name",
+      "medicinePlaceholder": "e.g., Paracetamol 500mg",
+      "dosage": "Dosage",
+      "dosagePlaceholder": "e.g., 1 tablet twice a day",
+      "duration": "Duration",
+      "durationPlaceholder": "e.g., 5 days",
+      "addMedicine": "Add Another Medicine",
+      "savePrescription": "Save & Send Prescription",
+      "validationErrorTitle": "Incomplete Prescription",
+      "validationErrorDesc": "Please select a patient and fill all medication details.",
+      "successTitle": "Prescription Saved",
+      "successDesc": "The digital prescription has been sent to"
+    }
   },
   "pharmacyDashboard": {
     "welcome": "Welcome back,",
@@ -281,6 +312,7 @@
     "prescriptionQueueDesc": "View and process incoming prescriptions from patients and doctors.",
     "searchPlaceholder": "Search by patient name or prescription ID...",
     "verifyButton": "Verify & Process",
+    "noPrescriptions": "No new prescriptions in the queue.",
     "manageInventory": "Manage Inventory",
     "manageInventoryDesc": "Keep track of your medicine stock and expiry dates.",
     "addMedicine": "Add Medicine",
@@ -415,5 +447,13 @@
       "titleMain": "Pharmacy",
       "titleCursive": "Portal"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "noNotifications": "No new notifications.",
+    "newPrescriptionPatient": "You have a new prescription from",
+    "newPrescriptionPharmacy": "New prescription received for"
   }
 }
+
+    

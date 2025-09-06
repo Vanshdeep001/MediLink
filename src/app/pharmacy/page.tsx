@@ -10,10 +10,12 @@ import { ClipboardList, IndianRupee, Archive, Users, PlusCircle, Search, Filter,
 import TextFlipper from "@/components/ui/text-effect-flipper";
 import { Input } from "@/components/ui/input";
 import { LanguageContext } from '@/context/language-context';
+import type { Prescription } from '@/lib/types';
 
 export default function PharmacyDashboard() {
   const { translations } = useContext(LanguageContext);
   const [pharmacyName, setPharmacyName] = useState('');
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
 
   useEffect(() => {
     // In a real app, you'd fetch this from a user session or context
@@ -29,6 +31,22 @@ export default function PharmacyDashboard() {
     } else {
       setPharmacyName('Pharmacy');
     }
+
+    const prescriptionsString = localStorage.getItem('prescriptions_list');
+    if (prescriptionsString) {
+      setPrescriptions(JSON.parse(prescriptionsString));
+    }
+    
+    // Periodically check for new prescriptions
+    const interval = setInterval(() => {
+        const updatedPrescriptionsString = localStorage.getItem('prescriptions_list');
+        if (updatedPrescriptionsString) {
+            setPrescriptions(JSON.parse(updatedPrescriptionsString));
+        }
+    }, 5000); // Check every 5 seconds
+
+    return () => clearInterval(interval);
+
   }, []);
 
   return (
@@ -53,7 +71,7 @@ export default function PharmacyDashboard() {
                 <ClipboardList className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">12</div>
+                <div className="text-2xl font-bold">{prescriptions.length}</div>
                 <p className="text-xs text-muted-foreground">{translations.pharmacyDashboard.pendingVerification}</p>
               </CardContent>
             </Card>
@@ -109,21 +127,18 @@ export default function PharmacyDashboard() {
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       <Input placeholder={translations.pharmacyDashboard.searchPlaceholder} className="pl-10" />
                     </div>
-                    <div className="border rounded-lg p-4 space-y-4">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="font-semibold">#PR-1024 - Ravi Kumar</p>
-                          <p className="text-sm text-muted-foreground">Dr. Anjali Sharma</p>
+                     <div className="border rounded-lg p-4 space-y-4">
+                      {prescriptions.length > 0 ? prescriptions.map((presc) => (
+                        <div key={presc.id} className="flex justify-between items-center">
+                          <div>
+                            <p className="font-semibold">{presc.id} - {presc.patientName}</p>
+                            <p className="text-sm text-muted-foreground">Dr. {presc.doctorName}</p>
+                          </div>
+                          <Button>{translations.pharmacyDashboard.verifyButton}</Button>
                         </div>
-                        <Button>{translations.pharmacyDashboard.verifyButton}</Button>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="font-semibold">#PR-1023 - Priya Sharma</p>
-                          <p className="text-sm text-muted-foreground">Dr. Vikram Singh</p>
-                        </div>
-                        <Button>{translations.pharmacyDashboard.verifyButton}</Button>
-                      </div>
+                      )) : (
+                        <p className="text-center text-muted-foreground py-4">{translations.pharmacyDashboard.noPrescriptions}</p>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -233,3 +248,5 @@ export default function PharmacyDashboard() {
     </div>
   );
 }
+
+    

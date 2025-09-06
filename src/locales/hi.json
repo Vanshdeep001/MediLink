@@ -220,7 +220,19 @@
     "uploadReport": "नई रिपोर्ट अपलोड करें",
     "yourHealthData": "स्वास्थ्य डेटा",
     "yourHealthDataDesc": "अपने बुनियादी स्वास्थ्य मेट्रिक्स देखें।",
-    "healthDataPlaceholder": "पहनने योग्य उपकरणों और मैन्युअल इनपुट से स्वास्थ्य डेटा भविष्य में यहां उपलब्ध होगा।"
+    "healthDataPlaceholder": "पहनने योग्य उपकरणों और मैन्युअल इनपुट से स्वास्थ्य डेटा भविष्य में यहां उपलब्ध होगा।",
+    "reminders": {
+      "tabTitle": "अनुस्मारक",
+      "title": "स्वास्थ्य अनुस्मारक",
+      "description": "कस्टम अनुस्मारक जोड़ें या अपने नुस्खों से स्वचालित वाले देखें।",
+      "placeholder": "जैसे, डॉक्टर से कल सुबह 10 बजे फॉलो-अप",
+      "add": "जोड़ें",
+      "successTitle": "अनुस्मारक जोड़ा गया",
+      "successDesc": "आपका नया अनुस्मारक सहेजा गया है।",
+      "deletedTitle": "अनुस्मारक हटाया गया",
+      "take": "लें",
+      "from": "से"
+    }
   },
   "doctorDashboard": {
     "welcome": "वापसी पर स्वागत है,",
@@ -260,7 +272,26 @@
     "noPharmaciesFound": "आपके क्लिनिक के क्षेत्र में कोई फार्मेसी नहीं मिली।",
     "patientReports": "रोगी रिपोर्ट",
     "patientReportsDesc": "अपलोड की गई रोगी रिपोर्ट की समीक्षा और प्रबंधन करें।",
-    "reportsPlaceholder": "समीक्षा के लिए लंबित रोगी रिपोर्टों की एक सूची यहां दिखाई देगी।"
+    "reportsPlaceholder": "समीक्षा के लिए लंबित रोगी रिपोर्टों की एक सूची यहां दिखाई देगी।",
+     "prescriptions": {
+      "tabTitle": "नुस्खे",
+      "title": "एक डिजिटल नुस्खा लिखें",
+      "description": "एक नया नुस्खा बनाने के लिए एक रोगी का चयन करें और दवाएं जोड़ें।",
+      "selectPatient": "एक रोगी का चयन करें",
+      "patientPlaceholder": "अपनी सूची से एक रोगी चुनें...",
+      "medicineName": "दवा का नाम",
+      "medicinePlaceholder": "जैसे, पैरासिटामोल 500 मिलीग्राम",
+      "dosage": "खुराक",
+      "dosagePlaceholder": "जैसे, 1 गोली दिन में दो बार",
+      "duration": "अवधि",
+      "dosagePlaceholder": "जैसे, 5 दिन",
+      "addMedicine": "एक और दवा जोड़ें",
+      "savePrescription": "नुस्खा सहेजें और भेजें",
+      "validationErrorTitle": "अधूरा नुस्खा",
+      "validationErrorDesc": "कृपया एक रोगी का चयन करें और सभी दवा विवरण भरें।",
+      "successTitle": "नुस्खा सहेजा गया",
+      "successDesc": "डिजिटल नुस्खा भेजा गया है"
+    }
   },
   "pharmacyDashboard": {
     "welcome": "वापसी पर स्वागत है,",
@@ -281,6 +312,7 @@
     "prescriptionQueueDesc": "रोगियों और डॉक्टरों से आने वाले नुस्खों को देखें और संसाधित करें।",
     "searchPlaceholder": "रोगी के नाम या पर्चे आईडी द्वारा खोजें...",
     "verifyButton": "सत्यापित करें और संसाधित करें",
+    "noPrescriptions": "कतार में कोई नया नुस्खा नहीं है।",
     "manageInventory": "इन्वेंटरी प्रबंधित करें",
     "manageInventoryDesc": "अपनी दवा के स्टॉक और समाप्ति तिथियों पर नज़र रखें।",
     "addMedicine": "दवा जोड़ें",
@@ -415,5 +447,13 @@
       "titleMain": "फार्मेसी",
       "titleCursive": "पोर्टल"
     }
+  },
+  "notifications": {
+    "title": "सूचनाएं",
+    "noNotifications": "कोई नई सूचना नहीं।",
+    "newPrescriptionPatient": "आपके पास से एक नया नुस्खा है",
+    "newPrescriptionPharmacy": "के लिए नया नुस्खा प्राप्त हुआ"
   }
 }
+
+    

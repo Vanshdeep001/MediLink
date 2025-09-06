@@ -6,22 +6,24 @@ import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Users, FileText, HeartPulse, PlusCircle, MessageSquare, LineChart, ChevronRight, Building, MapPin, Phone } from "lucide-react";
+import { Calendar, Users, FileText, HeartPulse, PlusCircle, MessageSquare, LineChart, ChevronRight, Building, MapPin, Phone, ClipboardEdit, Trash2, Save } from "lucide-react";
 import TextFlipper from "@/components/ui/text-effect-flipper";
 import { LanguageContext } from '@/context/language-context';
-
-interface Pharmacy {
-  pharmacyName: string;
-  address: string;
-  city: string;
-  pinCode: string;
-  phone: string;
-}
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import type { Patient, Pharmacy, Prescription, Medication } from '@/lib/types';
 
 export default function DoctorDashboard() {
   const { translations } = useContext(LanguageContext);
+  const { toast } = useToast();
   const [doctorName, setDoctorName] = useState('');
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
+
+  // Prescription State
+  const [selectedPatient, setSelectedPatient] = useState('');
+  const [medications, setMedications] = useState<Medication[]>([{ name: '', dosage: '', duration: '' }]);
 
   useEffect(() => {
     const userString = localStorage.getItem('temp_user');
@@ -40,7 +42,84 @@ export default function DoctorDashboard() {
     if (pharmaciesString) {
       setPharmacies(JSON.parse(pharmaciesString));
     }
+
+    const patientsString = localStorage.getItem('users_list');
+    if (patientsString) {
+      setPatients(JSON.parse(patientsString).filter((u: any) => u.role === 'patient'));
+    }
   }, []);
+
+  const handleAddMedication = () => {
+    setMedications([...medications, { name: '', dosage: '', duration: '' }]);
+  };
+
+  const handleRemoveMedication = (index: number) => {
+    const newMedications = medications.filter((_, i) => i !== index);
+    setMedications(newMedications);
+  };
+  
+  const handleMedicationChange = (index: number, field: keyof Medication, value: string) => {
+    const newMedications = [...medications];
+    newMedications[index][field] = value;
+    setMedications(newMedications);
+  };
+  
+  const handleSavePrescription = () => {
+    if (!selectedPatient || medications.some(m => !m.name || !m.dosage || !m.duration)) {
+      toast({
+        title: translations.doctorDashboard.prescription.validationErrorTitle,
+        description: translations.doctorDashboard.prescription.validationErrorDesc,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const patientDetails = patients.find(p => p.fullName === selectedPatient);
+    if (!patientDetails) return;
+
+    const newPrescription: Prescription = {
+      id: `PRES-${Date.now()}`,
+      patientName: selectedPatient,
+      doctorName: doctorName,
+      date: new Date().toISOString().split('T')[0],
+      medications: medications,
+    };
+
+    const prescriptionsString = localStorage.getItem('prescriptions_list');
+    const allPrescriptions = prescriptionsString ? JSON.parse(prescriptionsString) : [];
+    allPrescriptions.push(newPrescription);
+    localStorage.setItem('prescriptions_list', JSON.stringify(allPrescriptions));
+    
+    // Add notifications
+    const notificationsString = localStorage.getItem('notifications');
+    const allNotifications = notificationsString ? JSON.parse(notificationsString) : [];
+    
+    // Notification for patient
+    allNotifications.push({
+      id: `notif-${Date.now()}-p`,
+      for: 'patient',
+      patientName: selectedPatient,
+      message: `${translations.notifications.newPrescriptionPatient} Dr. ${doctorName}`,
+      read: false
+    });
+    // Notification for all pharmacies
+     allNotifications.push({
+      id: `notif-${Date.now()}-ph`,
+      for: 'pharmacy',
+      message: `${translations.notifications.newPrescriptionPharmacy} ${selectedPatient}`,
+      read: false
+    });
+    localStorage.setItem('notifications', JSON.stringify(allNotifications));
+
+    toast({
+      title: translations.doctorDashboard.prescription.successTitle,
+      description: `${translations.doctorDashboard.prescription.successDesc} ${selectedPatient}.`,
+    });
+
+    // Reset form
+    setSelectedPatient('');
+    setMedications([{ name: '', dosage: '', duration: '' }]);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -132,8 +211,9 @@ export default function DoctorDashboard() {
 
           <div className="animate-content-fade-in" style={{ animationDelay: '1s' }}>
             <Tabs defaultValue="appointments" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="appointments">{translations.doctorDashboard.appointments}</TabsTrigger>
+                <TabsTrigger value="prescriptions">{translations.doctorDashboard.prescriptions.tabTitle}</TabsTrigger>
                 <TabsTrigger value="patients">{translations.doctorDashboard.patients}</TabsTrigger>
                 <TabsTrigger value="pharmacies">{translations.doctorDashboard.pharmacies}</TabsTrigger>
                 <TabsTrigger value="reports">{translations.doctorDashboard.reports}</TabsTrigger>
@@ -154,6 +234,65 @@ export default function DoctorDashboard() {
                             <PlusCircle className="mr-2 h-5 w-5" />
                             {translations.doctorDashboard.scheduleAppointment}
                         </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+               <TabsContent value="prescriptions" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><ClipboardEdit />{translations.doctorDashboard.prescription.title}</CardTitle>
+                    <CardDescription>{translations.doctorDashboard.prescription.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div>
+                      <label className="text-sm font-medium">{translations.doctorDashboard.prescription.selectPatient}</label>
+                      <Select onValueChange={setSelectedPatient} value={selectedPatient}>
+                          <SelectTrigger>
+                            <SelectValue placeholder={translations.doctorDashboard.prescription.patientPlaceholder} />
+                          </SelectTrigger>
+                          <SelectContent>
+                              {patients.map((p) => (
+                                <SelectItem key={p.email} value={p.fullName}>{p.fullName}</SelectItem>
+                              ))}
+                          </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-4">
+                        {medications.map((med, index) => (
+                          <div key={index} className="flex flex-col md:flex-row gap-4 items-end bg-muted/50 p-4 rounded-lg">
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow">
+                                  <div>
+                                    <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescription.medicineName}</label>
+                                    <Input value={med.name} onChange={(e) => handleMedicationChange(index, 'name', e.target.value)} placeholder={translations.doctorDashboard.prescription.medicinePlaceholder} />
+                                  </div>
+                                  <div>
+                                    <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescription.dosage}</label>
+                                    <Input value={med.dosage} onChange={(e) => handleMedicationChange(index, 'dosage', e.target.value)} placeholder={translations.doctorDashboard.prescription.dosagePlaceholder} />
+                                  </div>
+                                  <div>
+                                    <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescription.duration}</label>
+                                    <Input value={med.duration} onChange={(e) => handleMedicationChange(index, 'duration', e.target.value)} placeholder={translations.doctorDashboard.prescription.durationPlaceholder} />
+                                  </div>
+                              </div>
+                              <Button variant="ghost" size="icon" onClick={() => handleRemoveMedication(index)}>
+                                <Trash2 className="w-5 h-5 text-destructive" />
+                              </Button>
+                          </div>
+                        ))}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-4">
+                       <Button onClick={handleAddMedication} variant="outline">
+                        <PlusCircle className="mr-2 h-5 w-5" />
+                        {translations.doctorDashboard.prescription.addMedicine}
+                      </Button>
+                      <Button onClick={handleSavePrescription}>
+                        <Save className="mr-2 h-5 w-5" />
+                        {translations.doctorDashboard.prescription.savePrescription}
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -234,3 +373,5 @@ export default function DoctorDashboard() {
     </div>
   );
 }
+
+    
