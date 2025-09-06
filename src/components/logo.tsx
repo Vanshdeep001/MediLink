@@ -11,27 +11,23 @@ export function Logo({ className }: { className?: string }) {
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect width="48" height="48" rx="8" fill="hsl(var(--logo-color-3))" />
-        <g transform="translate(12 12) scale(0.8)">
-          <defs>
-            <linearGradient
-              id="logo-gradient"
-              x1="0"
-              y1="0"
-              x2="24"
-              y2="24"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stopColor="hsl(var(--logo-color-1))" />
-              <stop offset="1" stopColor="hsl(var(--logo-color-2))" />
-            </linearGradient>
-          </defs>
-          <g transform="translate(3 3)">
-            <rect x="0" y="0" width="8" height="18" rx="4" fill="url(#logo-gradient)" />
-            <rect x="10" y="0" width="8" height="18" rx="4" fill="url(#logo-gradient)" />
-            <rect x="0" y="20" width="8" height="10" rx="4" fill="url(#logo-gradient)" />
-            <rect x="10" y="20" width="8" height="10" rx="4" fill="url(#logo-gradient)" />
-          </g>
-        </g>
+        <svg
+          x="12"
+          y="12"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="hsl(var(--logo-color-1))"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M3 12a9 9 0 0 1 9-9v0a9 9 0 0 1 9 9v3a6 6 0 0 1-6 6v0a6 6 0 0 1-6-6v-3" />
+          <path d="M12 3v-2" />
+          <circle cx="12" cy="21" r="2" />
+          <circle cx="6" cy="15" r="2" fill="hsl(var(--logo-color-2))" stroke="hsl(var(--logo-color-2))"/>
+        </svg>
       </svg>
       <div>
         <h1 className="text-2xl font-bold text-foreground tracking-tighter">MediLink</h1>
