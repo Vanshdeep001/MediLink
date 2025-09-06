@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { UploadCloud, File, X, Info, ArrowLeft } from "lucide-react";
+import { UploadCloud, File, X, Info, ArrowLeft, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
@@ -37,6 +37,9 @@ const formSchema = z.object({
   allergies: z.string().optional(),
   familyHistory: z.string().optional(),
   otherNotes: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  pinCode: z.string().optional(),
 });
 
 export function MedicalHistoryForm() {
@@ -51,6 +54,7 @@ export function MedicalHistoryForm() {
     { id: 'medications', title: translations.medicalHistory.medications },
     { id: 'allergies', title: translations.medicalHistory.allergies },
     { id: 'familyHistory', title: translations.medicalHistory.familyHistory },
+    { id: 'address', title: translations.medicalHistory.address },
     { id: 'reports', title: translations.medicalHistory.reports }
   ];
 
@@ -62,6 +66,9 @@ export function MedicalHistoryForm() {
       allergies: "",
       familyHistory: "",
       otherNotes: "",
+      address: "",
+      city: "",
+      pinCode: "",
     },
   });
 
@@ -175,6 +182,49 @@ export function MedicalHistoryForm() {
                   />
                 )}
                 {currentStep === 4 && (
+                  <div className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-lg font-semibold">{translations.medicalHistory.addressLabel}</FormLabel>
+                          <FormDescription>{translations.medicalHistory.addressDescription}</FormDescription>
+                           <div className="relative">
+                            <MapPin className="absolute left-3 top-5 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                            <FormControl><Textarea className="pl-10" rows={3} placeholder={translations.medicalHistory.addressPlaceholder} {...field} /></FormControl>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{translations.medicalHistory.cityLabel}</FormLabel>
+                            <FormControl><Input placeholder="e.g. Nabha" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                       <FormField
+                        control={form.control}
+                        name="pinCode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{translations.medicalHistory.pinCodeLabel}</FormLabel>
+                            <FormControl><Input placeholder="e.g. 147201" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                     </div>
+                  </div>
+                )}
+                {currentStep === 5 && (
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <h3 className="text-lg font-semibold">{translations.medicalHistory.reportsLabel}</h3>

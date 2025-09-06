@@ -5,7 +5,7 @@ import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { User, Mail, Phone, Briefcase, Award, GraduationCap, UploadCloud, File, X, Lock } from "lucide-react";
+import { User, Mail, Phone, Briefcase, Award, GraduationCap, UploadCloud, File, X, Lock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { FadeIn } from "../fade-in";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -31,6 +32,9 @@ const formSchema = z.object({
   experience: z.coerce.number().min(0, { message: 'Experience cannot be negative.' }),
   degree: z.string().min(2, { message: 'Medical degree is required.' }),
   licenseNumber: z.string().min(5, { message: 'A valid license number is required.' }),
+  address: z.string().min(10, { message: 'Clinic address is required.' }),
+  city: z.string().min(2, { message: 'City is required.' }),
+  pinCode: z.string().min(6, { message: 'A valid 6-digit pin code is required.' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
   confirmPassword: z.string(),
 }).refine(data => data.password === data.confirmPassword, {
@@ -62,6 +66,9 @@ export function DoctorRegistrationForm() {
       experience: 0,
       degree: "",
       licenseNumber: "",
+      address: "",
+      city: "",
+      pinCode: "",
       password: "",
       confirmPassword: "",
     },
@@ -216,9 +223,51 @@ export function DoctorRegistrationForm() {
                     )}
                   />
                 </FadeIn>
+                 <FadeIn delay={1250} direction="up" className="md:col-span-2">
+                   <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{translations.doctorRegForm.addressLabel}</FormLabel>
+                         <div className="relative">
+                          <MapPin className="absolute left-3 top-5 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <FormControl><Textarea className="pl-10" rows={3} {...field} /></FormControl>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FadeIn>
+                 <FadeIn delay={1300} direction="left">
+                   <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{translations.doctorRegForm.cityLabel}</FormLabel>
+                        <FormControl><Input className="h-12" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FadeIn>
+                 <FadeIn delay={1350} direction="right">
+                   <FormField
+                    control={form.control}
+                    name="pinCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{translations.doctorRegForm.pinCodeLabel}</FormLabel>
+                        <FormControl><Input className="h-12" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FadeIn>
               </div>
 
-              <FadeIn delay={1300} direction="up">
+              <FadeIn delay={1400} direction="up">
                 <div className="space-y-2">
                     <FormLabel>{translations.doctorRegForm.uploadLabel}</FormLabel>
                     <div className="relative border-2 border-dashed border-muted-foreground/30 rounded-xl p-8 flex flex-col items-center justify-center text-center">
@@ -250,7 +299,7 @@ export function DoctorRegistrationForm() {
               </FadeIn>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FadeIn delay={1400} direction="left">
+                <FadeIn delay={1500} direction="left">
                    <FormField
                     control={form.control}
                     name="password"
@@ -266,7 +315,7 @@ export function DoctorRegistrationForm() {
                     )}
                   />
                 </FadeIn>
-                <FadeIn delay={1500} direction="right">
+                <FadeIn delay={1600} direction="right">
                    <FormField
                     control={form.control}
                     name="confirmPassword"
@@ -284,7 +333,7 @@ export function DoctorRegistrationForm() {
                 </FadeIn>
               </div>
               
-              <FadeIn delay={1600} direction="up">
+              <FadeIn delay={1700} direction="up">
                 <Button type="submit" className="w-full text-lg h-14">
                   {translations.doctorRegForm.submitButton}
                 </Button>

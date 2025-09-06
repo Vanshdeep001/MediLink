@@ -5,7 +5,7 @@ import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { User, Mail, Phone, Building, Award, MapPin, UploadCloud, File, X, Lock } from "lucide-react";
+import { User, Mail, Phone, Building, Award, MapPin, UploadCloud, File, X, Lock, Pin, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -31,6 +31,8 @@ const formSchema = z.object({
   phone: z.string().min(10, { message: 'Phone number must be at least 10 digits.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   address: z.string().min(10, { message: 'A valid store address is required.' }),
+  pinCode: z.string().min(6, { message: 'A valid 6-digit pin code is required.' }),
+  deliveryRange: z.string().min(1, { message: 'Delivery range is required.' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
   confirmPassword: z.string(),
 }).refine(data => data.password === data.confirmPassword, {
@@ -61,6 +63,8 @@ export function PharmacyRegistrationForm() {
       phone: "",
       email: "",
       address: "",
+      pinCode: "",
+      deliveryRange: "",
       password: "",
       confirmPassword: "",
     },
@@ -97,10 +101,6 @@ export function PharmacyRegistrationForm() {
     router.push("/pharmacy");
   };
 
-  const titleParts = translations.pharmacyRegForm.title.split(' ');
-  const mainTitle = titleParts[0];
-  const cursiveTitle = titleParts.slice(1).join(' ');
-
   return (
     <div className="w-full max-w-2xl mx-auto">
       <div
@@ -110,7 +110,7 @@ export function PharmacyRegistrationForm() {
         )}
       >
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight whitespace-nowrap">
-          <TextFlipper>{mainTitle}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{cursiveTitle}</TextFlipper>
+          <TextFlipper>{translations.pharmacyRegForm.titleMain}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{translations.pharmacyRegForm.titleCursive}</TextFlipper>
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground mt-2 font-serif">
           {translations.pharmacyRegForm.subtitle}
@@ -218,9 +218,41 @@ export function PharmacyRegistrationForm() {
                     )}
                   />
                 </FadeIn>
+                <FadeIn delay={1150} direction="left">
+                   <FormField
+                    control={form.control}
+                    name="pinCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{translations.pharmacyRegForm.pinCodeLabel}</FormLabel>
+                        <div className="relative">
+                          <Pin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <FormControl><Input className="pl-10 h-12" {...field} /></FormControl>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FadeIn>
+                <FadeIn delay={1200} direction="right">
+                   <FormField
+                    control={form.control}
+                    name="deliveryRange"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{translations.pharmacyRegForm.deliveryRangeLabel}</FormLabel>
+                        <div className="relative">
+                          <Truck className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <FormControl><Input className="pl-10 h-12" placeholder={translations.pharmacyRegForm.deliveryRangePlaceholder} {...field} /></FormControl>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FadeIn>
               </div>
 
-              <FadeIn delay={1200} direction="up">
+              <FadeIn delay={1250} direction="up">
                 <div className="space-y-2">
                     <FormLabel>{translations.pharmacyRegForm.uploadLabel}</FormLabel>
                     <div className="relative border-2 border-dashed border-muted-foreground/30 rounded-xl p-8 flex flex-col items-center justify-center text-center">
