@@ -95,7 +95,18 @@
     "confirmPasswordLabel": "Confirm Password",
     "submitButton": "Register as Pharmacy",
     "toastTitle": "Registration Submitted",
-    "toastDescription": "Your pharmacy profile is under review. We will notify you upon verification."
+    "toastDescription": "Your pharmacy profile is under review. We will notify you upon verification.",
+    "tabs": {
+      "register": "New Registration",
+      "login": "Login"
+    },
+    "login": {
+      "loginButton": "Login to your Account",
+      "toastSuccessTitle": "Login Successful",
+      "toastSuccessDescription": "Redirecting to your dashboard...",
+      "toastErrorTitle": "Login Failed",
+      "toastErrorDescription": "Invalid credentials, please try again."
+    }
   },
   "medicalHistory": {
     "title": "Personalize Your Healthcare",
