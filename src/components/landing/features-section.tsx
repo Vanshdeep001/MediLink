@@ -35,7 +35,7 @@ export function FeaturesSection() {
   ];
 
   return (
-    <section className="py-20 md:py-32 bg-background">
+    <section className="py-20 md:py-32 bg-[hsl(224,71%,10%)] text-white">
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
@@ -55,7 +55,7 @@ export function FeaturesSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {features.map((feature, index) => (
             <FadeIn key={index} delay={200 * (index + 1)} direction="up">
-              <Card className="group h-full flex flex-col p-6 text-center items-center justify-start transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20">
+              <Card className="group h-full flex flex-col p-6 text-center items-center justify-start transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 bg-card">
                 <CardHeader className="p-0 mb-4">{feature.icon}</CardHeader>
                 <CardContent className="p-0 flex flex-col grow">
                   <CardTitle className="text-xl font-bold mb-2">

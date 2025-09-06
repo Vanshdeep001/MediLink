@@ -30,7 +30,7 @@ export function ImpactSection() {
   ];
 
   return (
-    <section className="py-20 md:py-32 bg-background" ref={ref}>
+    <section className="py-20 md:py-32 bg-[hsl(224,71%,10%)] text-white" ref={ref}>
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {stats.map((stat, index) => (
