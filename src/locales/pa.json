@@ -31,7 +31,7 @@
     "confirmPasswordLabel": "ਪਾਸਵਰਡ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ",
     "submitButton": "ਰਜਿਸਟਰ ਕਰੋ ਅਤੇ ਜਾਰੀ ਰੱਖੋ",
     "toastSuccessTitle": "ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਸਫਲ",
-    "toastSuccessDescription": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਭੂਮਿਕਾ ਚੁਣੋ।",
+    "toastSuccessDescription": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਮੈਡੀਕਲ ਇਤਿਹਾਸ ਪ੍ਰਦਾਨ ਕਰੋ।",
     "toastErrorTitle": "ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਅਸਫਲ",
     "toastErrorDescription": "ਇੱਕ ਅਚਾਨਕ ਗਲਤੀ ਆਈ।",
     "tabs": {
@@ -400,6 +400,20 @@
         "label": "ਏਆਈ ਸਹਾਇਕ",
         "value": "ਤੁਰੰਤ ਮਦਦ ਲਈ ਸਾਡੀ ਐਪ 'ਤੇ 24/7 ਉਪਲਬਧ ਹੈ।"
       }
+    }
+  },
+  "authPortal": {
+    "patient": {
+      "titleMain": "ਮਰੀਜ਼",
+      "titleCursive": "ਪੋਰਟਲ"
+    },
+    "doctor": {
+      "titleMain": "ਡਾਕਟਰ",
+      "titleCursive": "ਪੋਰਟਲ"
+    },
+    "pharmacy": {
+      "titleMain": "ਫਾਰਮੇਸੀ",
+      "titleCursive": "ਪੋਰਟਲ"
     }
   }
 }

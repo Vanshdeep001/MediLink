@@ -100,7 +100,7 @@ export function PatientAuthForm() {
         description: translations.authForm.toastSuccessDescription,
       });
 
-      router.push('/role-selection');
+      router.push('/patient/medical-history');
 
     } catch (e) {
       toast({

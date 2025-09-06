@@ -31,7 +31,7 @@
     "confirmPasswordLabel": "पासवर्ड की पुष्टि कीजिये",
     "submitButton": "पंजीकरण करें और जारी रखें",
     "toastSuccessTitle": "पंजीकरण सफल",
-    "toastSuccessDescription": "कृपया अपनी भूमिका चुनें।",
+    "toastSuccessDescription": "कृपया अपना चिकित्सा इतिहास प्रदान करें।",
     "toastErrorTitle": "पंजीकरण विफल",
     "toastErrorDescription": "एक अप्रत्याशित त्रुटि हुई।",
     "tabs": {
@@ -400,6 +400,20 @@
         "label": "एआई सहायक",
         "value": "तत्काल सहायता के लिए हमारे ऐप पर 24/7 उपलब्ध है।"
       }
+    }
+  },
+  "authPortal": {
+    "patient": {
+      "titleMain": "रोगी",
+      "titleCursive": "पोर्टल"
+    },
+    "doctor": {
+      "titleMain": "डॉक्टर",
+      "titleCursive": "पोर्टल"
+    },
+    "pharmacy": {
+      "titleMain": "फार्मेसी",
+      "titleCursive": "पोर्टल"
     }
   }
 }

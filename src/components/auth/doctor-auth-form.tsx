@@ -81,6 +81,9 @@ export function DoctorAuthForm() {
   });
 
   const onRegisterSubmit = (values: z.infer<typeof registrationSchema>) => {
+    const user = { ...values, role: 'doctor' };
+    localStorage.setItem('temp_user', JSON.stringify(user));
+    
     const doctorsString = localStorage.getItem('doctors_list');
     const doctors = doctorsString ? JSON.parse(doctorsString) : [];
     doctors.push(values);

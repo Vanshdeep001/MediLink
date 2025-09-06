@@ -78,6 +78,9 @@ export function PharmacyAuthForm() {
   });
   
   const onRegisterSubmit = (values: z.infer<typeof registrationSchema>) => {
+    const user = { ...values, role: 'pharmacy' };
+    localStorage.setItem('temp_user', JSON.stringify(user));
+
     const pharmaciesString = localStorage.getItem('pharmacies_list');
     const pharmacies = pharmaciesString ? JSON.parse(pharmaciesString) : [];
     pharmacies.push(values);

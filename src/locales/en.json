@@ -31,7 +31,7 @@
     "confirmPasswordLabel": "Confirm Password",
     "submitButton": "Register & Continue",
     "toastSuccessTitle": "Registration Successful",
-    "toastSuccessDescription": "Please select your role.",
+    "toastSuccessDescription": "Please provide your medical history.",
     "toastErrorTitle": "Registration Failed",
     "toastErrorDescription": "An unexpected error occurred.",
     "tabs": {
@@ -400,6 +400,20 @@
         "label": "AI Assistant",
         "value": "Available 24/7 on our app for instant help."
       }
+    }
+  },
+   "authPortal": {
+    "patient": {
+      "titleMain": "Patient",
+      "titleCursive": "Portal"
+    },
+    "doctor": {
+      "titleMain": "Doctor",
+      "titleCursive": "Portal"
+    },
+    "pharmacy": {
+      "titleMain": "Pharmacy",
+      "titleCursive": "Portal"
     }
   }
 }
