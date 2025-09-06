@@ -51,8 +51,13 @@ export function Logo({ className }: { className?: string }) {
           d="M0 8C0 3.58172 3.58172 0 8 0H40C44.4183 0 48 3.58172 48 8V40C48 44.4183 44.4183 48 40 48H8C3.58172 48 0 44.4183 0 40V8Z"
           fill="hsl(var(--logo-color-3))"
         />
-        <path d="M14 20L24 28L34 20V25L24 33L14 25V20Z" fill="url(#logo-gradient-1)" />
-        <path d="M14 15L24 23L34 15V20L24 28L14 20V15Z" fill="url(#logo-gradient-2)" />
+        {/* New Logo SVG */}
+        <g transform="translate(4, 4)">
+          <path d="M18 6C18 2.68629 15.3137 0 12 0H8C4.68629 0 2 2.68629 2 6V14H18V6Z" fill="url(#logo-gradient-1)"/>
+          <path d="M22 18C25.3137 18 28 20.6863 28 24V28C28 31.3137 25.3137 34 22 34H14V18H22Z" fill="url(#logo-gradient-1)"/>
+          <path d="M6 22C2.68629 22 0 24.6863 0 28V32C0 35.3137 2.68629 38 6 38H14V22H6Z" fill="url(#logo-gradient-2)"/>
+          <path d="M34 14C37.3137 14 40 11.3137 40 8V4C40 0.686292 37.3137 -2 34 -2H26V14H34Z" fill="url(#logo-gradient-2)"/>
+        </g>
       </svg>
       <div>
         <h1 className="text-2xl font-bold text-foreground tracking-tighter">MediLink</h1>
