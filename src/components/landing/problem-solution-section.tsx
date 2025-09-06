@@ -36,7 +36,7 @@ export function ProblemSolutionSection() {
   ];
 
   return (
-    <section className="py-20 md:py-32 bg-background">
+    <section className="py-20 md:py-32 bg-[hsl(224,71%,10%)] text-white">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
@@ -56,7 +56,7 @@ export function ProblemSolutionSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {challenges.map((item, index) => (
             <FadeIn key={index} delay={200 * (index + 1)} direction="up">
-              <Card className="group h-full flex flex-col transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10">
+              <Card className="group bg-card h-full flex flex-col transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10">
                 <CardContent className="p-6 text-center flex flex-col items-center">
                   {/* Problem Section */}
                   <div className="flex flex-col items-center">
@@ -71,7 +71,7 @@ export function ProblemSolutionSection() {
                   <div className="flex flex-col items-center">
                      <div className="relative mb-4">
                         {item.solutionIcon}
-                        <CheckCircle className="absolute -bottom-1 -right-1 w-5 h-5 text-green-500 bg-background rounded-full" />
+                        <CheckCircle className="absolute -bottom-1 -right-1 w-5 h-5 text-green-500 bg-card rounded-full" />
                      </div>
                     <h3 className="text-xl font-bold text-primary">{item.solutionTitle}</h3>
                     <p className="mt-2 text-sm text-muted-foreground h-16">{item.solutionDescription}</p>
