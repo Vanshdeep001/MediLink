@@ -5,30 +5,39 @@ import Link from 'next/link';
 import { Logo } from '@/components/logo';
 import { LanguageContext } from '@/context/language-context';
 import { Github, Twitter, Linkedin } from 'lucide-react';
-import ShareButton from '../ui/share-button';
+import { Button } from '../ui/button';
 
 export function Footer() {
   const { translations } = useContext(LanguageContext);
   
   const socialLinks = [
-    { icon: Github, href: "https://github.com" },
-    { icon: Twitter, href: "https://twitter.com" },
-    { icon: Linkedin, href: "https://linkedin.com" },
+    { icon: Github, href: "https://github.com", label: "GitHub" },
+    { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+    { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
   ];
 
   return (
     <footer className="border-t border-border/40 bg-card">
       <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="md:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-1 space-y-4">
             <div className="w-40 h-auto">
               <Logo />
             </div>
-            <p className="mt-4 text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-sm">
               {translations.footer.tagline}
             </p>
+             <div className="flex items-center gap-2">
+              {socialLinks.map((link) => (
+                <Button key={link.label} variant="ghost" size="icon" asChild>
+                  <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label}>
+                    <link.icon className="w-5 h-5" />
+                  </a>
+                </Button>
+              ))}
+            </div>
           </div>
-          <div>
+          <div className="md:col-start-2">
             <h4 className="font-semibold mb-3">Quick Links</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
@@ -51,14 +60,17 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-3">Contact</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>support@medilink.com</li>
+              <li>
+                <a href="mailto:support@medilink.com" className="hover:text-primary">
+                  support@medilink.com
+                </a>
+              </li>
+              <li>
+                <a href="tel:+911234567890" className="hover:text-primary">
+                  +91-12345-67890
+                </a>
+              </li>
             </ul>
-          </div>
-          <div>
-             <h4 className="font-semibold mb-3">Follow Us</h4>
-            <ShareButton links={socialLinks.map(link => ({...link, onClick: () => window.open(link.href, '_blank')}))}>
-                Follow us on
-            </ShareButton>
           </div>
         </div>
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
