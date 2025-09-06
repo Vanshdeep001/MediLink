@@ -14,35 +14,47 @@ export function Logo({ className }: { className?: string }) {
         <defs>
           <linearGradient
             id="logo-gradient-1"
-            x1="50%"
-            y1="0%"
-            x2="50%"
-            y2="100%"
+            x1="5.66895"
+            y1="8"
+            x2="20.4385"
+            y2="20.0327"
+            gradientUnits="userSpaceOnUse"
           >
-            <stop
-              offset="0%"
-              stopColor="hsl(var(--logo-color-2))"
-            />
-            <stop
-              offset="100%"
-              stopColor="hsl(var(--logo-color-1))"
-            />
+            <stop stopColor="hsl(var(--logo-color-2))" />
+            <stop offset="1" stopColor="hsl(var(--logo-color-1))" />
+          </linearGradient>
+          <linearGradient
+            id="logo-gradient-2"
+            x1="5.66895"
+            y1="28"
+            x2="20.4385"
+            y2="40.0327"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stopColor="hsl(var(--logo-color-2))" />
+            <stop offset="1" stopColor="hsl(var(--logo-color-1))" />
           </linearGradient>
            <linearGradient
-            id="logo-gradient-2"
-            x1="50%"
-            y1="0%"
-            x2="50%"
-            y2="100%"
+            id="logo-gradient-3"
+            x1="25.669"
+            y1="8"
+            x2="40.4385"
+            y2="20.0327"
+            gradientUnits="userSpaceOnUse"
           >
-            <stop
-              offset="0%"
-              stopColor="hsl(var(--logo-color-1))"
-            />
-            <stop
-              offset="100%"
-              stopColor="hsl(var(--logo-color-2))"
-            />
+            <stop stopColor="hsl(var(--logo-color-2))" />
+            <stop offset="1" stopColor="hsl(var(--logo-color-1))" />
+          </linearGradient>
+           <linearGradient
+            id="logo-gradient-4"
+            x1="25.669"
+            y1="28"
+            x2="40.4385"
+            y2="40.0327"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stopColor="hsl(var(--logo-color-2))" />
+            <stop offset="1" stopColor="hsl(var(--logo-color-1))" />
           </linearGradient>
         </defs>
         <path
@@ -51,12 +63,11 @@ export function Logo({ className }: { className?: string }) {
           d="M0 8C0 3.58172 3.58172 0 8 0H40C44.4183 0 48 3.58172 48 8V40C48 44.4183 44.4183 48 40 48H8C3.58172 48 0 44.4183 0 40V8Z"
           fill="hsl(var(--logo-color-3))"
         />
-        {/* New Logo SVG */}
         <g transform="translate(4, 4)">
-          <path d="M18 6C18 2.68629 15.3137 0 12 0H8C4.68629 0 2 2.68629 2 6V14H18V6Z" fill="url(#logo-gradient-1)"/>
-          <path d="M22 18C25.3137 18 28 20.6863 28 24V28C28 31.3137 25.3137 34 22 34H14V18H22Z" fill="url(#logo-gradient-1)"/>
-          <path d="M6 22C2.68629 22 0 24.6863 0 28V32C0 35.3137 2.68629 38 6 38H14V22H6Z" fill="url(#logo-gradient-2)"/>
-          <path d="M34 14C37.3137 14 40 11.3137 40 8V4C40 0.686292 37.3137 -2 34 -2H26V14H34Z" fill="url(#logo-gradient-2)"/>
+            <path d="M12 4C7.58172 4 4 7.58172 4 12V14C4 18.4183 7.58172 22 12 22H14V4H12Z" fill="url(#logo-gradient-1)"/>
+            <path d="M14 24H12C7.58172 24 4 27.5817 4 32V34C4 38.4183 7.58172 42 12 42H14V24Z" fill="url(#logo-gradient-2)"/>
+            <path d="M28 4C23.5817 4 20 7.58172 20 12V14C20 18.4183 23.5817 22 28 22H30V4H28Z" fill="url(#logo-gradient-3)"/>
+            <path d="M30 24H28C23.5817 24 20 27.5817 20 32V34C20 38.4183 23.5817 42 28 42H30V24Z" fill="url(#logo-gradient-4)"/>
         </g>
       </svg>
       <div>
