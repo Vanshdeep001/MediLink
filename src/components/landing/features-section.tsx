@@ -56,7 +56,7 @@ export function FeaturesSection() {
           {features.map((feature, index) => (
             <FadeIn key={index} delay={200 * (index + 1)} direction="up">
               <Card className="group h-full flex flex-col p-6 text-center items-center justify-start transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 bg-card">
-                <CardHeader className="p-0 mb-4">{feature.icon}</CardHeader>
+                <CardHeader className="p-0 mb-4 group-hover:animate-bounce">{feature.icon}</CardHeader>
                 <CardContent className="p-0 flex flex-col grow">
                   <CardTitle className="text-xl font-bold mb-2">
                     {feature.title}

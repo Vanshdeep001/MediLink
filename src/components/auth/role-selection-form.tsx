@@ -9,9 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { FadeIn } from '../fade-in';
 import { useRouter } from 'next/navigation';
 import TextFlipper from '../ui/text-effect-flipper';
-import { PatientIcon } from './icons/patient-icon';
-import { DoctorIcon } from './icons/doctor-icon';
-import { PharmacyIcon } from './icons/pharmacy-icon';
+import Image from 'next/image';
 import { LanguageContext } from '@/context/language-context';
 
 type Role = 'patient' | 'doctor' | 'pharmacy';
@@ -27,22 +25,34 @@ export function RoleSelectionForm() {
     { 
       id: 'patient' as Role, 
       label: translations.roleSelection.patient,
-      icon: <PatientIcon />,
+      icon: null,
       description: translations.roleSelection.patientDescription
     },
     { 
       id: 'doctor' as Role, 
       label: translations.roleSelection.doctor,
-      icon: <DoctorIcon />,
+      icon: null,
       description: translations.roleSelection.doctorDescription
     },
     { 
       id: 'pharmacy' as Role, 
       label: translations.roleSelection.pharmacy,
-      icon: <PharmacyIcon />,
+      icon: null,
       description: translations.roleSelection.pharmacyDescription
     },
   ];
+  const getRoleImage = (roleId: Role) => {
+    switch(roleId) {
+      case 'patient':
+        return '/patient.jpg';
+      case 'doctor':
+        return '/doctor.jpg';
+      case 'pharmacy':
+        return '/pharmacy.jpg';
+      default:
+        return '/patient.jpg';
+    }
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -134,8 +144,8 @@ export function RoleSelectionForm() {
                   onClick={() => handleRoleSelect(role.id)}
                 >
                   <CardContent className="p-6 flex flex-col items-center justify-center">
-                    <div className="w-32 h-32 mb-4 relative">
-                      {role.icon}
+                    <div className="w-48 h-32 mb-4 relative overflow-hidden rounded-lg ring-1 ring-border">
+                      <Image src={getRoleImage(role.id)} alt={role.label} fill className="object-cover" priority unoptimized />
                     </div>
                     <h3 className="text-xl font-semibold">{role.label}</h3>
                     <p className="text-sm text-muted-foreground mt-1 text-center">{role.description}</p>

@@ -12,6 +12,7 @@ import TextFlipper from "@/components/ui/text-effect-flipper";
 import { LanguageContext } from '@/context/language-context';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import type { Patient, Pharmacy, Prescription, Medication, Consultation } from '@/lib/types';
 import Image from 'next/image';
@@ -30,7 +31,9 @@ export default function DoctorDashboard() {
 
   // Prescription State
   const [selectedPatient, setSelectedPatient] = useState('');
-  const [medications, setMedications] = useState<Medication[]>([{ name: '', dosage: '', duration: '' }]);
+  const [medications, setMedications] = useState<Medication[]>([{ name: '', dosage: '', frequency: '', duration: '' }]);
+  const [diagnosis, setDiagnosis] = useState('');
+  const [notes, setNotes] = useState('');
 
   useEffect(() => {
     const userString = localStorage.getItem('temp_user');
@@ -57,10 +60,20 @@ export default function DoctorDashboard() {
       setPharmacies(JSON.parse(pharmaciesString));
     }
 
-    const patientsString = localStorage.getItem('users_list');
-    if (patientsString) {
-      setPatients(JSON.parse(patientsString).filter((u: any) => u.role === 'patient'));
+    const patientsKey = 'users_list';
+    let users = [] as any[];
+    const existingUsers = localStorage.getItem(patientsKey);
+    if (existingUsers) {
+      users = JSON.parse(existingUsers);
+    } else {
+      users = [
+        { fullName: 'Vanshdeep', email: 'vanshdeep@example.com', phone: '9999999999', age: 24, role: 'patient' },
+        { fullName: 'Aman', email: 'aman@example.com', phone: '8888888888', age: 28, role: 'patient' },
+        { fullName: 'Priya', email: 'priya@example.com', phone: '7777777777', age: 26, role: 'patient' }
+      ];
+      localStorage.setItem(patientsKey, JSON.stringify(users));
     }
+    setPatients(users.filter((u: any) => u.role === 'patient'));
 
     const consultationsString = localStorage.getItem('consultations_list');
     if (consultationsString) {
@@ -71,7 +84,7 @@ export default function DoctorDashboard() {
   }, [router]);
 
   const handleAddMedication = () => {
-    setMedications([...medications, { name: '', dosage: '', duration: '' }]);
+    setMedications([...medications, { name: '', dosage: '', frequency: '', duration: '' }]);
   };
 
   const handleRemoveMedication = (index: number) => {
@@ -86,7 +99,7 @@ export default function DoctorDashboard() {
   };
   
   const handleSavePrescription = () => {
-    if (!selectedPatient || medications.some(m => !m.name || !m.dosage || !m.duration)) {
+    if (!selectedPatient || medications.some(m => !m.name || !m.dosage || !m.frequency || !m.duration)) {
       toast({
         title: translations.doctorDashboard.prescriptions.validationErrorTitle,
         description: translations.doctorDashboard.prescriptions.validationErrorDesc,
@@ -99,17 +112,21 @@ export default function DoctorDashboard() {
     if (!patientDetails) return;
 
     const newPrescription: Prescription = {
-      id: `PRES-${Date.now()}`,
-      patientName: selectedPatient,
-      doctorName: doctorName,
+      id: `pres-${Date.now()}`,
+      doctor: `Dr. ${doctorName}`,
+      patient: selectedPatient,
       date: new Date().toISOString().split('T')[0],
-      medications: medications,
+      diagnosis,
+      medications,
+      notes,
     };
 
-    const prescriptionsString = localStorage.getItem('prescriptions_list');
-    const allPrescriptions = prescriptionsString ? JSON.parse(prescriptionsString) : [];
-    allPrescriptions.push(newPrescription);
-    localStorage.setItem('prescriptions_list', JSON.stringify(allPrescriptions));
+    const dsKey = 'medilink_prescriptions';
+    const existing = JSON.parse(localStorage.getItem(dsKey) || '[]');
+    existing.push(newPrescription);
+    localStorage.setItem(dsKey, JSON.stringify(existing));
+    // Emit a custom event so other tabs/pages can pick up instantly
+    try { window.dispatchEvent(new StorageEvent('storage', { key: dsKey } as any)); } catch {}
     
     // Add notifications
     const notificationsString = localStorage.getItem('notifications');
@@ -123,13 +140,6 @@ export default function DoctorDashboard() {
       message: `${translations.notifications.newPrescriptionPatient} Dr. ${doctorName}`,
       read: false
     });
-    // Notification for all pharmacies
-     allNotifications.push({
-      id: `notif-${Date.now()}-ph`,
-      for: 'pharmacy',
-      message: `${translations.notifications.newPrescriptionPharmacy} ${selectedPatient}`,
-      read: false
-    });
     localStorage.setItem('notifications', JSON.stringify(allNotifications));
 
     toast({
@@ -139,7 +149,9 @@ export default function DoctorDashboard() {
 
     // Reset form
     setSelectedPatient('');
-    setMedications([{ name: '', dosage: '', duration: '' }]);
+    setDiagnosis('');
+    setNotes('');
+    setMedications([{ name: '', dosage: '', frequency: '', duration: '' }]);
   };
   
   const upcomingConsultations = consultations.filter(c => new Date(c.date) >= new Date());
@@ -244,12 +256,11 @@ export default function DoctorDashboard() {
 
           <div className="animate-content-fade-in" style={{ animationDelay: '1s' }}>
             <Tabs defaultValue="appointments" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="appointments">{translations.doctorDashboard.appointments}</TabsTrigger>
                 <TabsTrigger value="video-consultation">Video Consultation</TabsTrigger>
                 <TabsTrigger value="prescriptions">{translations.doctorDashboard.prescriptions.tabTitle}</TabsTrigger>
                 <TabsTrigger value="patients">{translations.doctorDashboard.patients}</TabsTrigger>
-                <TabsTrigger value="pharmacies">{translations.doctorDashboard.pharmacies}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="appointments" className="mt-6">
@@ -342,11 +353,16 @@ export default function DoctorDashboard() {
                           </SelectContent>
                       </Select>
                     </div>
+
+                    <div>
+                      <label className="text-sm font-medium">Diagnosis</label>
+                      <Input value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} placeholder="e.g., Viral Fever" />
+                    </div>
                     
                     <div className="space-y-4">
                         {medications.map((med, index) => (
                           <div key={index} className="flex flex-col md:flex-row gap-4 items-end bg-muted/50 p-4 rounded-lg">
-                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow">
+                              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 flex-grow">
                                   <div>
                                     <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescriptions.medicineName}</label>
                                     <Input value={med.name} onChange={(e) => handleMedicationChange(index, 'name', e.target.value)} placeholder={translations.doctorDashboard.prescriptions.medicinePlaceholder} />
@@ -354,6 +370,10 @@ export default function DoctorDashboard() {
                                   <div>
                                     <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescriptions.dosage}</label>
                                     <Input value={med.dosage} onChange={(e) => handleMedicationChange(index, 'dosage', e.target.value)} placeholder={translations.doctorDashboard.prescriptions.dosagePlaceholder} />
+                                  </div>
+                                  <div>
+                                    <label className="text-xs text-muted-foreground">Frequency</label>
+                                    <Input value={med.frequency} onChange={(e) => handleMedicationChange(index, 'frequency', e.target.value)} placeholder="e.g., Twice daily" />
                                   </div>
                                   <div>
                                     <label className="text-xs text-muted-foreground">{translations.doctorDashboard.prescriptions.duration}</label>
@@ -365,6 +385,11 @@ export default function DoctorDashboard() {
                               </Button>
                           </div>
                         ))}
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium">Notes</label>
+                      <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Additional advice or instructions (optional)" />
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4">
@@ -403,31 +428,7 @@ export default function DoctorDashboard() {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="pharmacies" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{translations.doctorDashboard.nearbyPharmacies}</CardTitle>
-                    <CardDescription>{translations.doctorDashboard.nearbyPharmaciesDesc}</CardDescription>
-                  </CardHeader>
-                   <CardContent className="space-y-4">
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {pharmacies.length > 0 ? pharmacies.map((pharmacy, index) => (
-                            <Card key={index} className="hover:shadow-lg transition-shadow">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2"><Building className="text-primary"/> {pharmacy.pharmacyName}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2 text-sm text-muted-foreground">
-                                    <p className="flex items-center gap-2"><MapPin className="w-4 h-4"/> {pharmacy.address}, {pharmacy.city} - {pharmacy.pinCode}</p>
-                                    <p className="flex items-center gap-2"><Phone className="w-4 h-4"/> {pharmacy.phone}</p>
-                                </CardContent>
-                            </Card>
-                        )) : (
-                             <p className="text-muted-foreground col-span-2 text-center py-8">{translations.doctorDashboard.noPharmaciesFound}</p>
-                        )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+              
 
             </Tabs>
           </div>

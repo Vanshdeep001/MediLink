@@ -27,15 +27,20 @@ export interface Pharmacy {
 export interface Medication {
     name: string;
     dosage: string;
+    frequency: string;
     duration: string;
 }
 
 export interface Prescription {
     id: string;
-    patientName: string;
-    doctorName: string;
+    patient?: string; // new schema key
+    patientName?: string; // backward compat
+    doctor?: string; // new schema key
+    doctorName?: string; // backward compat
     date: string;
+    diagnosis?: string;
     medications: Medication[];
+    notes?: string;
 }
 
 export interface Reminder {

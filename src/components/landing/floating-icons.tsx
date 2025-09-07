@@ -4,7 +4,7 @@ export function FloatingIcons() {
   const iconClasses = "absolute text-primary/20 animate-float";
 
   return (
-    <div className="absolute inset-0 -z-10 overflow-hidden">
+    <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none select-none">
       <Stethoscope
         className={iconClasses}
         style={{ top: '15%', left: '10%', animationDelay: '0s', width: '64px', height: '64px' }}

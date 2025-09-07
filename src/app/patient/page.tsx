@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -37,7 +37,7 @@ export default function PatientDashboard() {
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [activeCall, setActiveCall] = useState<Consultation | null>(null);
 
-  const [specializationFilter, setSpecializationFilter] = useState('all');
+  const [specializationFilter, setSpecializationFilter] = useState('All');
   const [locationFilter, setLocationFilter] = useState('');
 
   useEffect(() => {
@@ -74,12 +74,18 @@ export default function PatientDashboard() {
     loadData(currentUserName);
   }, [router]);
 
+  const lastPrescCountRef = useRef<number>(0);
+
   const loadData = (currentUserName: string) => {
     if (!currentUserName) return;
-    const prescriptionsString = localStorage.getItem('prescriptions_list');
-    const allPrescriptions = prescriptionsString ? JSON.parse(prescriptionsString) : [];
-    const userPrescriptions = allPrescriptions.filter((p: Prescription) => p.patientName === currentUserName);
+    const dsKey = 'medilink_prescriptions';
+    const allPrescriptions = JSON.parse(localStorage.getItem(dsKey) || '[]');
+    const userPrescriptions = allPrescriptions.filter((p: any) => (p.patient || p.patientName) === currentUserName);
     setPrescriptions(userPrescriptions);
+    if (lastPrescCountRef.current && userPrescriptions.length > lastPrescCountRef.current) {
+      toast({ title: 'New Prescription Added', description: 'A new prescription was added to your records.' });
+    }
+    lastPrescCountRef.current = userPrescriptions.length;
 
     const remindersString = localStorage.getItem('reminders_list');
     const allReminders = remindersString ? JSON.parse(remindersString) : [];
@@ -91,6 +97,22 @@ export default function PatientDashboard() {
     const userConsultations = allConsultations.filter((c: Consultation) => c.patientName === currentUserName);
     setConsultations(userConsultations);
   };
+
+  // Live-sync prescriptions between portals (prototype mode)
+  useEffect(() => {
+    if (!userName) return;
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'medilink_prescriptions') {
+        loadData(userName);
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    const interval = setInterval(() => loadData(userName), 2000);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      clearInterval(interval);
+    };
+  }, [userName]);
 
   const handleAddReminder = () => {
     if (!newReminder.trim()) return;
@@ -126,7 +148,7 @@ export default function PatientDashboard() {
 
   useEffect(() => {
     let doctors = allDoctors;
-    if (specializationFilter !== 'all') {
+    if (specializationFilter !== 'All') {
       doctors = doctors.filter(d => d.specialization.toLowerCase() === specializationFilter.toLowerCase());
     }
     if (locationFilter) {
@@ -141,7 +163,29 @@ export default function PatientDashboard() {
   const upcomingConsultations = consultations.filter(c => new Date(c.date) >= new Date());
   const pastConsultations = consultations.filter(c => new Date(c.date) < new Date());
 
-  const uniqueSpecializations = ['all', ...Array.from(new Set(allDoctors.map(d => d.specialization.toLowerCase())))];
+  // Predefined common specialties for a clearer dropdown (capitalized)
+  const allKnownSpecialties = [
+    'General Physician',
+    'Cardiologist',
+    'Orthopedic',
+    'Dermatologist',
+    'Pediatrician',
+    'Gynecologist',
+    'Neurologist',
+    'Psychiatrist',
+    'ENT Specialist',
+    'Ophthalmologist',
+    'Dentist',
+    'Oncologist',
+    'Endocrinologist',
+    'Gastroenterologist',
+    'Nephrologist',
+    'Pulmonologist',
+    'Rheumatologist',
+    'Urologist',
+    'Physiotherapist'
+  ];
+  const uniqueSpecializations = ['All', ...allKnownSpecialties];
   
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -150,13 +194,6 @@ export default function PatientDashboard() {
         <div className="max-w-5xl mx-auto">
           
           <div className="relative text-center py-16 md:py-24 animate-fade-in-down overflow-hidden rounded-lg">
-             <Image
-                src="/patient.jpg"
-                alt="Patient background"
-                fill
-                className="object-cover object-center z-0 opacity-20"
-                data-ai-hint="patient background"
-              />
             <div className="relative z-10">
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
                 <TextFlipper>{translations.patientDashboard.welcome}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{userName}!</TextFlipper>
@@ -210,7 +247,7 @@ export default function PatientDashboard() {
             </Card>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.8s' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.8s' }}>
             <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
                <CardHeader>
                 <CardTitle className="flex items-center gap-2"><BrainCircuit /> {translations.patientDashboard.symptomChecker}</CardTitle>
@@ -233,28 +270,16 @@ export default function PatientDashboard() {
                 </Button>
               </CardContent>
             </Card>
-            <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2"><BellRing /> {translations.patientDashboard.smartReminders}</CardTitle>
-                <CardDescription>{translations.patientDashboard.smartRemindersDesc}</CardDescription>
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground flex-grow">
-                <ul className="space-y-2">
-                  <li>{translations.patientDashboard.reminder1}</li>
-                  <li>{translations.patientDashboard.reminder2}</li>
-                </ul>
-              </CardContent>
-            </Card>
+            
           </div>
 
           <div className="animate-content-fade-in" style={{ animationDelay: '1s' }}>
             <Tabs defaultValue="appointments" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="appointments">{translations.patientDashboard.appointments}</TabsTrigger>
-                <TabsTrigger value="video-consultation">Video Consultation</TabsTrigger>
                 <TabsTrigger value="reminders">{translations.patientDashboard.reminders.tabTitle}</TabsTrigger>
                 <TabsTrigger value="doctors">{translations.patientDashboard.doctors}</TabsTrigger>
-                <TabsTrigger value="pharmacies">{translations.patientDashboard.pharmacies}</TabsTrigger>
+                <TabsTrigger value="digital-prescriptions">Digital Prescriptions</TabsTrigger>
               </TabsList>
               
               <TabsContent value="appointments" className="mt-6">
@@ -279,62 +304,52 @@ export default function PatientDashboard() {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="video-consultation" className="mt-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-1">
-                        <Card>
+              <TabsContent value="digital-prescriptions" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Digital Prescriptions</CardTitle>
+                    <CardDescription>Your prescriptions issued by doctors.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {prescriptions.length > 0 ? prescriptions.map((p: any) => (
+                      <div key={p.id} className="animate-content-fade-in" style={{ animationDelay: '0s' }}>
+                        <Card className="border-l-4 border-l-primary">
                           <CardHeader>
-                            <CardTitle>Start New Consultation</CardTitle>
-                            <CardDescription>Book a new video call with a doctor.</CardDescription>
+                            <CardTitle className="flex items-center justify-between">
+                              <span>{p.diagnosis || 'Prescription'}</span>
+                              <span className="text-sm text-muted-foreground">{new Date(p.date).toLocaleDateString()}</span>
+                            </CardTitle>
+                            <CardDescription>By {p.doctor || `Dr. ${p.doctorName}`}</CardDescription>
                           </CardHeader>
-                          <CardContent>
-                              <VideoConsultationBooking 
-                                patientName={userName}
-                                doctors={allDoctors} 
-                                onBookingConfirmed={handleBookingConfirmed}
-                              />
+                          <CardContent className="space-y-3 text-sm">
+                            <div>
+                              <p className="font-medium">Medicines</p>
+                              <ul className="list-disc ml-5 mt-1 space-y-1">
+                                {p.medications.map((m: any, idx: number) => (
+                                  <li key={idx}>{m.name} — {m.dosage}{m.frequency ? `, ${m.frequency}` : ''} for {m.duration}</li>
+                                ))}
+                              </ul>
+                            </div>
+                            {p.notes ? (
+                              <div>
+                                <p className="font-medium">Notes</p>
+                                <p className="text-muted-foreground">{p.notes}</p>
+                              </div>
+                            ) : null}
+                            <div className="pt-2">
+                              <Button variant="outline" onClick={() => window.print()}>Download PDF</Button>
+                            </div>
                           </CardContent>
                         </Card>
-                    </div>
-                    <div className="lg:col-span-2 space-y-8">
-                       <Card>
-                        <CardHeader>
-                          <CardTitle>Upcoming Consultations</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {upcomingConsultations.length > 0 ? upcomingConsultations.map(consult => (
-                                <div key={consult.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-muted/50 p-4 rounded-lg">
-                                    <div>
-                                        <p className="font-semibold">{consult.doctorName} <span className="text-sm font-normal text-muted-foreground">({consult.specialization})</span></p>
-                                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                                            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {new Date(consult.date).toLocaleDateString()}</span>
-                                            <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {consult.time}</span>
-                                        </div>
-                                    </div>
-                                    <Button className="mt-2 sm:mt-0" onClick={() => setActiveCall(consult)}>Join Call</Button>
-                                </div>
-                            )) : <p className="text-sm text-muted-foreground text-center py-4">No upcoming consultations.</p>}
-                        </CardContent>
-                       </Card>
-                       <Card>
-                        <CardHeader>
-                          <CardTitle>Consultation History</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                           {pastConsultations.length > 0 ? pastConsultations.map(consult => (
-                                <div key={consult.id} className="flex justify-between items-center bg-muted/30 p-4 rounded-lg opacity-70">
-                                    <div>
-                                        <p className="font-semibold">{consult.doctorName}</p>
-                                        <p className="text-sm text-muted-foreground">{new Date(consult.date).toLocaleDateString()} at {consult.time}</p>
-                                    </div>
-                                    <Button variant="outline" disabled>View Summary</Button>
-                                </div>
-                            )) : <p className="text-sm text-muted-foreground text-center py-4">No past consultations.</p>}
-                        </CardContent>
-                       </Card>
-                    </div>
-                </div>
+                      </div>
+                    )) : (
+                      <p className="text-muted-foreground">No prescriptions yet.</p>
+                    )}
+                  </CardContent>
+                </Card>
               </TabsContent>
+
+              
 
                <TabsContent value="reminders" className="mt-6">
                 <Card>
@@ -350,12 +365,12 @@ export default function PatientDashboard() {
                         </Button>
                      </div>
                      <div className="space-y-2">
-                       {prescriptions.map(presc => presc.medications.map((med, index) => (
+                       {prescriptions.map((presc: any) => presc.medications.map((med: any, index: number) => (
                            <div key={`${presc.id}-${index}`} className="flex justify-between items-center bg-blue-100/50 dark:bg-blue-900/20 p-3 rounded-lg">
                               <p className="font-medium text-sm">
-                                {translations.patientDashboard.reminders.take} <span className="text-primary">{med.name}</span> ({med.dosage}) - {med.duration}
+                                {translations.patientDashboard.reminders.take} <span className="text-primary">{med.name}</span> ({med.dosage}) {med.frequency ? `- ${med.frequency}` : ''} - {med.duration}
                               </p>
-                              <p className="text-xs text-muted-foreground">{translations.patientDashboard.reminders.from} Dr. {presc.doctorName}</p>
+                              <p className="text-xs text-muted-foreground">{translations.patientDashboard.reminders.from} {presc.doctor || `Dr. ${presc.doctorName}`}</p>
                            </div>
                        )))}
                        {reminders.map(rem => (
@@ -383,13 +398,13 @@ export default function PatientDashboard() {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                             <Input placeholder={translations.patientDashboard.searchByLocation} className="pl-10" value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)} />
                         </div>
-                        <Select onValueChange={setSpecializationFilter} defaultValue="all">
+                        <Select onValueChange={setSpecializationFilter} defaultValue="All">
                             <SelectTrigger className="w-full sm:w-1/2">
                                 <SelectValue placeholder={translations.patientDashboard.filterBySpecialization} />
                             </SelectTrigger>
                             <SelectContent>
                                 {uniqueSpecializations.map((spec) => (
-                                    <SelectItem key={spec} value={spec} className="capitalize">{spec}</SelectItem>
+                                    <SelectItem key={spec} value={spec}>{spec}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
@@ -414,31 +429,7 @@ export default function PatientDashboard() {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="pharmacies" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{translations.patientDashboard.nearbyPharmacies}</CardTitle>
-                    <CardDescription>{translations.patientDashboard.nearbyPharmaciesDesc}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {filteredPharmacies.length > 0 ? filteredPharmacies.map((pharmacy, index) => (
-                            <Card key={index} className="hover:shadow-lg transition-shadow">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2"><Building className="text-primary"/> {pharmacy.pharmacyName}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2 text-sm text-muted-foreground">
-                                    <p className="flex items-center gap-2"><MapPin className="w-4 h-4"/> {pharmacy.address}, {pharmacy.city} - {pharmacy.pinCode}</p>
-                                    <p className="flex items-center gap-2"><Phone className="w-4 h-4"/> {pharmacy.phone}</p>
-                                </CardContent>
-                            </Card>
-                        )) : (
-                             <p className="text-muted-foreground col-span-2 text-center py-8">{translations.patientDashboard.noPharmaciesFound}</p>
-                        )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+              
 
                <TabsContent value="reports" className="mt-6">
                  <Card>

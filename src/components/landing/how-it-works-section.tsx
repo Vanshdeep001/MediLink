@@ -48,7 +48,7 @@ export function HowItWorksSection() {
         </div>
 
         <div className="relative">
-          <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-border -translate-y-1/2"></div>
+          <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-primary/20 via-primary to-primary/20 -translate-y-1/2"></div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
             {steps.map((step, index) => (
               <FadeIn
@@ -57,7 +57,11 @@ export function HowItWorksSection() {
                 direction={index % 2 === 0 ? 'up' : 'down'}
               >
                 <div className="text-center relative bg-background px-4">
-                  <div className="flex items-center justify-center w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/20 mb-6 mx-auto">
+                  {/* Step number */}
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold z-10">
+                    {index + 1}
+                  </div>
+                  <div className="flex items-center justify-center w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/20 mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
                     {step.icon}
                   </div>
                   <h3 className="text-2xl font-bold mb-2">{step.title}</h3>

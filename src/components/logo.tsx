@@ -10,7 +10,7 @@ export function Logo({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect width="48" height="48" rx="8" fill="hsl(var(--card))" />
+        <rect width="48" height="48" rx="8" fill="hsl(224,71%,10%)" />
         <svg
           x="12"
           y="12"
@@ -33,9 +33,6 @@ export function Logo({ className }: { className?: string }) {
         <h1 className="text-2xl font-bold text-foreground tracking-tighter">
           MediLink
         </h1>
-        <p className="text-xs text-primary tracking-widest font-sans font-semibold">
-          HEALTHCARE
-        </p>
       </div>
     </div>
   );
