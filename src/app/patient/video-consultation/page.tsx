@@ -14,9 +14,9 @@ import { VideoConsultationBooking } from '@/components/patient/video-consultatio
 import { FadeIn } from '@/components/fade-in';
 import { FeedbackForm } from '@/components/patient/feedback-form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { JitsiCall } from '@/components/jitsi-call';
 import type { Consultation, Doctor } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
-import { JitsiCall } from '@/components/jitsi-call';
 
 
 export default function VideoConsultationPage() {
