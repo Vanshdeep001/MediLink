@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useTransition, useContext } from 'react';
+import React, { useState, useTransition, useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, AlertTriangle, Lightbulb, ListChecks, Sparkles, HeartPulse, BrainCircuit } from 'lucide-react';
 import { LanguageContext } from '@/context/language-context';
-import { symptomData } from '@/lib/symptom-data';
+import { analyzeSymptoms, getAvailableAIServices, type SymptomAnalysisRequest, type SymptomAnalysisResponse } from '@/lib/ai-service';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 
 const formSchema = z.object({
@@ -28,34 +28,40 @@ const formSchema = z.object({
 });
 
 type SymptomFormValues = z.infer<typeof formSchema>;
-type SymptomAnalysis = (typeof symptomData)['fever'];
+type SymptomAnalysis = SymptomAnalysisResponse;
 
 const additionalSymptomOptions = ['Fever', 'Headache', 'Fatigue', 'Nausea', 'Cough', 'Dizziness'];
 
-const getSymptomAnalysis = (values: SymptomFormValues): Promise<{ result?: SymptomAnalysis; error?: string }> => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const allSymptoms = [values.mainSymptom.toLowerCase(), ...values.additionalSymptoms.map(s => s.toLowerCase())];
-      
-      for (const symptom of allSymptoms) {
-        for (const key in symptomData) {
-          if (symptom.includes(key)) {
-            resolve({ result: symptomData[key as keyof typeof symptomData] });
-            return;
-          }
-        }
-      }
-      
-      resolve({ error: "We couldn't find a match for your symptoms. Please try describing them differently or consult a doctor." });
-    }, 1500); // Simulate network delay
-  });
+const getSymptomAnalysis = async (values: SymptomFormValues): Promise<{ result?: SymptomAnalysis; error?: string }> => {
+  try {
+    const request: SymptomAnalysisRequest = {
+      mainSymptom: values.mainSymptom,
+      bodyPart: values.bodyPart,
+      duration: values.duration,
+      severity: values.severity,
+      additionalSymptoms: values.additionalSymptoms,
+      additionalInfo: values.additionalInfo,
+    };
+    
+    const result = await analyzeSymptoms(request);
+    return { result };
+  } catch (error) {
+    console.error('AI analysis error:', error);
+    return { error: "We couldn't analyze your symptoms at the moment. Please try again or consult a doctor." };
+  }
 };
 
 export function SymptomChecker() {
   const [isPending, startTransition] = useTransition();
   const [analysis, setAnalysis] = useState<SymptomAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [availableAIServices, setAvailableAIServices] = useState<string[]>([]);
   const { translations } = useContext(LanguageContext);
+
+  // Get available AI services on component mount
+  useEffect(() => {
+    setAvailableAIServices(getAvailableAIServices());
+  }, []);
 
   const form = useForm<SymptomFormValues>({
     resolver: zodResolver(formSchema),
@@ -93,6 +99,15 @@ export function SymptomChecker() {
 
   return (
       <CardContent className="p-6 md:p-8">
+        {/* AI Services Status */}
+        <div className="mb-4 p-3 bg-muted/30 rounded-lg">
+          <div className="flex items-center gap-2 text-sm">
+            <BrainCircuit className="w-4 h-4 text-primary" />
+            <span className="font-medium">AI Services:</span>
+            <span className="text-muted-foreground">{availableAIServices.join(', ')}</span>
+          </div>
+        </div>
+        
         <AnimatePresence mode="wait">
           {!analysis && !isPending && !error && (
             <motion.div
@@ -301,6 +316,10 @@ export function SymptomChecker() {
                     <Sparkles className="w-10 h-10 text-primary/80 mx-auto mb-2" />
                     <h3 className="text-2xl font-bold">Your AI Health Report</h3>
                     <p className="text-sm text-muted-foreground">This is not a medical diagnosis. Please consult a doctor.</p>
+                    <div className="mt-2 flex items-center justify-center gap-4 text-xs text-muted-foreground">
+                      <span>Powered by: {analysis.aiModel}</span>
+                      <span>Confidence: {Math.round(analysis.confidence * 100)}%</span>
+                    </div>
                 </div>
 
                 <div className="space-y-4">
