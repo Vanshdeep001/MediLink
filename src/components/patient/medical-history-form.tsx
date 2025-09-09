@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Progress } from "@/components/ui/progress";
 import { LanguageContext } from "@/context/language-context";
+import { ensurePatientRecord } from "@/lib/dhidService";
 
 const formSchema = z.object({
   preExistingConditions: z.string().optional(),
@@ -84,6 +85,33 @@ export function MedicalHistoryForm() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log({ ...values, files });
+    try {
+      const userString = localStorage.getItem('temp_user');
+      if (userString) {
+        const user = JSON.parse(userString);
+        const name: string = user.fullName || 'Patient';
+        const dobDate: Date | string = user.dob;
+        const dobStr = typeof dobDate === 'string' ? new Date(dobDate).toISOString().slice(0,10) : new Date(dobDate).toISOString().slice(0,10);
+        const id: string = user.phone ? `PAT-${user.phone}` : `PAT-${Date.now()}`;
+        const medicalHistory: string[] = [
+          values.preExistingConditions,
+          values.medications,
+          values.allergies,
+          values.familyHistory,
+          values.otherNotes,
+        ].filter(Boolean) as string[];
+
+        const record = ensurePatientRecord({ id, name, dob: dobStr, medicalHistory });
+        localStorage.setItem('dhid_last_issued_for', record.id);
+      }
+    } catch (e) {
+      // Non-blocking alert if DHID fails
+      toast({
+        title: 'Digital Health ID',
+        description: 'Digital Health ID could not be generated. Please retry.',
+      });
+    }
+
     toast({
       title: translations.medicalHistory.toastTitle,
       description: translations.medicalHistory.toastDescription,

@@ -19,12 +19,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { VideoConsultationBooking } from '@/components/patient/video-consultation-booking';
 import { JitsiCall } from '@/components/jitsi-call';
+import { getPatientRecordByNameDob, ensurePatientRecord, copyTextToClipboard } from '@/lib/dhidService';
+import { Download, Copy } from 'lucide-react';
+import jsPDF from 'jspdf';
 
 export default function PatientDashboard() {
   const { translations } = useContext(LanguageContext);
   const { toast } = useToast();
   const router = useRouter();
   const [userName, setUserName] = useState('');
+  const [userDob, setUserDob] = useState<string>('');
+  const [dhid, setDhid] = useState<string>('');
+  const [dhidIssuedAt, setDhidIssuedAt] = useState<string>('');
   
   const [allDoctors, setAllDoctors] = useState<Doctor[]>([]);
   const [allPharmacies, setAllPharmacies] = useState<Pharmacy[]>([]);
@@ -54,6 +60,9 @@ export default function PatientDashboard() {
         const user = JSON.parse(userString);
         currentUserName = user.fullName || 'Patient';
         setUserName(currentUserName);
+        const dobDate: Date | string = user.dob;
+        const dobStr = typeof dobDate === 'string' ? new Date(dobDate).toISOString().slice(0,10) : new Date(dobDate).toISOString().slice(0,10);
+        setUserDob(dobStr);
       } catch (e) {
         setUserName('Patient');
       }
@@ -70,6 +79,32 @@ export default function PatientDashboard() {
     const pharmacies = pharmaciesString ? JSON.parse(pharmaciesString) : [];
     setAllPharmacies(pharmacies);
     setFilteredPharmacies(pharmacies);
+
+    // Load DHID if available; if absent, generate as a non-blocking fallback
+    try {
+      const uStr = localStorage.getItem('temp_user');
+      if (uStr) {
+        const u = JSON.parse(uStr);
+        const d = typeof u.dob === 'string' ? new Date(u.dob) : new Date(u.dob);
+        const dob = isNaN(d.getTime()) ? new Date().toISOString().slice(0,10) : d.toISOString().slice(0,10);
+        let rec = getPatientRecordByNameDob(currentUserName, dob);
+        if (!rec) {
+          const id = u.phone ? `PAT-${u.phone}` : `PAT-${Date.now()}`;
+          rec = ensurePatientRecord({ id, name: currentUserName, dob });
+        }
+        if (rec) {
+          setDhid(rec.digitalHealthId);
+          setDhidIssuedAt(rec.dhidCreatedAt);
+        }
+      } else {
+        // No temp user, still ensure a DHID so the banner is visible
+        const fallbackDob = '1970-01-01';
+        const id = `PAT-${Date.now()}`;
+        const rec = ensurePatientRecord({ id, name: currentUserName || 'Patient', dob: fallbackDob });
+        setDhid(rec.digitalHealthId);
+        setDhidIssuedAt(rec.dhidCreatedAt);
+      }
+    } catch {}
 
     loadData(currentUserName);
   }, [router]);
@@ -163,6 +198,93 @@ export default function PatientDashboard() {
   const upcomingConsultations = consultations.filter(c => new Date(c.date) >= new Date());
   const pastConsultations = consultations.filter(c => new Date(c.date) < new Date());
 
+  const handleCopyDhid = async () => {
+    if (!dhid) return;
+    await copyTextToClipboard(dhid);
+    toast({ title: 'Copied', description: 'Digital Health ID copied to clipboard.' });
+  };
+
+  const handleDownloadDhidPdf = () => {
+    if (!dhid) return;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Brand header bar
+    doc.setFillColor('#0ea5e9');
+    doc.rect(0, 0, pageWidth, 80, 'F');
+    doc.setTextColor('#ffffff');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.text('MediLink', 40, 50);
+
+    // Subheader title
+    doc.setTextColor('#0b1324');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text('Digital Health ID', 40, 120);
+
+    // Card container
+    const cardX = 40;
+    const cardY = 140;
+    const cardW = pageWidth - 80;
+    const cardH = 220;
+    doc.setDrawColor('#e5e7eb');
+    doc.setFillColor('#f8fafc');
+    doc.roundedRect(cardX, cardY, cardW, cardH, 8, 8, 'FD');
+
+    // Labels and values
+    const labelColor = '#64748b';
+    const valueColor = '#0b1324';
+    let y = cardY + 36;
+    const line = 28;
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(labelColor);
+    doc.setFontSize(11);
+    doc.text('Patient Name', cardX + 20, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(valueColor);
+    doc.setFontSize(13);
+    doc.text(userName || 'Patient', cardX + 160, y);
+
+    y += line;
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(labelColor);
+    doc.setFontSize(11);
+    doc.text('DOB', cardX + 20, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(valueColor);
+    doc.setFontSize(13);
+    doc.text(userDob || '-', cardX + 160, y);
+
+    y += line;
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(labelColor);
+    doc.setFontSize(11);
+    doc.text('Digital Health ID', cardX + 20, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor('#0ea5e9');
+    doc.setFontSize(14);
+    doc.text(dhid, cardX + 160, y);
+
+    y += line;
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(labelColor);
+    doc.setFontSize(11);
+    doc.text('Issued', cardX + 20, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(valueColor);
+    doc.setFontSize(13);
+    doc.text(dhidIssuedAt ? new Date(dhidIssuedAt).toLocaleString() : new Date().toLocaleString(), cardX + 160, y);
+
+    // Footer note
+    doc.setTextColor('#94a3b8');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text('Keep this DHID private. It helps link your health records within MediLink.', cardX, cardY + cardH + 30);
+
+    doc.save(`DHID_${userName.replace(/\s+/g,'_')}.pdf`);
+  };
+
   // Predefined common specialties for a clearer dropdown (capitalized)
   const allKnownSpecialties = [
     'General Physician',
@@ -201,6 +323,25 @@ export default function PatientDashboard() {
               <p className="mt-4 text-lg text-muted-foreground animate-text-fade-in-scale" style={{ animationDelay: '0.4s' }}>
                 {translations.patientDashboard.subtitle}
               </p>
+              {dhid ? (
+                <div className="mt-6 mx-auto max-w-xl">
+                  <div className="border rounded-lg p-4 bg-muted/30">
+                    <p className="text-sm text-muted-foreground mb-2">Your Digital Health ID</p>
+                    <p className="font-mono text-lg select-text break-all" aria-live="polite">{dhid}</p>
+                    <div className="mt-3 flex gap-2 justify-center">
+                      <Button variant="outline" size="sm" aria-label="Copy Digital Health ID" onClick={handleCopyDhid}>
+                        <Copy className="w-4 h-4 mr-2" /> Copy
+                      </Button>
+                      <Button variant="default" size="sm" aria-label="Download Digital Health ID PDF" onClick={handleDownloadDhidPdf}>
+                        <Download className="w-4 h-4 mr-2" /> Download PDF
+                      </Button>
+                    </div>
+                    {dhidIssuedAt ? (
+                      <p className="mt-2 text-xs text-muted-foreground">Issued on {new Date(dhidIssuedAt).toLocaleString()}</p>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -246,6 +387,33 @@ export default function PatientDashboard() {
               </CardContent>
             </Card>
           </div>
+
+          {!dhid ? null : (
+            <div className="mb-8 animate-content-fade-in" style={{ animationDelay: '0.7s' }}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Your Digital Health ID</CardTitle>
+                  <CardDescription>Keep this ID safe. You can copy or download it.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <p className="font-mono text-base select-text break-all" aria-live="polite">{dhid}</p>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" aria-label="Copy Digital Health ID" onClick={handleCopyDhid}>
+                        <Copy className="w-4 h-4 mr-2" /> Copy
+                      </Button>
+                      <Button variant="default" size="sm" aria-label="Download Digital Health ID PDF" onClick={handleDownloadDhidPdf}>
+                        <Download className="w-4 h-4 mr-2" /> Download PDF
+                      </Button>
+                    </div>
+                  </div>
+                  {dhidIssuedAt ? (
+                    <p className="mt-2 text-xs text-muted-foreground">Issued on {new Date(dhidIssuedAt).toLocaleString()}</p>
+                  ) : null}
+                </CardContent>
+              </Card>
+            </div>
+          )}
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.8s' }}>
             <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
