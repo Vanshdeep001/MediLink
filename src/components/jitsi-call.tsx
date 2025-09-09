@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { generateJitsiUrl } from '@/lib/call-management-service';
 
 interface JitsiCallProps {
     roomName: string;
@@ -22,7 +23,10 @@ export function JitsiCall({ roomName, userName, onClose }: JitsiCallProps) {
     const [copied, setCopied] = useState(false);
     const { toast } = useToast();
     
-    const jitsiUrl = `https://meet.jit.si/${roomName}#config.displayName="${userName}"&config.prejoinPageEnabled=false&config.startWithAudioMuted=${isMicMuted}&config.startWithVideoMuted=${isCameraOff}`;
+    const jitsiUrl = generateJitsiUrl(roomName, userName, {
+        audioMuted: isMicMuted,
+        videoMuted: isCameraOff
+    });
 
     const copyRoomLink = async () => {
         try {

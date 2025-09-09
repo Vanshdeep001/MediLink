@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { generateJitsiUrl } from '@/lib/call-management-service';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import type { Doctor, Consultation } from '@/lib/types';
 
@@ -65,7 +66,7 @@ export function VideoConsultationBooking({ doctors, patientName, onBookingConfir
       specialization: values.specialization,
       date: values.date.toISOString(),
       time: values.time,
-      jitsiLink: `https://meet.jit.si/${roomName}`
+      jitsiLink: generateJitsiUrl(roomName, values.patientName)
     };
 
     const consultationsString = localStorage.getItem('consultations_list');

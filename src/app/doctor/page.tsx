@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { Patient, Pharmacy, Prescription, Medication, Consultation } from '@/lib/types';
 import Image from 'next/image';
 import { JitsiCall } from '@/components/jitsi-call';
+import { DoctorCallInterface } from '@/components/doctor/doctor-call-interface';
 
 export default function DoctorDashboard() {
   const { translations } = useContext(LanguageContext);
@@ -284,53 +285,7 @@ export default function DoctorDashboard() {
               </TabsContent>
               
               <TabsContent value="video-consultation" className="mt-6">
-                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><Video /> Video Consultations</CardTitle>
-                    <CardDescription>Manage your scheduled video calls with patients.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                     <div>
-                       <h3 className="font-semibold mb-2">Incoming Consultations</h3>
-                        {upcomingConsultations.length > 0 ? (
-                           <div className="space-y-4">
-                            {upcomingConsultations.map(consult => (
-                                <div key={consult.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-muted/50 p-4 rounded-lg">
-                                    <div>
-                                        <p className="font-semibold">{consult.patientName}</p>
-                                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                                            <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {new Date(consult.date).toLocaleDateString()}</span>
-                                            <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {consult.time}</span>
-                                        </div>
-                                    </div>
-                                    <Button className="mt-2 sm:mt-0" onClick={() => setActiveCall(consult)}>Join Call</Button>
-                                </div>
-                            ))}
-                           </div>
-                        ) : (
-                           <p className="text-sm text-muted-foreground text-center py-4">No upcoming consultations.</p>
-                        )}
-                     </div>
-                      <div>
-                       <h3 className="font-semibold mb-2">Past Consultations</h3>
-                        {pastConsultations.length > 0 ? (
-                           <div className="space-y-4">
-                            {pastConsultations.map(consult => (
-                                <div key={consult.id} className="flex justify-between items-center bg-muted/30 p-4 rounded-lg opacity-70">
-                                    <div>
-                                        <p className="font-semibold">{consult.patientName}</p>
-                                        <p className="text-sm text-muted-foreground">{new Date(consult.date).toLocaleDateString()} at {consult.time}</p>
-                                    </div>
-                                    <Button variant="outline" disabled>View Details</Button>
-                                </div>
-                            ))}
-                           </div>
-                        ) : (
-                           <p className="text-sm text-muted-foreground text-center py-4">No past consultations.</p>
-                        )}
-                     </div>
-                  </CardContent>
-                </Card>
+                <DoctorCallInterface doctorName={doctorName} />
               </TabsContent>
 
                <TabsContent value="prescriptions" className="mt-6">

@@ -19,6 +19,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { VideoConsultationBooking } from '@/components/patient/video-consultation-booking';
 import { JitsiCall } from '@/components/jitsi-call';
+import { PatientCallNotification } from '@/components/patient/patient-call-notification';
 import { getPatientRecordByNameDob, ensurePatientRecord, copyTextToClipboard } from '@/lib/dhidService';
 import { Download, Copy } from 'lucide-react';
 import jsPDF from 'jspdf';
@@ -638,6 +639,22 @@ export default function PatientDashboard() {
             onClose={() => setActiveCall(null)}
         />
       )}
+      
+      {/* Patient Call Notification */}
+      <PatientCallNotification 
+        patientName={userName}
+        onCallAccepted={(call) => {
+          setActiveCall({
+            id: call.id,
+            patientName: call.patientName,
+            doctorName: call.doctorName,
+            specialization: 'General',
+            date: call.initiatedAt,
+            time: new Date().toLocaleTimeString(),
+            jitsiLink: call.jitsiLink
+          });
+        }}
+      />
     </div>
   );
 }
