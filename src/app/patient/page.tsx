@@ -8,7 +8,7 @@ import { Footer } from "@/components/layout/footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Pill, FileText, Heart, PlusCircle, Upload, Search, ChevronRight, BellRing, Video, Building, Stethoscope, MapPin, Phone, Trash2, BrainCircuit, Clock } from "lucide-react";
+import { Calendar, Pill, FileText, Heart, PlusCircle, Upload, Search, ChevronRight, BellRing, Video, Building, Stethoscope, MapPin, Phone, Trash2, BrainCircuit, Clock, MessageCircle, Eye, Copy, Download } from "lucide-react";
 import TextFlipper from "@/components/ui/text-effect-flipper";
 import { LanguageContext } from '@/context/language-context';
 import { Input } from '@/components/ui/input';
@@ -21,8 +21,10 @@ import { VideoConsultationBooking } from '@/components/patient/video-consultatio
 import { JitsiCall } from '@/components/jitsi-call';
 import { PatientCallNotification } from '@/components/patient/patient-call-notification';
 import { getPatientRecordByNameDob, ensurePatientRecord, copyTextToClipboard } from '@/lib/dhidService';
-import { Download, Copy } from 'lucide-react';
 import jsPDF from 'jspdf';
+import { OrderMedicines } from '@/components/patient/order-medicines';
+import { ChatDoc } from '@/components/chatdoc/chatdoc';
+import { addDemoDoctors } from '@/lib/demo-doctors';
 
 export default function PatientDashboard() {
   const { translations } = useContext(LanguageContext);
@@ -43,11 +45,15 @@ export default function PatientDashboard() {
   const [newReminder, setNewReminder] = useState('');
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [activeCall, setActiveCall] = useState<Consultation | null>(null);
+  const [activeTab, setActiveTab] = useState('appointments');
 
   const [specializationFilter, setSpecializationFilter] = useState('All');
   const [locationFilter, setLocationFilter] = useState('');
 
   useEffect(() => {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') return;
+    
     // Fetch user, doctors, and pharmacies data from localStorage
     const userString = localStorage.getItem('temp_user');
     if (!userString) {
@@ -113,7 +119,7 @@ export default function PatientDashboard() {
   const lastPrescCountRef = useRef<number>(0);
 
   const loadData = (currentUserName: string) => {
-    if (!currentUserName) return;
+    if (!currentUserName || typeof window === 'undefined') return;
     const dsKey = 'medilink_prescriptions';
     const allPrescriptions = JSON.parse(localStorage.getItem(dsKey) || '[]');
     const userPrescriptions = allPrescriptions.filter((p: any) => (p.patient || p.patientName) === currentUserName);
@@ -160,7 +166,9 @@ export default function PatientDashboard() {
     };
     const updatedReminders = [...reminders, newReminderObj];
     setReminders(updatedReminders);
-    localStorage.setItem('reminders_list', JSON.stringify([...(JSON.parse(localStorage.getItem('reminders_list') || '[]').filter((r: Reminder) => r.patientName !== userName)), ...updatedReminders]));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('reminders_list', JSON.stringify([...(JSON.parse(localStorage.getItem('reminders_list') || '[]').filter((r: Reminder) => r.patientName !== userName)), ...updatedReminders]));
+    }
     setNewReminder('');
     toast({
       title: translations.patientDashboard.reminders.successTitle,
@@ -171,7 +179,9 @@ export default function PatientDashboard() {
   const handleDeleteReminder = (id: string) => {
     const updatedReminders = reminders.filter(r => r.id !== id);
     setReminders(updatedReminders);
-    localStorage.setItem('reminders_list', JSON.stringify([...(JSON.parse(localStorage.getItem('reminders_list') || '[]').filter((r: Reminder) => r.patientName !== userName)), ...updatedReminders]));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('reminders_list', JSON.stringify([...(JSON.parse(localStorage.getItem('reminders_list') || '[]').filter((r: Reminder) => r.patientName !== userName)), ...updatedReminders]));
+    }
      toast({
       title: translations.patientDashboard.reminders.deletedTitle,
       variant: "destructive"
@@ -333,8 +343,8 @@ export default function PatientDashboard() {
                       <Button variant="outline" size="sm" aria-label="Copy Digital Health ID" onClick={handleCopyDhid}>
                         <Copy className="w-4 h-4 mr-2" /> Copy
                       </Button>
-                      <Button variant="default" size="sm" aria-label="Download Digital Health ID PDF" onClick={handleDownloadDhidPdf}>
-                        <Download className="w-4 h-4 mr-2" /> Download PDF
+                      <Button variant="default" size="sm" aria-label="View Full Digital Health ID" onClick={() => router.push('/patient/digital-health-id')}>
+                        <Eye className="w-4 h-4 mr-2" /> View Full ID
                       </Button>
                     </div>
                     {dhidIssuedAt ? (
@@ -389,34 +399,8 @@ export default function PatientDashboard() {
             </Card>
           </div>
 
-          {!dhid ? null : (
-            <div className="mb-8 animate-content-fade-in" style={{ animationDelay: '0.7s' }}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Your Digital Health ID</CardTitle>
-                  <CardDescription>Keep this ID safe. You can copy or download it.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <p className="font-mono text-base select-text break-all" aria-live="polite">{dhid}</p>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" aria-label="Copy Digital Health ID" onClick={handleCopyDhid}>
-                        <Copy className="w-4 h-4 mr-2" /> Copy
-                      </Button>
-                      <Button variant="default" size="sm" aria-label="Download Digital Health ID PDF" onClick={handleDownloadDhidPdf}>
-                        <Download className="w-4 h-4 mr-2" /> Download PDF
-                      </Button>
-                    </div>
-                  </div>
-                  {dhidIssuedAt ? (
-                    <p className="mt-2 text-xs text-muted-foreground">Issued on {new Date(dhidIssuedAt).toLocaleString()}</p>
-                  ) : null}
-                </CardContent>
-              </Card>
-            </div>
-          )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.8s' }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 animate-content-fade-in" style={{ animationDelay: '0.8s' }}>
             <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
                <CardHeader>
                 <CardTitle className="flex items-center gap-2"><BrainCircuit /> {translations.patientDashboard.symptomChecker}</CardTitle>
@@ -439,16 +423,28 @@ export default function PatientDashboard() {
                 </Button>
               </CardContent>
             </Card>
+            <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><MessageCircle /> ChatDoc</CardTitle>
+                <CardDescription>Chat with your doctor in real-time as a backup to video calls</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow flex items-end">
+                <Button className="w-full" onClick={() => router.push('/patient/chatdoc')}>
+                  Start Chat
+                </Button>
+              </CardContent>
+            </Card>
             
           </div>
 
           <div className="animate-content-fade-in" style={{ animationDelay: '1s' }}>
             <Tabs defaultValue="appointments" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="appointments">{translations.patientDashboard.appointments}</TabsTrigger>
                 <TabsTrigger value="reminders">{translations.patientDashboard.reminders.tabTitle}</TabsTrigger>
                 <TabsTrigger value="doctors">{translations.patientDashboard.doctors}</TabsTrigger>
                 <TabsTrigger value="digital-prescriptions">Digital Prescriptions</TabsTrigger>
+                <TabsTrigger value="order-medicines">Order Medicines</TabsTrigger>
               </TabsList>
               
               <TabsContent value="appointments" className="mt-6">
@@ -518,7 +514,15 @@ export default function PatientDashboard() {
                 </Card>
               </TabsContent>
 
-              
+              <TabsContent value="order-medicines" className="mt-6">
+                <OrderMedicines 
+                  prescriptions={prescriptions}
+                  pharmacies={filteredPharmacies}
+                  patientName={userName}
+                  patientPhone=""
+                  patientAddress=""
+                />
+              </TabsContent>
 
                <TabsContent value="reminders" className="mt-6">
                 <Card>
@@ -627,9 +631,11 @@ export default function PatientDashboard() {
                 </Card>
               </TabsContent>
 
+
             </Tabs>
           </div>
         </div>
+        
       </main>
       <Footer />
        {activeCall && (

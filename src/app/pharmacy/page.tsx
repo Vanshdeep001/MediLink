@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { LanguageContext } from '@/context/language-context';
 import type { Prescription } from '@/lib/types';
 import Image from 'next/image';
+import { OrderManagement } from '@/components/pharmacy/order-management';
 
 export default function PharmacyDashboard() {
   const { translations } = useContext(LanguageContext);
@@ -125,10 +126,11 @@ export default function PharmacyDashboard() {
 
           <div className="animate-content-fade-in" style={{ animationDelay: '0.8s' }}>
             <Tabs defaultValue="prescriptions" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="prescriptions">{translations.pharmacyDashboard.prescriptions}</TabsTrigger>
                 <TabsTrigger value="inventory">{translations.pharmacyDashboard.inventory}</TabsTrigger>
                 <TabsTrigger value="orders">{translations.pharmacyDashboard.orders}</TabsTrigger>
+                <TabsTrigger value="order-management">Order Management</TabsTrigger>
                 <TabsTrigger value="deliveries">{translations.pharmacyDashboard.deliveries}</TabsTrigger>
               </TabsList>
               
@@ -224,6 +226,13 @@ export default function PharmacyDashboard() {
                      </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="order-management" className="mt-6">
+                <OrderManagement 
+                  pharmacyId={`pharmacy_${pharmacyName.replace(/\s+/g, '_').toLowerCase()}`}
+                  pharmacyName={pharmacyName}
+                />
               </TabsContent>
 
                <TabsContent value="deliveries" className="mt-6">

@@ -1,18 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Phone, PhoneOff, Users, Clock, Search } from 'lucide-react';
+import { Phone, PhoneOff, Users, Clock, Search, CheckCircle, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { 
   initiateCall, 
   getAllPatients, 
   getDoctorCalls, 
   endCall,
+  acceptCall,
+  declineCall,
   type CallSession,
   type Patient 
 } from '@/lib/call-management-service';
@@ -35,11 +37,31 @@ export function DoctorCallInterface({ doctorName }: DoctorCallInterfaceProps) {
     
     // Poll for call status updates every 2 seconds
     const interval = setInterval(() => {
+      const previousCalls = activeCalls;
       loadActiveCalls();
+      
+      // Check for newly connected patient-initiated calls
+      const currentCalls = getDoctorCalls(doctorName);
+      const newlyConnectedCalls = currentCalls.filter(call => 
+        call.initiatedBy === 'patient' && 
+        call.status === 'connected' &&
+        !previousCalls.find(prevCall => prevCall.id === call.id && prevCall.status === 'connected')
+      );
+      
+      // Auto-open newly connected calls
+      newlyConnectedCalls.forEach(call => {
+        toast({
+          title: "Patient call connected",
+          description: `Opening video call with ${call.patientName}...`,
+        });
+        setTimeout(() => {
+          window.open(call.jitsiLink, '_blank');
+        }, 1000);
+      });
     }, 2000);
     
     return () => clearInterval(interval);
-  }, [doctorName]);
+  }, [doctorName, activeCalls, toast]);
 
   const loadPatients = () => {
     const allPatients = getAllPatients();
@@ -51,9 +73,11 @@ export function DoctorCallInterface({ doctorName }: DoctorCallInterfaceProps) {
     setActiveCalls(calls);
   };
 
-  const filteredPatients = patients.filter(patient =>
-    patient.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPatients = useMemo(() => 
+    patients.filter(patient =>
+      patient.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.email.toLowerCase().includes(searchTerm.toLowerCase())
+    ), [patients, searchTerm]
   );
 
   const handleCallPatient = async () => {
@@ -124,6 +148,32 @@ export function DoctorCallInterface({ doctorName }: DoctorCallInterfaceProps) {
     });
   };
 
+  const handleAcceptCall = (callId: string) => {
+    const updatedCall = acceptCall(callId);
+    if (updatedCall) {
+      loadActiveCalls();
+      toast({
+        title: "Call accepted",
+        description: `Connecting with ${updatedCall.patientName}...`,
+      });
+      // Open the call in a new window (same as doctor-initiated calls)
+      setTimeout(() => {
+        window.open(updatedCall.jitsiLink, '_blank');
+      }, 1000);
+    }
+  };
+
+  const handleDeclineCall = (callId: string) => {
+    const updatedCall = declineCall(callId);
+    if (updatedCall) {
+      loadActiveCalls();
+      toast({
+        title: "Call declined",
+        description: "The call request has been declined.",
+      });
+    }
+  };
+
   const getStatusColor = (status: CallSession['status']) => {
     switch (status) {
       case 'initiated': return 'bg-blue-500';
@@ -172,7 +222,7 @@ export function DoctorCallInterface({ doctorName }: DoctorCallInterfaceProps) {
           </div>
 
           {/* Patient Selection */}
-          <Select value={selectedPatient} onValueChange={setSelectedPatient}>
+          <Select value={selectedPatient || ""} onValueChange={setSelectedPatient}>
             <SelectTrigger>
               <SelectValue placeholder="Select a patient to call" />
             </SelectTrigger>
@@ -212,8 +262,68 @@ export function DoctorCallInterface({ doctorName }: DoctorCallInterfaceProps) {
         </CardContent>
       </Card>
 
+      {/* Incoming Call Requests */}
+      {activeCalls.filter(call => call.initiatedBy === 'patient' && call.status === 'initiated').length > 0 && (
+        <Card className="border-orange-200 bg-orange-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-orange-800">
+              <Phone className="w-5 h-5" />
+              Incoming Call Requests
+            </CardTitle>
+            <CardDescription className="text-orange-700">
+              Patients requesting instant video consultations
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {activeCalls
+                .filter(call => call.initiatedBy === 'patient' && call.status === 'initiated')
+                .map((call) => (
+                <div
+                  key={call.id}
+                  className="flex items-center justify-between p-4 border border-orange-200 rounded-lg bg-white"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-orange-500 animate-pulse" />
+                    <div>
+                      <p className="font-semibold text-orange-900">{call.patientName}</p>
+                      <p className="text-sm text-orange-700">
+                        Instant call request
+                      </p>
+                      <Badge variant="outline" className="mt-1 border-orange-300 text-orange-700">
+                        Waiting for acceptance
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => handleAcceptCall(call.id)}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      <CheckCircle className="w-4 h-4 mr-1" />
+                      Accept
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeclineCall(call.id)}
+                    >
+                      <XCircle className="w-4 h-4 mr-1" />
+                      Decline
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Active Calls */}
-      {activeCalls.length > 0 && (
+      {activeCalls.filter(call => call.status === 'connected' || call.status === 'ringing').length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -226,7 +336,9 @@ export function DoctorCallInterface({ doctorName }: DoctorCallInterfaceProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {activeCalls.map((call) => (
+              {activeCalls
+                .filter(call => call.status === 'connected' || call.status === 'ringing')
+                .map((call) => (
                 <div
                   key={call.id}
                   className="flex items-center justify-between p-4 border rounded-lg"

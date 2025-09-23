@@ -12,7 +12,8 @@ export async function signIn(email: string) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     
     const token = await userCredential.user.getIdToken();
-    cookies().set('session', token, {
+    const cookieStore = await cookies();
+    cookieStore.set('session', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24, // 1 day

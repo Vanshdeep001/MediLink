@@ -50,7 +50,7 @@ export function HeroSection() {
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-blue-200/30 rounded-3xl transform rotate-3"></div>
             <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-4 shadow-2xl overflow-hidden">
               <Image
-                src="/healthcare-illustration.jpg"
+                src="/healthcare-illustration.jpg?v=3"
                 alt="Doctor and Patient connected through technology"
                 width={400}
                 height={350}

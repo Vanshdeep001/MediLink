@@ -8,9 +8,13 @@ import { Footer } from "@/components/layout/footer";
 import { LanguageContext } from '@/context/language-context';
 import TextFlipper from '@/components/ui/text-effect-flipper';
 import { Card } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SymptomCheckerPage() {
   const { translations } = useContext(LanguageContext);
+  const router = useRouter();
+  const { toast } = useToast();
 
   const titleParts = translations.patientDashboard.symptomChecker.split(' ');
   const mainTitle = titleParts.slice(0, -1).join(' ');
@@ -32,6 +36,7 @@ export default function SymptomCheckerPage() {
           <Card className="shadow-lg animate-content-fade-in w-full" style={{ animationDelay: '0.5s' }}>
             <SymptomChecker />
           </Card>
+          
         </div>
       </main>
       <Footer />

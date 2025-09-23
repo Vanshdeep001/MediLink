@@ -284,7 +284,7 @@
       "dosage": "खुराक",
       "dosagePlaceholder": "जैसे, 1 गोली दिन में दो बार",
       "duration": "अवधि",
-      "dosagePlaceholder": "जैसे, 5 दिन",
+      "durationPlaceholder": "जैसे, 5 दिन",
       "addMedicine": "एक और दवा जोड़ें",
       "savePrescription": "नुस्खा सहेजें और भेजें",
       "validationErrorTitle": "अधूरा नुस्खा",

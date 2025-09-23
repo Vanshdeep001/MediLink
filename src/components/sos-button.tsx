@@ -1,57 +1,66 @@
 
 "use client";
 
-import { useContext } from "react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { useContext, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import { Siren } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { LanguageContext } from "@/context/language-context";
+import { EmergencyManager } from "@/components/emergency/emergency-manager";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-// This component is the dialog part, which can be triggered by any button
+// Enhanced Emergency Dialog Component
 export function SOSButtonDialog({ children }: { children: React.ReactNode }) {
-  const { toast } = useToast();
   const { translations } = useContext(LanguageContext);
+  const [isOpen, setIsOpen] = useState(false);
+  const [patientData, setPatientData] = useState({
+    id: '',
+    name: '',
+    digitalHealthId: ''
+  });
 
-  const handleConfirm = () => {
-    toast({
-      title: translations.sos.toastTitle,
-      description: translations.sos.toastDescription,
-      variant: "destructive",
-    });
-  };
+  useEffect(() => {
+    // Get patient data from localStorage
+    try {
+      const userString = localStorage.getItem('temp_user');
+      if (userString) {
+        const user = JSON.parse(userString);
+        setPatientData({
+          id: user.id || `patient_${Date.now()}`,
+          name: user.fullName || 'Patient',
+          digitalHealthId: user.digitalHealthId || `DHID_${Date.now()}`
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load patient data:', error);
+      setPatientData({
+        id: `patient_${Date.now()}`,
+        name: 'Patient',
+        digitalHealthId: `DHID_${Date.now()}`
+      });
+    }
+  }, []);
 
   return (
-    <AlertDialog>
-        <div className="contents" onClick={(e) => e.preventDefault()}>
-            <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-        </div>
-        <AlertDialogContent>
-            <AlertDialogHeader>
-            <AlertDialogTitle>{translations.sos.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-                {translations.sos.description}
-            </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-            <AlertDialogCancel>{translations.sos.cancel}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirm} className="bg-destructive hover:bg-destructive/90">
-                {translations.sos.confirm}
-            </AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        {children}
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-red-600">
+            <Siren className="w-5 h-5" />
+            Emergency SOS System
+          </DialogTitle>
+        </DialogHeader>
+        
+        <EmergencyManager
+          patientId={patientData.id}
+          patientName={patientData.name}
+          digitalHealthId={patientData.digitalHealthId}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }
 

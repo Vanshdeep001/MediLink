@@ -74,12 +74,12 @@ export function getAllPatients(): Patient[] {
 }
 
 // Create a new call session
-export function initiateCall(doctorName: string, patientName: string): CallSession {
+export function initiateCall(doctorName: string, patientName: string, initiatedBy: 'doctor' | 'patient' = 'doctor'): CallSession {
   const callId = generateCallId();
   const roomName = generateCallRoomName(doctorName, patientName);
-  const jitsiLink = generateJitsiUrl(roomName, doctorName);
+  const jitsiLink = generateJitsiUrl(roomName, initiatedBy === 'doctor' ? doctorName : patientName);
   
-  console.log('Initiating call:', { callId, roomName, doctorName, patientName, jitsiLink });
+  console.log('Initiating call:', { callId, roomName, doctorName, patientName, initiatedBy, jitsiLink });
   
   const callSession: CallSession = {
     id: callId,
@@ -87,7 +87,7 @@ export function initiateCall(doctorName: string, patientName: string): CallSessi
     patientName,
     roomName,
     status: 'initiated',
-    initiatedBy: 'doctor',
+    initiatedBy,
     initiatedAt: new Date().toISOString(),
     jitsiLink
   };
@@ -97,8 +97,19 @@ export function initiateCall(doctorName: string, patientName: string): CallSessi
   activeCalls.push(callSession);
   localStorage.setItem(STORAGE_KEYS.ACTIVE_CALLS, JSON.stringify(activeCalls));
 
-  // Notify patient (simulate real-time notification)
-  notifyPatient(callSession);
+  // Notify the appropriate party
+  if (initiatedBy === 'doctor') {
+    notifyPatient(callSession);
+  } else {
+    notifyDoctor(callSession);
+    // Auto-accept patient-initiated calls (same behavior as doctor-initiated calls)
+    setTimeout(() => {
+      updateCallStatus(callSession.id, 'ringing');
+    }, 1000);
+    setTimeout(() => {
+      updateCallStatus(callSession.id, 'connected');
+    }, 2000);
+  }
 
   return callSession;
 }
@@ -181,12 +192,40 @@ function notifyPatient(call: CallSession): void {
     type: 'incoming_call',
     callId: call.id,
     doctorName: call.doctorName,
+    patientName: call.patientName,
     roomName: call.roomName,
     jitsiLink: call.jitsiLink,
     timestamp: new Date().toISOString()
   };
 
   // Store notification for patient
+  const notificationsString = localStorage.getItem('medilink_notifications');
+  const notifications = notificationsString ? JSON.parse(notificationsString) : [];
+  notifications.push(notification);
+  localStorage.setItem('medilink_notifications', JSON.stringify(notifications));
+
+  // Trigger storage event for real-time updates
+  window.dispatchEvent(new StorageEvent('storage', {
+    key: 'medilink_notifications',
+    newValue: JSON.stringify(notifications)
+  }));
+}
+
+// Notify doctor (simulate real-time notification)
+function notifyDoctor(call: CallSession): void {
+  // In a real app, this would use WebSockets, Server-Sent Events, or push notifications
+  // For now, we'll use localStorage events to simulate real-time updates
+  const notification = {
+    type: 'incoming_call_request',
+    callId: call.id,
+    doctorName: call.doctorName,
+    patientName: call.patientName,
+    roomName: call.roomName,
+    jitsiLink: call.jitsiLink,
+    timestamp: new Date().toISOString()
+  };
+
+  // Store notification for doctor
   const notificationsString = localStorage.getItem('medilink_notifications');
   const notifications = notificationsString ? JSON.parse(notificationsString) : [];
   notifications.push(notification);

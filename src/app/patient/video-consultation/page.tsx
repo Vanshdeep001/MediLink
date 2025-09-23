@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { LanguageContext } from '@/context/language-context';
@@ -16,19 +17,26 @@ import { FeedbackForm } from '@/components/patient/feedback-form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { JitsiCall } from '@/components/jitsi-call';
 import type { Consultation, Doctor } from '@/lib/types';
+import type { CallSession } from '@/lib/call-management-service';
 import { useToast } from '@/hooks/use-toast';
+import { doctorsDatabase } from '@/lib/doctor-database';
+import { addDemoDoctors } from '@/lib/demo-doctors';
 
-
-export default function VideoConsultationPage() {
+function VideoConsultationContent() {
   const { translations } = useContext(LanguageContext);
   const { toast } = useToast();
+  const searchParams = useSearchParams();
   
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [userName, setUserName] = useState('');
   const [activeCall, setActiveCall] = useState<Consultation | null>(null);
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Add demo doctors if they don't exist
+    addDemoDoctors();
+    
     const userString = localStorage.getItem('temp_user');
     let currentUserName = '';
     if (userString) {
@@ -43,7 +51,20 @@ export default function VideoConsultationPage() {
     }
     
     loadConsultations(currentUserName);
-  }, []);
+
+    // Handle doctor parameter from URL (from symptom checker)
+    const doctorId = searchParams.get('doctor');
+    if (doctorId) {
+      setSelectedDoctorId(doctorId);
+      const doctor = doctorsDatabase.find(d => d.id === doctorId);
+      if (doctor) {
+        toast({
+          title: "Doctor Selected",
+          description: `Ready to connect with ${doctor.name}`,
+        });
+      }
+    }
+  }, [searchParams, toast]);
   
   const loadConsultations = (currentUserName: string) => {
      const consultationsString = localStorage.getItem('consultations_list');
@@ -58,6 +79,63 @@ export default function VideoConsultationPage() {
         title: "Booking Confirmed!",
         description: `Your appointment has been scheduled.`
     });
+    loadConsultations(userName);
+  };
+
+  const handleInstantCall = (callSession: CallSession) => {
+    console.log('handleInstantCall called with:', callSession);
+    toast({
+        title: "Joining Instant Call!",
+        description: `Opening video consultation room with ${callSession.doctorName}...`
+    });
+    
+    // Create a consultation object for the JitsiCall component
+    const instantConsultation: Consultation = {
+      id: callSession.id,
+      patientName: userName,
+      doctorName: callSession.doctorName,
+      specialization: 'Instant Call',
+      date: new Date().toISOString(),
+      time: new Date().toLocaleTimeString(),
+      jitsiLink: callSession.jitsiLink,
+      roomName: callSession.roomName
+    };
+    
+    console.log('Created instant consultation:', instantConsultation);
+    console.log('Room name for JitsiCall:', callSession.roomName);
+    
+    // Create notification for the doctor
+    const notificationsString = localStorage.getItem('notifications');
+    const allNotifications = notificationsString ? JSON.parse(notificationsString) : [];
+    
+    const notification = {
+      id: `call-notif-${Date.now()}`,
+      type: 'incoming_call',
+      for: 'doctor',
+      doctorName: callSession.doctorName,
+      patientName: userName,
+      message: `${userName} is calling you for an instant video consultation`,
+      callSession: callSession,
+      roomName: callSession.roomName,
+      jitsiLink: callSession.jitsiLink,
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+    
+    console.log('Creating notification:', notification);
+    allNotifications.push(notification);
+    
+    localStorage.setItem('notifications', JSON.stringify(allNotifications));
+    console.log('Notifications saved to localStorage');
+    
+    // Trigger storage event for real-time updates
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'notifications',
+      newValue: JSON.stringify(allNotifications)
+    }));
+    console.log('Storage event dispatched');
+    
+    setActiveCall(instantConsultation);
     loadConsultations(userName);
   };
 
@@ -86,7 +164,13 @@ export default function VideoConsultationPage() {
                   <CardDescription>Book a new video call with a doctor.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <VideoConsultationBooking doctors={doctors} patientName={userName} onBookingConfirmed={handleBookingConfirmed} />
+                  <VideoConsultationBooking 
+                    doctors={doctors} 
+                    patientName={userName} 
+                    onBookingConfirmed={handleBookingConfirmed}
+                    onInstantCall={handleInstantCall}
+                    selectedDoctorId={selectedDoctorId}
+                  />
                 </CardContent>
               </Card>
             </FadeIn>
@@ -153,11 +237,19 @@ export default function VideoConsultationPage() {
       
       {activeCall && (
         <JitsiCall 
-            roomName={activeCall.jitsiLink.split('/').pop()!}
+            roomName={activeCall.roomName || activeCall.jitsiLink.split('/').pop()!}
             userName={userName}
             onClose={() => setActiveCall(null)}
         />
       )}
     </div>
+  );
+}
+
+export default function VideoConsultationPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VideoConsultationContent />
+    </Suspense>
   );
 }

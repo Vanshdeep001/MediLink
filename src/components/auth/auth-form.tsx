@@ -25,6 +25,8 @@ import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import TextFlipper from "../ui/text-effect-flipper";
 import { LanguageContext } from "@/context/language-context";
+import { useVoiceForm } from "@/context/voice-form-context";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -50,6 +52,7 @@ export function AuthForm() {
   const { toast } = useToast();
   const router = useRouter();
   const { translations } = useContext(LanguageContext);
+  const { registerForm } = useVoiceForm();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -82,6 +85,15 @@ export function AuthForm() {
       });
     }
   };
+
+  // Register this form with the voice context
+  useEffect(() => {
+    console.log('AuthForm: Registering form with voice context', form);
+    console.log('AuthForm: Form has setValue?', !!form.setValue);
+    registerForm(form, () => {
+      form.handleSubmit(onSubmit)();
+    });
+  }, [form, registerForm]);
 
   return (
     <div className="w-full max-w-lg mx-auto">

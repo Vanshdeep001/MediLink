@@ -5,6 +5,8 @@ import { Poppins, Playfair_Display, Dancing_Script } from 'next/font/google';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { SOSButton } from '@/components/sos-button';
 import { LanguageProvider } from '@/context/language-context';
+import { VoiceFormProvider } from '@/context/voice-form-context';
+import { FloatingVoiceButton } from '@/components/voice-assistant/floating-voice-button';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -44,9 +46,12 @@ export default function RootLayout({
           disableTransitionOnChange={false}
         >
           <LanguageProvider>
-            {children}
-            <Toaster />
-            <SOSButton />
+            <VoiceFormProvider>
+              {children}
+              <Toaster />
+              <SOSButton />
+              <FloatingVoiceButton />
+            </VoiceFormProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

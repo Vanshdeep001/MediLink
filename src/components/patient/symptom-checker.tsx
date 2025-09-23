@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 import { CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -17,6 +19,19 @@ import { Loader2, AlertTriangle, Lightbulb, ListChecks, Sparkles, HeartPulse, Br
 import { LanguageContext } from '@/context/language-context';
 import { analyzeSymptoms, getAvailableAIServices, type SymptomAnalysisRequest, type SymptomAnalysisResponse } from '@/lib/ai-service';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { 
+  getRecommendedDoctor, 
+  getOTCMedicines, 
+  analyzeSeverity,
+  type Doctor,
+  type OTCMedicine 
+} from '@/lib/doctor-database';
+import { 
+  SeverityIndicator, 
+  SuggestedDoctorCard, 
+  OTCMedicines, 
+  NextSteps 
+} from './symptom-checker-components';
 
 const formSchema = z.object({
   mainSymptom: z.string().min(3, { message: 'Please describe your symptom in more detail.' }),
@@ -30,7 +45,13 @@ const formSchema = z.object({
 type SymptomFormValues = z.infer<typeof formSchema>;
 type SymptomAnalysis = SymptomAnalysisResponse;
 
-const additionalSymptomOptions = ['Fever', 'Headache', 'Fatigue', 'Nausea', 'Cough', 'Dizziness'];
+const additionalSymptomOptions = [
+  'Fever', 'Headache', 'Fatigue', 'Nausea', 'Cough',
+  'Dizziness', 'Vomiting', 'Diarrhea', 'Abdominal Pain', 'Chest Pain',
+  'Shortness of Breath', 'Muscle Pain', 'Joint Pain', 'Back Pain', 'Skin Rash',
+  'Loss of Appetite', 'Sleep Problems', 'Anxiety', 'Sore Throat', 'Runny Nose',
+  'Congestion', 'Heart Palpitations', 'Frequent Urination', 'Painful Urination', 'Swelling'
+];
 
 const getSymptomAnalysis = async (values: SymptomFormValues): Promise<{ result?: SymptomAnalysis; error?: string }> => {
   try {
@@ -56,7 +77,13 @@ export function SymptomChecker() {
   const [analysis, setAnalysis] = useState<SymptomAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [availableAIServices, setAvailableAIServices] = useState<string[]>([]);
+  const [recommendedDoctor, setRecommendedDoctor] = useState<Doctor | null>(null);
+  const [otcMedicines, setOTCMedicines] = useState<OTCMedicine[]>([]);
+  const [severityLevel, setSeverityLevel] = useState<'Mild' | 'Moderate' | 'Severe'>('Mild');
+  const [formData, setFormData] = useState<SymptomFormValues | null>(null);
   const { translations } = useContext(LanguageContext);
+  const router = useRouter();
+  const { toast } = useToast();
 
   // Get available AI services on component mount
   useEffect(() => {
@@ -76,6 +103,8 @@ export function SymptomChecker() {
   const onSubmit = (values: SymptomFormValues) => {
     setError(null);
     setAnalysis(null);
+    setFormData(values);
+    
     startTransition(async () => {
       const response = await getSymptomAnalysis(values);
       if (response.error) {
@@ -86,7 +115,28 @@ export function SymptomChecker() {
             recommendation: response.result.recommendation,
             seekHelp: response.result.seekHelp,
             advice: response.result.advice,
+            confidence: response.result.confidence || 0.8,
+            aiModel: response.result.aiModel || 'fallback',
         });
+        
+        // Analyze severity and get recommendations
+        const allSymptoms = [
+          values.mainSymptom,
+          ...values.additionalSymptoms,
+          values.bodyPart,
+          values.duration
+        ].filter(Boolean);
+        
+        const severity = analyzeSeverity(allSymptoms, values.severity);
+        setSeverityLevel(severity);
+        
+        // Get recommended doctor
+        const doctor = getRecommendedDoctor(allSymptoms, severity);
+        setRecommendedDoctor(doctor);
+        
+        // Get OTC medicines for mild/moderate cases
+        const medicines = getOTCMedicines(allSymptoms, severity);
+        setOTCMedicines(medicines);
       }
     });
   };
@@ -95,7 +145,40 @@ export function SymptomChecker() {
     form.reset();
     setAnalysis(null);
     setError(null);
-  }
+    setRecommendedDoctor(null);
+    setOTCMedicines([]);
+    setSeverityLevel('Mild');
+    setFormData(null);
+  };
+
+  // Action handlers
+  const handleCallDoctor = () => {
+    if (recommendedDoctor) {
+      // Integrate with existing video consultation
+      toast({
+        title: "Initiating Video Call",
+        description: `Connecting to ${recommendedDoctor.name}...`,
+      });
+      // Navigate to video consultation with doctor
+      router.push(`/patient/video-consultation?doctor=${recommendedDoctor.id}`);
+    }
+  };
+
+  const handleBookConsultation = () => {
+    router.push('/patient/video-consultation');
+  };
+
+  const handleOrderMedicines = () => {
+    router.push('/patient?tab=order-medicines');
+  };
+
+  const handleViewHealthAdvice = () => {
+    // Scroll to advice section or show in modal
+    toast({
+      title: "Health Advice",
+      description: "Please refer to the 'Good Health Advice' section above.",
+    });
+  };
 
   return (
       <CardContent className="p-6 md:p-8">
@@ -139,7 +222,7 @@ export function SymptomChecker() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Affected Body Part</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
                                 <FormControl>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select a body part" />
@@ -218,7 +301,7 @@ export function SymptomChecker() {
                                 <div className="mb-4">
                                     <FormLabel className="text-base">Additional Symptoms</FormLabel>
                                 </div>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                 {additionalSymptomOptions.map((item) => (
                                     <FormField
                                     key={item}
@@ -322,6 +405,9 @@ export function SymptomChecker() {
                     </div>
                 </div>
 
+                {/* Severity Indicator */}
+                <SeverityIndicator severity={severityLevel} />
+
                 <div className="space-y-4">
                    <div className="p-4 bg-muted/50 rounded-lg">
                         <h4 className="font-semibold flex items-center gap-2"><ListChecks className="text-primary"/> Possible Conditions</h4>
@@ -342,6 +428,27 @@ export function SymptomChecker() {
                         <p className="mt-2 text-sm">{analysis.advice}</p>
                    </div>
                 </div>
+
+                {/* Suggested Doctor */}
+                {recommendedDoctor && (
+                  <SuggestedDoctorCard 
+                    doctor={recommendedDoctor} 
+                    onCallNow={handleCallDoctor}
+                  />
+                )}
+
+                {/* OTC Medicines */}
+                <OTCMedicines medicines={otcMedicines} />
+
+                {/* Next Steps */}
+                <NextSteps 
+                  severity={severityLevel}
+                  hasDoctor={!!recommendedDoctor}
+                  hasMedicines={otcMedicines.length > 0}
+                  onBookConsultation={handleBookConsultation}
+                  onOrderMedicines={handleOrderMedicines}
+                  onViewHealthAdvice={handleViewHealthAdvice}
+                />
 
                 <Button onClick={resetChecker} className="w-full h-12">Start a New Check</Button>
             </motion.div>
