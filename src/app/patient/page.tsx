@@ -26,8 +26,45 @@ import { OrderMedicines } from '@/components/patient/order-medicines';
 import { ChatDoc } from '@/components/chatdoc/chatdoc';
 import { addDemoDoctors } from '@/lib/demo-doctors';
 
+// Function to convert common English names to Punjabi (only when language is Punjabi)
+const convertNameToPunjabi = (englishName: string, currentLanguage: string): string => {
+  // Only convert to Punjabi if the current language is Punjabi
+  if (currentLanguage !== 'pa') {
+    return englishName; // Return original name for English and Hindi
+  }
+
+  const nameMap: { [key: string]: string } = {
+    'Ananya': 'ਅਨੰਨਿਆ',
+    'Singh': 'ਸਿੰਘ',
+    'Kaur': 'ਕੌਰ',
+    'Kumar': 'ਕੁਮਾਰ',
+    'Sharma': 'ਸ਼ਰਮਾ',
+    'Gupta': 'ਗੁਪਤਾ',
+    'Patel': 'ਪਟੇਲ',
+    'Jain': 'ਜੈਨ',
+    'Agarwal': 'ਅਗਰਵਾਲ',
+    'Malhotra': 'ਮਲਹੋਤਰਾ',
+    'Chopra': 'ਚੋਪੜਾ',
+    'Bhatia': 'ਭਾਟੀਆ',
+    'Sethi': 'ਸੇਠੀ',
+    'Verma': 'ਵਰਮਾ',
+    'Yadav': 'ਯਾਦਵ',
+    'Raj': 'ਰਾਜ',
+    'Khan': 'ਖਾਨ',
+    'Ahmed': 'ਅਹਿਮਦ',
+    'Ali': 'ਅਲੀ',
+    'Hussain': 'ਹੁਸੈਨ',
+    'Patient': 'ਮਰੀਜ਼'
+  };
+
+  // Split the name into parts and convert each part
+  const nameParts = englishName.split(' ');
+  const punjabiParts = nameParts.map(part => nameMap[part] || part);
+  return punjabiParts.join(' ');
+};
+
 export default function PatientDashboard() {
-  const { translations } = useContext(LanguageContext);
+  const { translations, language } = useContext(LanguageContext);
   const { toast } = useToast();
   const router = useRouter();
   const [userName, setUserName] = useState('');
@@ -212,7 +249,7 @@ export default function PatientDashboard() {
   const handleCopyDhid = async () => {
     if (!dhid) return;
     await copyTextToClipboard(dhid);
-    toast({ title: 'Copied', description: 'Digital Health ID copied to clipboard.' });
+    toast({ title: translations.digitalHealthId.copied, description: translations.digitalHealthId.copiedDescription });
   };
 
   const handleDownloadDhidPdf = () => {
@@ -232,7 +269,7 @@ export default function PatientDashboard() {
     doc.setTextColor('#0b1324');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
-    doc.text('Digital Health ID', 40, 120);
+    doc.text(translations.digitalHealthId.title, 40, 120);
 
     // Card container
     const cardX = 40;
@@ -251,11 +288,11 @@ export default function PatientDashboard() {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(labelColor);
     doc.setFontSize(11);
-    doc.text('Patient Name', cardX + 20, y);
+    doc.text(language === 'pa' ? 'ਮਰੀਜ਼ ਦਾ ਨਾਮ' : 'Patient Name', cardX + 20, y);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(valueColor);
     doc.setFontSize(13);
-    doc.text(userName || 'Patient', cardX + 160, y);
+    doc.text(convertNameToPunjabi(userName, language) || 'Patient', cardX + 160, y);
 
     y += line;
     doc.setFont('helvetica', 'bold');
@@ -271,7 +308,7 @@ export default function PatientDashboard() {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(labelColor);
     doc.setFontSize(11);
-    doc.text('Digital Health ID', cardX + 20, y);
+    doc.text(language === 'pa' ? 'ਡਿਜੀਟਲ ਸਿਹਤ ਆਈਡੀ' : 'Digital Health ID', cardX + 20, y);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor('#0ea5e9');
     doc.setFontSize(14);
@@ -281,7 +318,7 @@ export default function PatientDashboard() {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(labelColor);
     doc.setFontSize(11);
-    doc.text('Issued', cardX + 20, y);
+    doc.text(language === 'pa' ? 'ਜਾਰੀ ਕੀਤਾ ਗਿਆ' : 'Issued', cardX + 20, y);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(valueColor);
     doc.setFontSize(13);
@@ -293,7 +330,7 @@ export default function PatientDashboard() {
     doc.setFontSize(10);
     doc.text('Keep this DHID private. It helps link your health records within MediLink.', cardX, cardY + cardH + 30);
 
-    doc.save(`DHID_${userName.replace(/\s+/g,'_')}.pdf`);
+    doc.save(`DHID_${convertNameToPunjabi(userName, language).replace(/\s+/g,'_')}.pdf`);
   };
 
   // Predefined common specialties for a clearer dropdown (capitalized)
@@ -329,7 +366,7 @@ export default function PatientDashboard() {
           <div className="relative text-center py-16 md:py-24 animate-fade-in-down overflow-hidden rounded-lg">
             <div className="relative z-10">
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-                <TextFlipper>{translations.patientDashboard.welcome}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{userName}!</TextFlipper>
+                <TextFlipper>{translations.patientDashboard.welcome}</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">{convertNameToPunjabi(userName, language)}!</TextFlipper>
               </h1>
               <p className="mt-4 text-lg text-muted-foreground animate-text-fade-in-scale" style={{ animationDelay: '0.4s' }}>
                 {translations.patientDashboard.subtitle}
@@ -337,18 +374,18 @@ export default function PatientDashboard() {
               {dhid ? (
                 <div className="mt-6 mx-auto max-w-xl">
                   <div className="border rounded-lg p-4 bg-muted/30">
-                    <p className="text-sm text-muted-foreground mb-2">Your Digital Health ID</p>
+                    <p className="text-sm text-muted-foreground mb-2">{translations.digitalHealthId.title}</p>
                     <p className="font-mono text-lg select-text break-all" aria-live="polite">{dhid}</p>
                     <div className="mt-3 flex gap-2 justify-center">
                       <Button variant="outline" size="sm" aria-label="Copy Digital Health ID" onClick={handleCopyDhid}>
-                        <Copy className="w-4 h-4 mr-2" /> Copy
+                        <Copy className="w-4 h-4 mr-2" /> {translations.digitalHealthId.copy}
                       </Button>
                       <Button variant="default" size="sm" aria-label="View Full Digital Health ID" onClick={() => router.push('/patient/digital-health-id')}>
-                        <Eye className="w-4 h-4 mr-2" /> View Full ID
+                        <Eye className="w-4 h-4 mr-2" /> {translations.digitalHealthId.viewFullId}
                       </Button>
                     </div>
                     {dhidIssuedAt ? (
-                      <p className="mt-2 text-xs text-muted-foreground">Issued on {new Date(dhidIssuedAt).toLocaleString()}</p>
+                      <p className="mt-2 text-xs text-muted-foreground">{translations.digitalHealthId.issuedOn} {new Date(dhidIssuedAt).toLocaleString()}</p>
                     ) : null}
                   </div>
                 </div>
@@ -393,7 +430,7 @@ export default function PatientDashboard() {
                 <Heart className="w-5 h-5 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">Good</div>
+                <div className="text-2xl font-bold">{translations.patientDashboard.healthStatusGood}</div>
                 <p className="text-xs text-muted-foreground">{translations.patientDashboard.lastUpdated}</p>
               </CardContent>
             </Card>
@@ -425,12 +462,12 @@ export default function PatientDashboard() {
             </Card>
             <Card className="md:col-span-1 hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><MessageCircle /> ChatDoc</CardTitle>
-                <CardDescription>Chat with your doctor in real-time as a backup to video calls</CardDescription>
+                <CardTitle className="flex items-center gap-2"><MessageCircle /> {translations.patientDashboard.chatDoc}</CardTitle>
+                <CardDescription>{translations.patientDashboard.chatDocDesc}</CardDescription>
               </CardHeader>
               <CardContent className="flex-grow flex items-end">
                 <Button className="w-full" onClick={() => router.push('/patient/chatdoc')}>
-                  Start Chat
+                  {translations.patientDashboard.startChat}
                 </Button>
               </CardContent>
             </Card>
@@ -443,8 +480,8 @@ export default function PatientDashboard() {
                 <TabsTrigger value="appointments">{translations.patientDashboard.appointments}</TabsTrigger>
                 <TabsTrigger value="reminders">{translations.patientDashboard.reminders.tabTitle}</TabsTrigger>
                 <TabsTrigger value="doctors">{translations.patientDashboard.doctors}</TabsTrigger>
-                <TabsTrigger value="digital-prescriptions">Digital Prescriptions</TabsTrigger>
-                <TabsTrigger value="order-medicines">Order Medicines</TabsTrigger>
+                <TabsTrigger value="digital-prescriptions">{translations.patientDashboard.digitalPrescriptions}</TabsTrigger>
+                <TabsTrigger value="order-medicines">{translations.patientDashboard.orderMedicines}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="appointments" className="mt-6">
@@ -472,8 +509,8 @@ export default function PatientDashboard() {
               <TabsContent value="digital-prescriptions" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Digital Prescriptions</CardTitle>
-                    <CardDescription>Your prescriptions issued by doctors.</CardDescription>
+                    <CardTitle>{translations.patientDashboard.digitalPrescriptions}</CardTitle>
+                    <CardDescription>{translations.patientDashboard.digitalPrescriptionsDesc}</CardDescription>
                   </CardHeader>
                   <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {prescriptions.length > 0 ? prescriptions.map((p: any) => (
@@ -481,14 +518,14 @@ export default function PatientDashboard() {
                         <Card className="border-l-4 border-l-primary">
                           <CardHeader>
                             <CardTitle className="flex items-center justify-between">
-                              <span>{p.diagnosis || 'Prescription'}</span>
+                              <span>{p.diagnosis || translations.patientDashboard.prescription}</span>
                               <span className="text-sm text-muted-foreground">{new Date(p.date).toLocaleDateString()}</span>
                             </CardTitle>
                             <CardDescription>By {p.doctor || `Dr. ${p.doctorName}`}</CardDescription>
                           </CardHeader>
                           <CardContent className="space-y-3 text-sm">
                             <div>
-                              <p className="font-medium">Medicines</p>
+                              <p className="font-medium">{translations.patientDashboard.medicines}</p>
                               <ul className="list-disc ml-5 mt-1 space-y-1">
                                 {p.medications.map((m: any, idx: number) => (
                                   <li key={idx}>{m.name} — {m.dosage}{m.frequency ? `, ${m.frequency}` : ''} for {m.duration}</li>
@@ -497,18 +534,18 @@ export default function PatientDashboard() {
                             </div>
                             {p.notes ? (
                               <div>
-                                <p className="font-medium">Notes</p>
+                                <p className="font-medium">{translations.patientDashboard.notes}</p>
                                 <p className="text-muted-foreground">{p.notes}</p>
                               </div>
                             ) : null}
                             <div className="pt-2">
-                              <Button variant="outline" onClick={() => window.print()}>Download PDF</Button>
+                              <Button variant="outline" onClick={() => window.print()}>{translations.patientDashboard.downloadPdf}</Button>
                             </div>
                           </CardContent>
                         </Card>
                       </div>
                     )) : (
-                      <p className="text-muted-foreground">No prescriptions yet.</p>
+                      <p className="text-muted-foreground">{translations.patientDashboard.noPrescriptionsYet}</p>
                     )}
                   </CardContent>
                 </Card>

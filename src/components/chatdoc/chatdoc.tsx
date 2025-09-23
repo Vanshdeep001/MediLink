@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -10,6 +10,7 @@ import { ChatList } from './chat-list';
 import { ChatInterface } from './chat-interface';
 import ChatService, { type ChatSession } from '@/lib/chat-service';
 import { useToast } from '@/hooks/use-toast';
+import { LanguageContext } from '@/context/language-context';
 
 interface ChatDocProps {
   currentUserId: string;
@@ -34,6 +35,7 @@ export function ChatDoc({
   onPhoneCall,
   className = '' 
 }: ChatDocProps) {
+  const { translations } = useContext(LanguageContext);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedSession, setSelectedSession] = useState<ChatSession | null>(null);
   const [showNewChatDialog, setShowNewChatDialog] = useState(false);
@@ -174,11 +176,11 @@ export function ChatDoc({
             <CardContent className="flex items-center justify-center h-full">
               <div className="text-center text-muted-foreground">
                 <MessageCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">Welcome to ChatDoc</h3>
+                <h3 className="text-lg font-semibold mb-2">{translations.patientDashboard.welcomeToChatDoc}</h3>
                 <p className="mb-4">Select a chat to start messaging with your doctor</p>
                 <Button onClick={handleStartNewChat}>
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  Start New Chat
+                  {translations.patientDashboard.startNewChat}
                 </Button>
               </div>
             </CardContent>

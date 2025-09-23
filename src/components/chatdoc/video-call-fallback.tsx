@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Video, Phone } from 'lucide-react';
+import { LanguageContext } from '@/context/language-context';
 
 interface VideoCallFallbackProps {
   isOpen: boolean;
@@ -81,6 +82,7 @@ export function VideoCallFallback({
     </AlertDialog>
   );
 }
+
 
 
 

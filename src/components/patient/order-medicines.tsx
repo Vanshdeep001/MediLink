@@ -157,9 +157,9 @@ export function OrderMedicines({
     <div className="space-y-6">
       <Tabs defaultValue="new-order" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="new-order">New Order</TabsTrigger>
-          <TabsTrigger value="my-orders">My Orders</TabsTrigger>
-          <TabsTrigger value="prescriptions">Prescriptions</TabsTrigger>
+          <TabsTrigger value="new-order">{translations.orderMedicines.newOrder}</TabsTrigger>
+          <TabsTrigger value="my-orders">{translations.orderMedicines.myOrders}</TabsTrigger>
+          <TabsTrigger value="prescriptions">{translations.orderMedicines.prescriptions}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="new-order" className="space-y-6">
@@ -167,19 +167,19 @@ export function OrderMedicines({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <ShoppingCart className="w-5 h-5" />
-                Order Medicines
+                {translations.orderMedicines.title}
               </CardTitle>
               <CardDescription>
-                Select a prescription and pharmacy to place your order
+                {translations.orderMedicines.subtitle}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Prescription Selection */}
               <div className="space-y-2">
-                <Label htmlFor="prescription">Select Prescription</Label>
+                <Label htmlFor="prescription">{translations.orderMedicines.selectPrescription}</Label>
                 <Select value={selectedPrescription || ""} onValueChange={setSelectedPrescription}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choose a prescription" />
+                    <SelectValue placeholder={translations.orderMedicines.choosePrescription} />
                   </SelectTrigger>
                   <SelectContent>
                     {prescriptions.map((prescription) => (
@@ -193,10 +193,10 @@ export function OrderMedicines({
 
               {/* Pharmacy Selection */}
               <div className="space-y-2">
-                <Label htmlFor="pharmacy">Select Pharmacy</Label>
+                <Label htmlFor="pharmacy">{translations.orderMedicines.selectPharmacy}</Label>
                 <Select value={selectedPharmacy || ""} onValueChange={setSelectedPharmacy}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choose a pharmacy" />
+                    <SelectValue placeholder={translations.orderMedicines.choosePharmacy} />
                   </SelectTrigger>
                   <SelectContent>
                     {pharmacies.map((pharmacy) => (
@@ -214,7 +214,7 @@ export function OrderMedicines({
               {/* Order Items */}
               {orderItems.length > 0 && (
                 <div className="space-y-4">
-                  <h4 className="font-medium">Order Items</h4>
+                  <h4 className="font-medium">{translations.orderMedicines.orderItems}</h4>
                   <div className="space-y-3">
                     {orderItems.map((item) => (
                       <div key={item.medicineId} className="flex items-center justify-between p-3 border rounded-lg">
@@ -222,7 +222,7 @@ export function OrderMedicines({
                           <div className="flex items-center gap-2">
                             <h5 className="font-medium">{item.medicine.name}</h5>
                             <Badge variant={item.isAvailable ? "default" : "destructive"}>
-                              {item.isAvailable ? "Available" : "Out of Stock"}
+                              {item.isAvailable ? translations.orderMedicines.available : translations.orderMedicines.outOfStock}
                             </Badge>
                           </div>
                           <p className="text-sm text-muted-foreground">
@@ -230,7 +230,7 @@ export function OrderMedicines({
                           </p>
                           {!item.isAvailable && item.alternativeMedicines && item.alternativeMedicines.length > 0 && (
                             <p className="text-xs text-blue-600 mt-1">
-                              Alternatives: {item.alternativeMedicines.map(alt => alt.name).join(', ')}
+                              {translations.orderMedicines.alternatives}: {item.alternativeMedicines.map(alt => alt.name).join(', ')}
                             </p>
                           )}
                         </div>
@@ -308,7 +308,7 @@ export function OrderMedicines({
                   {/* Order Summary */}
                   <div className="border-t pt-4">
                     <div className="flex justify-between items-center">
-                      <span className="font-medium">Total Amount:</span>
+                      <span className="font-medium">{translations.orderMedicines.totalAmount}:</span>
                       <span className="text-lg font-bold">
                         ₹{orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}
                       </span>
@@ -318,7 +318,7 @@ export function OrderMedicines({
                       onClick={handleCreateOrder}
                       disabled={orderItems.length === 0 || !selectedPharmacy}
                     >
-                      Place Order
+                      {translations.orderMedicines.placeOrder}
                     </Button>
                   </div>
                 </div>
@@ -442,6 +442,7 @@ export function OrderMedicines({
     </div>
   );
 }
+
 
 
 

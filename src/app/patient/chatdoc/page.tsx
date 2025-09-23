@@ -12,8 +12,45 @@ import { ChatDoc } from '@/components/chatdoc/chatdoc';
 import { addDemoDoctors } from '@/lib/demo-doctors';
 import TextFlipper from '@/components/ui/text-effect-flipper';
 
+// Function to convert common English names to Punjabi (only when language is Punjabi)
+const convertNameToPunjabi = (englishName: string, currentLanguage: string): string => {
+  // Only convert to Punjabi if the current language is Punjabi
+  if (currentLanguage !== 'pa') {
+    return englishName; // Return original name for English and Hindi
+  }
+
+  const nameMap: { [key: string]: string } = {
+    'Ananya': 'ਅਨੰਨਿਆ',
+    'Singh': 'ਸਿੰਘ',
+    'Kaur': 'ਕੌਰ',
+    'Kumar': 'ਕੁਮਾਰ',
+    'Sharma': 'ਸ਼ਰਮਾ',
+    'Gupta': 'ਗੁਪਤਾ',
+    'Patel': 'ਪਟੇਲ',
+    'Jain': 'ਜੈਨ',
+    'Agarwal': 'ਅਗਰਵਾਲ',
+    'Malhotra': 'ਮਲਹੋਤਰਾ',
+    'Chopra': 'ਚੋਪੜਾ',
+    'Bhatia': 'ਭਾਟੀਆ',
+    'Sethi': 'ਸੇਠੀ',
+    'Verma': 'ਵਰਮਾ',
+    'Yadav': 'ਯਾਦਵ',
+    'Raj': 'ਰਾਜ',
+    'Khan': 'ਖਾਨ',
+    'Ahmed': 'ਅਹਿਮਦ',
+    'Ali': 'ਅਲੀ',
+    'Hussain': 'ਹੁਸੈਨ',
+    'Patient': 'ਮਰੀਜ਼'
+  };
+
+  // Split the name into parts and convert each part
+  const nameParts = englishName.split(' ');
+  const punjabiParts = nameParts.map(part => nameMap[part] || part);
+  return punjabiParts.join(' ');
+};
+
 export default function PatientChatDocPage() {
-  const { translations } = useContext(LanguageContext);
+  const { translations, language } = useContext(LanguageContext);
   const { toast } = useToast();
   const router = useRouter();
   const [userName, setUserName] = useState('');
@@ -45,16 +82,16 @@ export default function PatientChatDocPage() {
           <div className="mb-6">
             <Button variant="ghost" onClick={() => router.back()}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+              {translations.patientDashboard.backToDashboard}
             </Button>
           </div>
 
           {/* Page Header */}
           <div className="mb-8 text-center">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-              <TextFlipper>Chat</TextFlipper> <TextFlipper delay={0.2} className="text-primary font-cursive">Doc</TextFlipper>
+              <TextFlipper>{translations.patientDashboard.chatDoc}</TextFlipper>
             </h1>
-            <p className="mt-4 text-lg text-muted-foreground">Chat with your doctor in real-time as a backup to video calls</p>
+            <p className="mt-4 text-lg text-muted-foreground">{translations.patientDashboard.chatDocDesc}</p>
           </div>
 
           {/* Demo Doctors Button */}
@@ -64,12 +101,12 @@ export default function PatientChatDocPage() {
               onClick={() => {
                 addDemoDoctors();
                 toast({
-                  title: "Demo Doctors Added",
-                  description: "Demo doctors have been added for testing ChatDoc functionality",
+                  title: translations.patientDashboard.demoDoctorsAdded,
+                  description: translations.patientDashboard.demoDoctorsAddedDesc,
                 });
               }}
             >
-              Add Demo Doctors (for testing)
+              {translations.patientDashboard.addDemoDoctors}
             </Button>
           </div>
 
@@ -77,19 +114,19 @@ export default function PatientChatDocPage() {
           <div className="bg-white rounded-lg shadow-lg">
             <ChatDoc
               currentUserId={userName || `patient_${Date.now()}`}
-              currentUserName={userName || 'Patient'}
+              currentUserName={convertNameToPunjabi(userName, language) || 'Patient'}
               currentUserType="patient"
               onVideoCall={(doctorId, doctorName) => {
                 toast({
-                  title: "Video Call Requested",
-                  description: `Initiating video call with ${doctorName}`,
+                  title: translations.patientDashboard.videoCallRequested,
+                  description: `${translations.patientDashboard.initiatingVideoCall} ${doctorName}`,
                 });
                 // You can implement actual video call logic here
               }}
               onPhoneCall={(doctorId, doctorName) => {
                 toast({
-                  title: "Phone Call Requested",
-                  description: `Calling ${doctorName}`,
+                  title: translations.patientDashboard.phoneCallRequested,
+                  description: `${translations.patientDashboard.calling} ${doctorName}`,
                 });
                 // You can implement actual phone call logic here
               }}
