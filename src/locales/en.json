@@ -227,6 +227,7 @@
     "setReminder": "Set Reminder",
     "orderMedicines": "Order Medicines",
     "digitalPrescriptions": "Digital Prescriptions",
+    "digitalPrescriptionsDesc": "Your prescriptions issued by doctors.",
     "yourReports": "Your Medical Reports",
     "yourReportsDesc": "All your uploaded health documents in one place.",
     "view": "View",
