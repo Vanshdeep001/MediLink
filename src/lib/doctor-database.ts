@@ -305,3 +305,9 @@ export function getOTCMedicines(symptoms: string[], severity: 'Mild' | 'Moderate
 
 
 
+
+
+
+
+
+

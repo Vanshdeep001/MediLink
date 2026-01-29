@@ -28,6 +28,11 @@ export function FloatingVoiceButton({ className = '' }: FloatingVoiceButtonProps
     stopSpeaking,
   } = useVoiceAssistant();
 
+  // Hide on landing page
+  if (pathname === '/') {
+    return null;
+  }
+
   // Check if we're on auth page for form-specific commands
   const isAuthPage = pathname === '/auth';
 
@@ -222,7 +227,7 @@ export function FloatingVoiceButton({ className = '' }: FloatingVoiceButtonProps
       <Button
         onClick={() => setIsExpanded(!isExpanded)}
         size="icon"
-        className={`h-16 w-16 rounded-full shadow-2xl border-4 border-white transition-all duration-200 animate-bounce ${
+        className={`h-16 w-16 rounded-full shadow-2xl border-4 border-white transition-all duration-200 ${
           isListening 
             ? 'bg-red-500 hover:bg-red-600 animate-pulse' 
             : isSpeaking 
