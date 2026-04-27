@@ -63,24 +63,30 @@ export function WebRTCCall({ room, isCaller, remoteUserName, onClose, targetId }
   const [connectionState, setConnectionState] = useState<string>('new');
 
   const processPendingCandidates = useCallback(async () => {
-    if (!peerConnection.current || !peerConnection.current.remoteDescription) {
-      console.log('⏳ Skipping pending candidates: PC or remoteDescription not ready');
+    if (!peerConnection.current || !peerConnection.current.remoteDescription || !peerConnection.current.remoteDescription.type) {
+      console.log('⏳ Skipping pending candidates: PC or remoteDescription not fully ready');
       return;
     }
     
     console.log(`📦 Processing ${pendingCandidates.current.length} pending candidates`);
-    while (pendingCandidates.current.length > 0) {
-      const candidate = pendingCandidates.current.shift();
+    // Create a copy of the queue to avoid modification during loop
+    const candidates = [...pendingCandidates.current];
+    pendingCandidates.current = [];
+
+    for (const candidate of candidates) {
       if (candidate) {
         try {
-          await peerConnection.current.addIceCandidate(new RTCIceCandidate(candidate));
-          console.log('✅ Added pending candidate');
+          if (peerConnection.current && peerConnection.current.remoteDescription) {
+            await peerConnection.current.addIceCandidate(new RTCIceCandidate(candidate));
+            console.log('✅ Added pending candidate');
+          }
         } catch (e) {
           console.error('❌ Error adding pending ice candidate', e);
         }
       }
     }
   }, []);
+
 
 
   // Handle Socket Events for WebRTC
@@ -122,7 +128,7 @@ export function WebRTCCall({ room, isCaller, remoteUserName, onClose, targetId }
 
     socket.on('ice-candidate', async ({ candidate }) => {
       console.log('❄️ Received ice-candidate');
-      if (peerConnection.current && peerConnection.current.remoteDescription) {
+      if (peerConnection.current && peerConnection.current.remoteDescription && peerConnection.current.remoteDescription.type) {
         try {
           await peerConnection.current.addIceCandidate(new RTCIceCandidate(candidate));
           console.log('✅ Added immediate ice candidate');
@@ -134,6 +140,7 @@ export function WebRTCCall({ room, isCaller, remoteUserName, onClose, targetId }
         pendingCandidates.current.push(candidate);
       }
     });
+
 
     socket.on('call:ended', endCall);
 
