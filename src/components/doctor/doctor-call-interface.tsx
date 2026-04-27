@@ -37,31 +37,37 @@ export function DoctorCallInterface({ doctorName }: DoctorCallInterfaceProps) {
     
     // Poll for call status updates every 2 seconds
     const interval = setInterval(() => {
-      const previousCalls = activeCalls;
-      loadActiveCalls();
-      
-      // Check for newly connected patient-initiated calls
-      const currentCalls = getDoctorCalls(doctorName);
-      const newlyConnectedCalls = currentCalls.filter(call => 
-        call.initiatedBy === 'patient' && 
-        call.status === 'connected' &&
-        !previousCalls.find(prevCall => prevCall.id === call.id && prevCall.status === 'connected')
-      );
-      
-      // Auto-open newly connected calls
-      newlyConnectedCalls.forEach(call => {
-        toast({
-          title: "Patient call connected",
-          description: `Opening video call with ${call.patientName}...`,
+      // Use functional state update to avoid dependency on activeCalls
+      setActiveCalls(prevCalls => {
+        const currentCalls = getDoctorCalls(doctorName);
+        
+        // Check for newly connected patient-initiated calls
+        const newlyConnectedCalls = currentCalls.filter(call => 
+          call.initiatedBy === 'patient' && 
+          call.status === 'connected' &&
+          !prevCalls.find(prev => prev.id === call.id && prev.status === 'connected')
+        );
+        
+        // Auto-open newly connected calls - DISABLED to favor WebRTC
+        /*
+        newlyConnectedCalls.forEach(call => {
+          toast({
+            title: "Patient call connected",
+            description: `Opening video call with ${call.patientName}...`,
+          });
+          setTimeout(() => {
+            window.open(call.jitsiLink, '_blank');
+          }, 1000);
         });
-        setTimeout(() => {
-          window.open(call.jitsiLink, '_blank');
-        }, 1000);
+        */
+        
+        return currentCalls;
+
       });
     }, 2000);
     
     return () => clearInterval(interval);
-  }, [doctorName, activeCalls, toast]);
+  }, [doctorName, toast]); // Removed activeCalls from dependencies
 
   const loadPatients = () => {
     const allPatients = getAllPatients();

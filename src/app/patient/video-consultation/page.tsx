@@ -15,16 +15,18 @@ import { VideoConsultationBooking } from '@/components/patient/video-consultatio
 import { FadeIn } from '@/components/fade-in';
 import { FeedbackForm } from '@/components/patient/feedback-form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { JitsiCall } from '@/components/jitsi-call';
+import { WebRTCCall } from '@/components/chatdoc/WebRTCCall';
 import type { Consultation, Doctor } from '@/lib/types';
 import type { CallSession } from '@/lib/call-management-service';
 import { useToast } from '@/hooks/use-toast';
+import { useSocket } from '@/hooks/use-socket';
 import { doctorsDatabase } from '@/lib/doctor-database';
 import { addDemoDoctors } from '@/lib/demo-doctors';
 
 function VideoConsultationContent() {
   const { translations } = useContext(LanguageContext);
   const { toast } = useToast();
+  const { socket } = useSocket();
   const searchParams = useSearchParams();
   
   const [doctors, setDoctors] = useState<Doctor[]>([]);
@@ -65,6 +67,30 @@ function VideoConsultationContent() {
       }
     }
   }, [searchParams, toast]);
+
+  // Identify identity for signaling
+  useEffect(() => {
+    if (!socket) return;
+    
+    const onConnect = () => {
+      const userString = localStorage.getItem('temp_user');
+      if (userString) {
+        const user = JSON.parse(userString);
+        const userId = user.id || user.fullName;
+        console.log('🆔 Identifying with socket as patient:', userId);
+        socket.emit('identify', userId);
+      }
+    };
+
+    if (socket.connected) {
+      onConnect();
+    }
+
+    socket.on('connect', onConnect);
+    return () => {
+      socket.off('connect', onConnect);
+    };
+  }, [socket]);
   
   const loadConsultations = (currentUserName: string) => {
      const consultationsString = localStorage.getItem('consultations_list');
@@ -94,6 +120,7 @@ function VideoConsultationContent() {
       id: callSession.id,
       patientName: userName,
       doctorName: callSession.doctorName,
+      doctorId: callSession.doctorId, // Added
       specialization: 'Instant Call',
       date: new Date().toISOString(),
       time: new Date().toLocaleTimeString(),
@@ -128,7 +155,16 @@ function VideoConsultationContent() {
     localStorage.setItem('notifications', JSON.stringify(allNotifications));
     console.log('Notifications saved to localStorage');
     
-    // Trigger storage event for real-time updates
+    // 🚀 NEW: Emit socket event for real-time signaling
+    if (socket) {
+      console.log('📞 Emitting call:initiate to doctor:', callSession.doctorId);
+      socket.emit('call:initiate', {
+        to: callSession.doctorId,
+        callerName: userName
+      });
+    }
+    
+    // Trigger storage event for real-time updates (backward compat)
     window.dispatchEvent(new StorageEvent('storage', {
       key: 'notifications',
       newValue: JSON.stringify(allNotifications)
@@ -236,9 +272,11 @@ function VideoConsultationContent() {
       <Footer />
       
       {activeCall && (
-        <JitsiCall 
-            roomName={activeCall.roomName || activeCall.jitsiLink.split('/').pop()!}
-            userName={userName}
+        <WebRTCCall 
+            room={activeCall.roomName || `call_${activeCall.id}`}
+            isCaller={true}
+            remoteUserName={activeCall.doctorName}
+            targetId={activeCall.doctorId || activeCall.doctorName}
             onClose={() => setActiveCall(null)}
         />
       )}

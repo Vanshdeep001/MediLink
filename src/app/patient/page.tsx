@@ -19,7 +19,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { VideoConsultationBooking } from '@/components/patient/video-consultation-booking';
 import { JitsiCall } from '@/components/jitsi-call';
-import { PatientCallNotification } from '@/components/patient/patient-call-notification';
+import { WebRTCCall } from '@/components/chatdoc/WebRTCCall';
+
 import { getPatientRecordByNameDob, ensurePatientRecord, copyTextToClipboard } from '@/lib/dhidService';
 import jsPDF from 'jspdf';
 import { OrderMedicines } from '@/components/patient/order-medicines';
@@ -676,28 +677,14 @@ export default function PatientDashboard() {
       </main>
       <Footer />
        {activeCall && (
-        <JitsiCall 
-            roomName={activeCall.jitsiLink.split('/').pop()!}
-            userName={userName}
+        <WebRTCCall 
+            room={activeCall.roomName || `call_${activeCall.id}`}
+            isCaller={false}
+            remoteUserName={activeCall.doctorName}
+            targetId={activeCall.doctorName}
             onClose={() => setActiveCall(null)}
         />
       )}
-      
-      {/* Patient Call Notification */}
-      <PatientCallNotification 
-        patientName={userName}
-        onCallAccepted={(call) => {
-          setActiveCall({
-            id: call.id,
-            patientName: call.patientName,
-            doctorName: call.doctorName,
-            specialization: 'General',
-            date: call.initiatedAt,
-            time: new Date().toLocaleTimeString(),
-            jitsiLink: call.jitsiLink
-          });
-        }}
-      />
     </div>
   );
 }

@@ -93,7 +93,7 @@ export function ChatList({
     if (!session.lastMessage) return 'No messages yet';
     
     const message = session.lastMessage.text;
-    return message.length > 50 ? `${message.substring(0, 50)}...` : message;
+    return message.length > 35 ? `${message.substring(0, 35)}...` : message;
   };
 
   return (
@@ -160,24 +160,24 @@ export function ChatList({
                     </AvatarFallback>
                   </Avatar>
                   
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 overflow-hidden">
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-semibold text-sm truncate">
                         {getOtherUserName(session)}
                       </h3>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-shrink-0">
                         {session.unreadCount > 0 && (
-                          <Badge variant="destructive" className="text-xs">
+                          <Badge variant="destructive" className="text-[10px] h-4 px-1">
                             {session.unreadCount}
                           </Badge>
                         )}
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">
                           {chatService.formatTimestamp(session.lastActivity)}
                         </span>
                       </div>
                     </div>
                     
-                    <p className="text-sm text-muted-foreground truncate">
+                    <p className="text-xs text-muted-foreground truncate max-w-full">
                       {formatLastMessage(session)}
                     </p>
                   </div>

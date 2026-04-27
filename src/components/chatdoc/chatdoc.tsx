@@ -11,6 +11,8 @@ import { ChatInterface } from './chat-interface';
 import ChatService, { type ChatSession } from '@/lib/chat-service';
 import { useToast } from '@/hooks/use-toast';
 import { LanguageContext } from '@/context/language-context';
+import { useSocket } from '@/hooks/use-socket';
+import { WebRTCCall } from './WebRTCCall';
 
 interface ChatDocProps {
   currentUserId: string;
@@ -21,11 +23,8 @@ interface ChatDocProps {
   className?: string;
 }
 
-// Get registered doctors from ChatService
-const getRegisteredDoctors = () => {
-  const chatService = ChatService.getInstance();
-  return chatService.getRegisteredDoctors();
-};
+// Registration check helper
+const hasDoctors = (doctors: any[]) => doctors.length > 0;
 
 export function ChatDoc({ 
   currentUserId, 
@@ -43,16 +42,98 @@ export function ChatDoc({
   const { toast } = useToast();
 
   const chatService = ChatService.getInstance();
+  const [registeredDoctors, setRegisteredDoctors] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeCall, setActiveCall] = useState<{ room: string; remoteName: string; targetId: string; isCaller: boolean } | null>(null);
+  const { socket } = useSocket();
 
   useEffect(() => {
-    // Initialize demo data if no sessions exist and there are registered doctors
+    if (!socket) return;
+
+    // Listen for incoming WebRTC calls
+    socket.on(`call:incoming-${currentUserId}`, ({ from, callerName }) => {
+      setActiveCall({
+        room: `call_${from}_${currentUserId}`,
+        remoteName: callerName,
+        targetId: from,
+        isCaller: false
+      });
+      toast({ title: "Incoming Call", description: `${callerName} is calling you for a video consultation.` });
+    });
+
+
+    socket.on(`call:rejected-${currentUserId}`, () => {
+      setActiveCall(null);
+      toast({ title: "Call Rejected", variant: "destructive" });
+    });
+
+    return () => {
+      socket.off(`call:incoming-${currentUserId}`);
+      socket.off(`call:rejected-${currentUserId}`);
+    };
+  }, [socket, currentUserId, toast]);
+
+  // Identify identity for WebRTC signaling
+  useEffect(() => {
+    if (!socket || !currentUserId) return;
+
+    const onConnect = () => {
+      console.log('🆔 Identifying with socket as patient:', currentUserId);
+      socket.emit('identify', currentUserId);
+    };
+
+    if (socket.connected) {
+      onConnect();
+    }
+
+    socket.on('connect', onConnect);
+    return () => {
+      socket.off('connect', onConnect);
+    };
+  }, [socket, currentUserId]);
+
+  useEffect(() => {
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    const fetchDoctors = async () => {
+      setIsLoading(true);
+      try {
+        console.log('Fetching doctors from:', 'http://localhost:5000/api/public/doctors');
+        const response = await fetch('http://localhost:5000/api/public/doctors');
+        const result = await response.json();
+        
+        if (result.success) {
+          console.log(`Fetched ${result.data.length} doctors`);
+          setRegisteredDoctors(result.data);
+          setIsLoading(false);
+          
+          if (result.data.length === 0 && retryCount < maxRetries) {
+            retryCount++;
+            setTimeout(fetchDoctors, 2000);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching doctors:', error);
+        if (retryCount < maxRetries) {
+          retryCount++;
+          setTimeout(fetchDoctors, 2000);
+        } else {
+          setIsLoading(false);
+        }
+      }
+    };
+    fetchDoctors();
+  }, []);
+
+  useEffect(() => {
+    // Initialize demo data if no sessions exist
     const sessions = chatService.getChatSessionsForUser(currentUserId, currentUserType);
-    const registeredDoctors = getRegisteredDoctors();
     
     if (sessions.length === 0 && registeredDoctors.length > 0) {
       chatService.initializeDemoData();
     }
-  }, [currentUserId, currentUserType, chatService]);
+  }, [currentUserId, currentUserType, chatService, registeredDoctors]);
 
   useEffect(() => {
     if (selectedChatId) {
@@ -79,7 +160,6 @@ export function ChatDoc({
       return;
     }
 
-    const registeredDoctors = getRegisteredDoctors();
     const selectedDoctor = registeredDoctors.find(d => d.id === selectedDoctorId);
     if (!selectedDoctor) {
       toast({
@@ -95,7 +175,7 @@ export function ChatDoc({
         currentUserId,
         currentUserName,
         selectedDoctorId,
-        selectedDoctor.name
+        selectedDoctor.name || selectedDoctor.fullName
       );
 
       setSelectedChatId(session.chatId);
@@ -116,10 +196,20 @@ export function ChatDoc({
   };
 
   const handleVideoCall = () => {
-    if (selectedSession && onVideoCall) {
-      const doctorId = currentUserType === 'patient' ? selectedSession.doctorId : selectedSession.patientId;
-      const doctorName = currentUserType === 'patient' ? selectedSession.doctorName : selectedSession.patientName;
-      onVideoCall(doctorId, doctorName);
+    if (selectedSession && socket) {
+      const targetId = currentUserType === 'patient' ? selectedSession.doctorId : selectedSession.patientId;
+      const targetName = currentUserType === 'patient' ? selectedSession.doctorName : selectedSession.patientName;
+      
+      setActiveCall({
+        room: `call_${currentUserId}_${targetId}`,
+        remoteName: targetName,
+        targetId: targetId,
+        isCaller: true
+      });
+
+      socket.emit('call:initiate', { to: targetId, callerName: currentUserName });
+      
+      if (onVideoCall) onVideoCall(targetId, targetName);
     }
   };
 
@@ -192,41 +282,61 @@ export function ChatDoc({
       <Dialog open={showNewChatDialog} onOpenChange={setShowNewChatDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Start New Chat</DialogTitle>
+            <DialogTitle>Start New Consultation</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium mb-2 block">
-                Select Doctor
+                Select Online Doctor
               </label>
-              {getRegisteredDoctors().length === 0 ? (
-                <div className="p-4 border border-dashed border-muted-foreground/25 rounded-lg text-center">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    No doctors are currently registered
+              
+              {isLoading ? (
+                <div className="p-4 border rounded-lg text-center animate-pulse bg-muted/50">
+                  <p className="text-sm text-muted-foreground">Connecting to medilink cluster...</p>
+                </div>
+              ) : !hasDoctors(registeredDoctors) ? (
+                <div className="p-4 border border-dashed border-red-500/25 rounded-lg text-center bg-red-50">
+                  <p className="text-sm text-red-600 mb-2 font-semibold">
+                    No approved doctors found in database
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Doctors need to register through the doctor portal to be available for chat
+                    Try refreshing or check if the seeder ran correctly.
                   </p>
                 </div>
               ) : (
-                <Select value={selectedDoctorId || ""} onValueChange={setSelectedDoctorId}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a doctor to chat with" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getRegisteredDoctors().map((doctor) => (
-                      <SelectItem key={doctor.id} value={doctor.id}>
-                        <div>
-                          <div className="font-medium">{doctor.name}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {doctor.specialization}
-                          </div>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="space-y-3">
+                  <Select value={selectedDoctorId} onValueChange={(val) => setSelectedDoctorId(val)}>
+                    <SelectTrigger className="w-full h-12">
+                      <SelectValue placeholder="Click to choose a doctor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {registeredDoctors.map((doctor) => (
+                        <SelectItem key={doctor.id} value={doctor.id}>
+                          {doctor.name} ({doctor.specialization})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Fallback Selection if Dropdown is stuck */}
+                  <div className="pt-2 border-t">
+                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider">Quick Select:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {registeredDoctors.map((doctor) => (
+                        <Button 
+                          key={`btn-${doctor.id}`}
+                          variant={selectedDoctorId === doctor.id ? "default" : "outline"}
+                          size="sm"
+                          className="text-xs h-8"
+                          onClick={() => setSelectedDoctorId(doctor.id)}
+                        >
+                          {doctor.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
 
@@ -234,7 +344,7 @@ export function ChatDoc({
               <Button variant="outline" onClick={() => setShowNewChatDialog(false)}>
                 Cancel
               </Button>
-              {getRegisteredDoctors().length > 0 && (
+              {hasDoctors(registeredDoctors) && (
                 <Button onClick={handleCreateNewChat}>
                   Start Chat
                 </Button>
@@ -243,6 +353,17 @@ export function ChatDoc({
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Video Call Overlay */}
+      {activeCall && (
+        <WebRTCCall
+          room={activeCall.room}
+          isCaller={activeCall.isCaller}
+          remoteUserName={activeCall.remoteName}
+          targetId={activeCall.targetId}
+          onClose={() => setActiveCall(null)}
+        />
+      )}
     </div>
   );
 }

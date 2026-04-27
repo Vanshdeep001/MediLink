@@ -16,6 +16,7 @@ import { StableCheckbox } from '@/components/ui/stable-checkbox';
 import { ClientOnly } from '@/components/ui/client-only';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 import { generateJitsiUrl, initiateCall, type CallSession } from '@/lib/call-management-service';
 import { Calendar as CalendarIcon, Video } from 'lucide-react';
 import type { Doctor, Consultation } from '@/lib/types';
@@ -28,11 +29,11 @@ const bookingSchema = z.object({
 });
 
 interface VideoConsultationBookingProps {
-    doctors: Doctor[];
-    patientName: string;
-    onBookingConfirmed: () => void;
-    onInstantCall?: (callSession: CallSession) => void;
-    selectedDoctorId?: string | null;
+  doctors: Doctor[];
+  patientName: string;
+  onBookingConfirmed: () => void;
+  onInstantCall?: (callSession: CallSession) => void;
+  selectedDoctorId?: string | null;
 }
 
 export function VideoConsultationBooking({ doctors, patientName, onBookingConfirmed, onInstantCall, selectedDoctorId }: VideoConsultationBookingProps) {
@@ -41,6 +42,27 @@ export function VideoConsultationBooking({ doctors, patientName, onBookingConfir
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
   const [isInstantCall, setIsInstantCall] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const { toast } = useToast();
+
+  const [onlineDoctorIds, setOnlineDoctorIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchOnlineStatus = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/public/online-status');
+        const result = await response.json();
+        if (result.success) {
+          setOnlineDoctorIds(result.data);
+        }
+      } catch (err) {
+        console.error('Error fetching online status:', err);
+      }
+    };
+
+    fetchOnlineStatus();
+    const interval = setInterval(fetchOnlineStatus, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     setIsHydrated(true);
@@ -78,37 +100,52 @@ export function VideoConsultationBooking({ doctors, patientName, onBookingConfir
       setFilteredDoctors(doctors.filter(d => d.specialization === spec));
     }
   }, [form, doctors]);
-  
+
   const onSubmit = (values: z.infer<typeof bookingSchema>) => {
     console.log('Form submitted with values:', values);
-    console.log('Is instant call:', isInstantCall);
-    
+
+    // Explicitly check for instant call state
     if (isInstantCall) {
-      // Set default values for instant calls
       const instantValues = {
         ...values,
         date: values.date || new Date(),
         time: values.time || 'Instant Call'
       };
-      console.log('Calling handleInstantCall with:', instantValues);
       handleInstantCall(instantValues);
     } else {
+      // Validate for scheduled booking
+      if (!values.date || !values.time) {
+        toast({
+          title: "Missing Information",
+          description: "Please select a preferred date and time for your booking, or choose 'Instant Call'.",
+          variant: "destructive"
+        });
+        return;
+      }
       handleScheduledBooking(values);
     }
   };
 
-  const handleInstantCall = (values: z.infer<typeof bookingSchema>) => {
+  const handleInstantCall = async (values: z.infer<typeof bookingSchema>) => {
     console.log('handleInstantCall called with:', values);
-    
-    // Extract doctor name without "Dr." prefix for the call system
-    const doctorName = values.doctor.replace('Dr. ', '');
-    console.log('Extracted doctor name:', doctorName);
-    console.log('Patient name:', patientName);
-    
-    // Create instant call request using the call management service (same as doctor-initiated calls)
-    const callSession = initiateCall(doctorName, patientName, 'patient');
-    console.log('Call session created:', callSession);
-    
+
+    // Find the doctor's real ID for WebRTC signaling
+    const cleanDoctorName = values.doctor.replace(/^Dr\.?\s+/i, '').trim();
+    const doctor = doctors.find(d => {
+      const dName = d.fullName.replace(/^Dr\.?\s+/i, '').trim();
+      return d.id === values.doctor || d.fullName === values.doctor || dName === cleanDoctorName;
+    });
+
+    if (!doctor) {
+      toast({ title: "Doctor Offline", description: "This doctor is not currently available for instant calls.", variant: "destructive" });
+      return;
+    }
+
+    const doctorId = doctor.id || cleanDoctorName;
+    const doctorName = doctor.fullName;
+
+
+
     // Store the instant consultation for history
     const instantConsultation: Consultation = {
       id: `INSTANT-${Date.now()}`,
@@ -117,8 +154,7 @@ export function VideoConsultationBooking({ doctors, patientName, onBookingConfir
       specialization: values.specialization,
       date: new Date().toISOString(),
       time: 'Instant Call',
-      jitsiLink: callSession.jitsiLink,
-      roomName: callSession.roomName
+      jitsiLink: 'webrtc-secure-link'
     };
 
     const consultationsString = localStorage.getItem('consultations_list');
@@ -126,18 +162,24 @@ export function VideoConsultationBooking({ doctors, patientName, onBookingConfir
     allConsultations.push(instantConsultation);
     localStorage.setItem('consultations_list', JSON.stringify(allConsultations));
 
-    // Simulate ringing and auto-join (exactly like doctor portal)
-    setTimeout(() => {
-      console.log('Calling onInstantCall with:', callSession);
-      if (onInstantCall) {
-        onInstantCall(callSession);
-      } else {
-        console.log('onInstantCall callback not provided');
-      }
-    }, 1000);
+    // Trigger the WebRTC call via the callback
+    toast({ title: "Initiating Video Call", description: `Connecting to Dr. ${doctorName}...` });
 
-    // The JitsiCall component will handle the video call interface
-    
+    if (onInstantCall) {
+      // We pass a mock session that triggers our WebRTC dialog
+      onInstantCall({
+        chatId: `call_${Date.now()}`,
+        patientId: patientName,
+        patientName,
+        doctorId: doctorId,
+        doctorName: doctorName,
+        messages: [],
+        lastActivity: new Date().toISOString(),
+        isActive: true,
+        unreadCount: 0
+      } as any);
+    }
+
     form.reset();
     setIsInstantCall(false);
   };
@@ -147,10 +189,10 @@ export function VideoConsultationBooking({ doctors, patientName, onBookingConfir
       console.error('Date and time are required for scheduled booking');
       return;
     }
-    
+
     const dateString = format(values.date, 'yyyy-MM-dd');
     const roomName = `MediLink-${patientName.replace(/\s/g, '')}-${values.doctor.replace(/\s/g, '')}-${dateString}`;
-    
+
     const newConsultation: Consultation = {
       id: `CONS-${Date.now()}`,
       patientName,
@@ -169,8 +211,24 @@ export function VideoConsultationBooking({ doctors, patientName, onBookingConfir
     onBookingConfirmed();
     form.reset();
   };
-  
+
   const timeSlots = ["09:00 AM", "10:00 AM", "11:00 AM", "02:00 PM", "03:00 PM", "04:00 PM"];
+
+  const isDoctorOnline = (doctor: Doctor) => {
+    const searchName = doctor.fullName.replace('Dr. ', '');
+    return onlineDoctorIds.includes(doctor.id || '') || 
+           onlineDoctorIds.includes(doctor.fullName) || 
+           onlineDoctorIds.includes(searchName);
+  };
+
+  const sortedDoctors = [...filteredDoctors].sort((a, b) => {
+    const aOnline = isDoctorOnline(a);
+    const bOnline = isDoctorOnline(b);
+    if (aOnline && !bOnline) return -1;
+    if (!aOnline && bOnline) return 1;
+    return 0;
+  });
+
 
   return (
     <div suppressHydrationWarning>
@@ -186,131 +244,152 @@ export function VideoConsultationBooking({ doctors, patientName, onBookingConfir
           </div>
         </div>
       }>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="specialization"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Specialization</FormLabel>
-              <Select onValueChange={onSpecializationChange} value={field.value || ""}>
-                <FormControl>
-                  <SelectTrigger><SelectValue placeholder="Select a specialization" /></SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {specializations.map(spec => <SelectItem key={spec} value={spec}>{spec}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="doctor"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Doctor</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value || ""}>
-                <FormControl>
-                  <SelectTrigger><SelectValue placeholder="Select a doctor" /></SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {filteredDoctors.map(doc => <SelectItem key={doc.fullName} value={`Dr. ${doc.fullName}`}>Dr. {doc.fullName}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        {/* Instant Call Checkbox */}
-        <StableCheckbox
-          id="instant-call"
-          checked={isInstantCall}
-          onCheckedChange={(checked) => {
-            setIsInstantCall(checked);
-            if (checked) {
-              // Clear date and time when instant call is selected
-              form.resetField('date');
-              form.resetField('time');
-            }
-          }}
-          className="space-x-2"
-        >
-          <div className="flex items-center gap-2">
-            <Video className="w-4 h-4" />
-            Instant Call (Skip scheduling)
-          </div>
-        </StableCheckbox>
-        {!isInstantCall && (
-          <>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Preferred Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button variant={"outline"} className={cn("pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))} initialFocus />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="time"
+              name="specialization"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Preferred Time</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                  <FormLabel>Specialization</FormLabel>
+                  <Select onValueChange={onSpecializationChange} value={field.value || ""}>
                     <FormControl>
-                      <SelectTrigger><SelectValue placeholder="Select a time slot" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder="Select a specialization" /></SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                        {timeSlots.map(time => <SelectItem key={time} value={time}>{time}</SelectItem>)}
+                      <SelectItem value="all">All Specializations</SelectItem>
+                      {specializations.map(spec => <SelectItem key={spec} value={spec}>{spec}</SelectItem>)}
                     </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </>
-        )}
-        <Button 
-          type="submit" 
-          className="w-full"
-          onClick={() => {
-            console.log('Button clicked!');
-            console.log('Form values:', form.getValues());
-            console.log('Form errors:', form.formState.errors);
-            console.log('Is instant call:', isInstantCall);
-          }}
-        >
-          {isInstantCall ? (
-            <>
-              <Video className="w-4 h-4 mr-2" />
-              Start Instant Call
-            </>
-          ) : (
-            'Confirm Booking'
-          )}
-        </Button>
-        </form>
-      </Form>
+            <FormField
+              control={form.control}
+              name="doctor"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex justify-between items-center">
+                    Doctor
+                    {isInstantCall && (
+                      <span className="text-[10px] uppercase tracking-wider text-primary font-bold bg-primary/10 px-2 py-0.5 rounded-full">
+                        Online Doctors Prioritized
+                      </span>
+                    )}
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <FormControl>
+                      <SelectTrigger><SelectValue placeholder="Select a doctor" /></SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {sortedDoctors.map((doc, idx) => {
+                        const online = isDoctorOnline(doc);
+                        return (
+                          <SelectItem key={doc.id || `doc-${idx}-${doc.fullName}`} value={`Dr. ${doc.fullName.replace('Dr. ', '')}`}>
+                            <div className="flex items-center gap-2">
+                              <div className={`w-2 h-2 rounded-full ${online ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`} />
+                              Dr. {doc.fullName.replace('Dr. ', '')}
+                              {online && <span className="text-[10px] text-green-600 font-medium ml-1">(Online)</span>}
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Instant Call Checkbox */}
+            <StableCheckbox
+              id="instant-call"
+              checked={isInstantCall}
+              onCheckedChange={(checked) => {
+                setIsInstantCall(checked);
+                if (checked) {
+                  // Clear date and time when instant call is selected
+                  form.resetField('date');
+                  form.resetField('time');
+                }
+              }}
+              className="space-x-2"
+            >
+              <div className="flex items-center gap-2">
+                <Video className="w-4 h-4" />
+                Instant Call (Skip scheduling)
+              </div>
+            </StableCheckbox>
+            {!isInstantCall && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Preferred Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button variant={"outline"} className={cn("pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                              {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))} initialFocus />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="time"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Preferred Time</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || ""}>
+                        <FormControl>
+                          <SelectTrigger><SelectValue placeholder="Select a time slot" /></SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {timeSlots.map(time => <SelectItem key={time} value={time}>{time}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isInstantCall && !isDoctorOnline(doctors.find(d => `Dr. ${d.fullName.replace('Dr. ', '')}` === form.getValues().doctor) || ({} as any))}
+              onClick={() => {
+                console.log('Button clicked!');
+                console.log('Form values:', form.getValues());
+                console.log('Form errors:', form.formState.errors);
+                console.log('Is instant call:', isInstantCall);
+              }}
+            >
+              {isInstantCall ? (
+                <>
+                  <Video className="w-4 h-4 mr-2" />
+                  Start Instant Call
+                </>
+              ) : (
+                'Confirm Booking'
+              )}
+            </Button>
+          </form>
+        </Form>
       </ClientOnly>
     </div>
   );
+
 }

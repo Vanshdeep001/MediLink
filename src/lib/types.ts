@@ -70,6 +70,9 @@ export interface Consultation {
     time: string;
     jitsiLink: string;
     roomName?: string;
+    fromSocketId?: string;
+    doctorId?: string;
+    patientId?: string;
 }
 
 export interface Medicine {

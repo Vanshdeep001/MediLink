@@ -16,7 +16,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import type { Patient, Pharmacy, Prescription, Medication, Consultation } from '@/lib/types';
 import Image from 'next/image';
-import { JitsiCall } from '@/components/jitsi-call';
+import { useSocket } from '@/hooks/use-socket';
+import { WebRTCCall } from '@/components/chatdoc/WebRTCCall';
 import ChatService, { type ChatSession } from '@/lib/chat-service';
 import { DoctorCallInterface } from '@/components/doctor/doctor-call-interface';
 import { orderService } from '@/lib/order-service';
@@ -27,7 +28,9 @@ export default function DoctorDashboard() {
   const { translations } = useContext(LanguageContext);
   const { toast } = useToast();
   const router = useRouter();
+  const { socket } = useSocket();
   const [doctorName, setDoctorName] = useState('');
+  const [doctorId, setDoctorId] = useState('');
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [consultations, setConsultations] = useState<Consultation[]>([]);
@@ -55,15 +58,11 @@ export default function DoctorDashboard() {
     }
 
     let currentDoctorName = 'Doctor';
-    if (userString) {
-      try {
-        const user = JSON.parse(userString);
-        currentDoctorName = user.fullName || 'Doctor';
-        setDoctorName(currentDoctorName);
-      } catch (e) {
-        setDoctorName('Doctor');
-      }
-    } else {
+    try {
+      const user = JSON.parse(userString);
+      currentDoctorName = user.fullName || 'Doctor';
+      setDoctorName(currentDoctorName);
+    } catch (e) {
       setDoctorName('Doctor');
     }
     
@@ -117,123 +116,161 @@ export default function DoctorDashboard() {
       }
     }
     
-    // Get sessions using the correct doctor ID
-    const registeredDoctors = chatService.getRegisteredDoctors();
-    const currentDoctor = registeredDoctors.find(d => d.name === currentDoctorName || d.name.includes(currentDoctorName));
-    const doctorId = currentDoctor ? currentDoctor.id : currentDoctorName;
-    
-    const sessions = chatService.getChatSessionsForUser(doctorId, 'doctor');
-    setChatSessions(sessions);
-
-    // Listen for new messages
-    const handleNewMessage = () => {
-      const updatedSessions = chatService.getChatSessionsForUser(doctorId, 'doctor');
-      setChatSessions(updatedSessions);
-      
-      // Update selected session if it exists
-      if (selectedChatSession) {
-        const updatedSelectedSession = chatService.getChatSession(selectedChatSession.chatId);
-        if (updatedSelectedSession) {
-          setSelectedChatSession(updatedSelectedSession);
-        }
-      }
-    };
-
-    chatService.on('newMessage', handleNewMessage);
-    
-    return () => {
-      chatService.off('newMessage', handleNewMessage);
-    };
-  }, [router, doctorName, selectedChatSession]);
-
-  // Listen for incoming call notifications
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      console.log('Storage event received:', e.key);
-      if (e.key === 'notifications') {
-        const notificationsString = localStorage.getItem('notifications');
-        console.log('Notifications from localStorage:', notificationsString);
-        if (notificationsString) {
-          const allNotifications = JSON.parse(notificationsString);
-          console.log('All notifications:', allNotifications);
-          const incomingCall = allNotifications.find((notif: any) => 
-            notif.type === 'incoming_call' && 
-            notif.for === 'doctor' && 
-            notif.doctorName === doctorName &&
-            !notif.read
+    // Get sessions using the real MongoDB ID if available
+    const syncDoctorSessions = async () => {
+      try {
+        const userString = localStorage.getItem('temp_user');
+        if (!userString) return;
+        const user = JSON.parse(userString);
+        
+        // Fetch doctor list to find the matching MongoDB ID
+        const response = await fetch('http://localhost:5000/api/public/doctors');
+        const result = await response.json();
+        
+        let doctorId = user.id || user.fullName;
+        
+        if (result.success) {
+          const dbDoctor = result.data.find((d: any) => 
+            d.name === currentDoctorName || d.name.includes(currentDoctorName) || d.email === user.email
           );
-          
-          console.log('Found incoming call:', incomingCall);
-          console.log('Current doctor name:', doctorName);
-          
-          if (incomingCall) {
-            setIncomingCallNotification(incomingCall);
-            toast({
-              title: "Incoming Call!",
-              description: `${incomingCall.patientName} is calling you for a video consultation`,
-              duration: 10000
-            });
+          if (dbDoctor) {
+            doctorId = dbDoctor.id;
+            setDoctorId(dbDoctor.id);
+            console.log('✅ Found matching Database ID for doctor:', dbDoctor.id);
           }
         }
+        
+        const sessions = chatService.getChatSessionsForUser(doctorId, 'doctor');
+        setChatSessions(sessions);
+
+        // Update listener with correct ID
+        const handleUpdates = () => {
+          const updated = chatService.getChatSessionsForUser(doctorId, 'doctor');
+          setChatSessions(updated);
+        };
+
+        chatService.on('newMessage', handleUpdates);
+        chatService.on('sessionsSynced', handleUpdates);
+      } catch (err) {
+        console.error('Error syncing doctor sessions:', err);
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    syncDoctorSessions();
     
-    // Also check for existing notifications on mount
-    const notificationsString = localStorage.getItem('notifications');
-    console.log('Checking existing notifications on mount:', notificationsString);
-    if (notificationsString) {
-      const allNotifications = JSON.parse(notificationsString);
-      console.log('Existing notifications:', allNotifications);
-      const incomingCall = allNotifications.find((notif: any) => 
-        notif.type === 'incoming_call' && 
-        notif.for === 'doctor' && 
-        notif.doctorName === doctorName &&
-        !notif.read
-      );
-      
-      console.log('Found existing incoming call:', incomingCall);
-      if (incomingCall) {
-        setIncomingCallNotification(incomingCall);
+    return () => {
+      chatService.off('newMessage', () => {});
+      chatService.off('sessionsSynced', () => {});
+    };
+  }, [router, doctorId]);
+
+  // Identify with socket for accurate call routing
+  useEffect(() => {
+    if (!socket || !doctorId) return;
+
+    const onConnect = () => {
+      if (doctorId) {
+        console.log('🆔 Identifying with socket as doctor (ID):', doctorId);
+        socket.emit('identify', doctorId);
       }
+      
+      const userString = localStorage.getItem('temp_user');
+      if (userString) {
+        const user = JSON.parse(userString);
+        const cleanName = user.fullName?.replace(/^Dr\.?\s+/i, '').trim();
+        console.log('🆔 Identifying with socket as doctor (Name):', cleanName);
+        socket.emit('identify', cleanName);
+      }
+
+    };
+
+
+    if (socket.connected) {
+      onConnect();
+    }
+
+    socket.on('connect', onConnect);
+    return () => {
+      socket.off('connect', onConnect);
+    };
+  }, [socket, doctorId]);
+
+  // Listen for incoming call notifications via Socket
+  useEffect(() => {
+    if (!socket || !doctorName) return;
+
+    const handleIncomingCall = ({ from, callerName }: { from: string, callerName: string }) => {
+      console.log('📹 Incoming socket call from:', callerName, 'socketId:', from);
+      
+      setIncomingCallNotification({
+        id: `call-${Date.now()}`,
+        patientName: callerName,
+        fromSocketId: from, // Critical for WebRTC
+        type: 'incoming_call'
+      });
+
+      toast({
+        title: "Incoming Video Call!",
+        description: `${callerName} is requesting a video consultation.`,
+        duration: 15000
+      });
+    };
+
+    const cleanDoctorName = doctorName?.replace(/^Dr\.?\s+/i, '').trim();
+    const registrationId = doctorId || cleanDoctorName;
+    
+    console.log('👂 Socket listening for calls on:', `call:incoming-${registrationId}`);
+    socket.on(`call:incoming-${registrationId}`, handleIncomingCall);
+    
+    // Also listen on full name if registrationId is an ID
+    if (doctorId && cleanDoctorName) {
+      socket.on(`call:incoming-${cleanDoctorName}`, handleIncomingCall);
+    }
+    
+    // Legacy support for "Dr. Name"
+    if (cleanDoctorName) {
+      socket.on(`call:incoming-Dr. ${cleanDoctorName}`, handleIncomingCall);
     }
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      socket.off(`call:incoming-${registrationId}`);
+      if (doctorId && cleanDoctorName) {
+        socket.off(`call:incoming-${cleanDoctorName}`);
+      }
+      if (cleanDoctorName) {
+        socket.off(`call:incoming-Dr. ${cleanDoctorName}`);
+      }
     };
-  }, [doctorName, toast]);
 
+
+  }, [socket, doctorName, doctorId, toast]);
+
+  // Handle Accept Call
   const handleAcceptCall = () => {
     if (incomingCallNotification) {
       const consultation: Consultation = {
-        id: incomingCallNotification.callSession.id,
+        id: incomingCallNotification.id,
         patientName: incomingCallNotification.patientName,
-        doctorName: incomingCallNotification.doctorName,
+        doctorName: doctorName,
         specialization: 'Instant Call',
         date: new Date().toISOString(),
         time: new Date().toLocaleTimeString(),
-        jitsiLink: incomingCallNotification.jitsiLink,
-        roomName: incomingCallNotification.roomName
+        jitsiLink: '', // Not needed for WebRTC
+        roomName: `call_${incomingCallNotification.fromSocketId}`,
+        fromSocketId: incomingCallNotification.fromSocketId
       };
-      
-      console.log('Doctor accepting call with consultation:', consultation);
-      console.log('Room name for doctor JitsiCall:', incomingCallNotification.roomName);
       
       setActiveCall(consultation);
       setIncomingCallNotification(null);
-      
-      // Mark notification as read
-      const notificationsString = localStorage.getItem('notifications');
-      if (notificationsString) {
-        const allNotifications = JSON.parse(notificationsString);
-        const updatedNotifications = allNotifications.map((notif: any) => 
-          notif.id === incomingCallNotification.id ? { ...notif, read: true } : notif
-        );
-        localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+
+      // Notify patient that call was accepted
+      if (socket) {
+        socket.emit('call:accepted', { to: incomingCallNotification.fromSocketId });
       }
     }
   };
+
+
 
   const handleDeclineCall = () => {
     if (incomingCallNotification) {
@@ -514,8 +551,8 @@ export default function DoctorDashboard() {
                               <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
                                 {session.patientName.split(' ').map(n => n[0]).join('').toUpperCase()}
                               </div>
-                              <div className="flex-1">
-                                <p className="font-medium text-sm">{session.patientName}</p>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-sm truncate">{session.patientName}</p>
                                 <p className="text-xs text-muted-foreground truncate">
                                   {session.lastMessage?.text || 'No messages yet'}
                                 </p>
@@ -711,42 +748,52 @@ export default function DoctorDashboard() {
       </main>
       <Footer />
       {activeCall && (
-        <JitsiCall 
-            roomName={activeCall.roomName || activeCall.jitsiLink.split('/').pop()!}
-            userName={doctorName}
+        <WebRTCCall 
+            room={activeCall.roomName || `call_${activeCall.id}`}
+            isCaller={false}
+            remoteUserName={activeCall.patientName}
+            targetId={activeCall.fromSocketId || activeCall.patientName}
             onClose={() => setActiveCall(null)}
         />
       )}
 
-      {/* Incoming Call Notification */}
+      {/* Incoming Call Overlay */}
       {incomingCallNotification && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Video className="w-8 h-8 text-green-600 dark:text-green-400" />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in zoom-in duration-300">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-sm w-full mx-4 shadow-2xl border border-primary/10 overflow-hidden relative">
+            {/* Background Decoration */}
+            <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/5 rounded-full blur-2xl" />
+            <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-primary/5 rounded-full blur-2xl" />
+            
+            <div className="text-center relative z-10">
+              <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+                <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping opacity-20" />
+                <Video className="w-12 h-12 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Incoming Video Call
+              
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Incoming Consultation
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                <strong>{incomingCallNotification.patientName}</strong> is calling you for an instant video consultation
+              <p className="text-gray-600 dark:text-gray-300 mb-8">
+                <span className="text-primary font-semibold text-lg block">{incomingCallNotification.patientName}</span>
+                is requesting a video call
               </p>
-              <div className="flex gap-3 justify-center">
+              
+              <div className="grid grid-cols-2 gap-4">
                 <Button 
                   onClick={handleDeclineCall}
                   variant="outline"
-                  className="flex-1"
+                  className="py-7 rounded-2xl border-2 border-red-100 text-red-600 hover:bg-red-50 hover:border-red-200 transition-all font-semibold"
                 >
-                  <X className="w-4 h-4 mr-2" />
+                  <X className="w-5 h-5 mr-2" />
                   Decline
                 </Button>
                 <Button 
                   onClick={handleAcceptCall}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="py-7 rounded-2xl bg-green-600 hover:bg-green-700 text-white shadow-xl shadow-green-200/50 hover:shadow-green-300/50 transition-all font-semibold"
                 >
-                  <Video className="w-4 h-4 mr-2" />
-                  Accept Call
+                  <Video className="w-5 h-5 mr-2" />
+                  Accept
                 </Button>
               </div>
             </div>

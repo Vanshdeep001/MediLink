@@ -102,14 +102,17 @@ export function initiateCall(doctorName: string, patientName: string, initiatedB
     notifyPatient(callSession);
   } else {
     notifyDoctor(callSession);
-    // Auto-accept patient-initiated calls (same behavior as doctor-initiated calls)
+    // Auto-accept patient-initiated calls DISABLED for WebRTC migration
+    /*
     setTimeout(() => {
       updateCallStatus(callSession.id, 'ringing');
     }, 1000);
     setTimeout(() => {
       updateCallStatus(callSession.id, 'connected');
     }, 2000);
+    */
   }
+
 
   return callSession;
 }

@@ -1,43 +1,42 @@
-import pkg from 'pg';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { Pool } = pkg;
+const MONGODB_URI = process.env.MONGODB_URI;
 
-// PostgreSQL Connection Pool
-export const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME || 'medilink',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+if (!MONGODB_URI) {
+  console.error('❌ MONGODB_URI is not defined in .env');
+}
 
-// Test connection
-pool.on('connect', () => {
-  console.log('✅ PostgreSQL connected successfully');
-});
-
-pool.on('error', (err) => {
-  console.error('❌ PostgreSQL connection error:', err);
-});
-
-// Helper function to execute queries
-export const query = async (text, params) => {
-  const start = Date.now();
+// MongoDB Connection
+export const connectDB = async () => {
   try {
-    const res = await pool.query(text, params);
-    const duration = Date.now() - start;
-    console.log('Executed query', { text, duration, rows: res.rowCount });
-    return res;
+    await mongoose.connect(MONGODB_URI);
+    console.log('✅ MongoDB connected successfully');
   } catch (error) {
-    console.error('Database query error:', error);
-    throw error;
+    console.error('❌ MongoDB connection error:', error.message);
+    process.exit(1);
   }
 };
 
-export default pool;
+// Mock pool object for backward compatibility with existing server.js health check
+export const pool = {
+  query: async (text, params) => {
+    // Basic connectivity check for health endpoint
+    if (text === 'SELECT 1') {
+      if (mongoose.connection.readyState === 1) {
+        return { rows: [{ '1': 1 }], rowCount: 1 };
+      }
+      throw new Error('Database not connected');
+    }
+    console.warn('⚠️ SQL Query attempted on MongoDB-configured backend. This requires refactoring.');
+    throw new Error('SQL queries are not supported on this MongoDB-native configuration.');
+  }
+};
+
+// Mock query function for backward compatibility with routes
+export const query = pool.query;
+
+export default connectDB;
+

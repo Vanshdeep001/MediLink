@@ -57,6 +57,33 @@ class ChatService {
       this.loadSessionsFromStorage();
       this.setupNetworkListeners();
       this.startHeartbeat();
+      this.syncWithBackend();
+    }
+  }
+
+  // Synchronize with backend API
+  private async syncWithBackend() {
+    try {
+      const userString = localStorage.getItem('temp_user');
+      if (!userString) return;
+      const user = JSON.parse(userString);
+      const userId = user.id || user.fullName;
+      const userType = (user.role || '').toLowerCase();
+      
+      if (!userType || !userId) return;
+
+      const response = await fetch(`http://localhost:5000/api/chat/sessions/${userId}/${userType}`);
+      const result = await response.json();
+      
+      if (result.success) {
+        result.data.forEach((sessionData: any) => {
+          this.sessions.set(sessionData.chatId, sessionData);
+        });
+        this.saveSessionsToStorage();
+        this.emit('sessionsSynced', result.data);
+      }
+    } catch (error) {
+      console.error('Failed to sync chat sessions with backend:', error);
     }
   }
 
@@ -80,6 +107,13 @@ class ChatService {
     this.saveSessionsToStorage();
     this.emit('sessionCreated', session);
     
+    // Notify backend
+    fetch('http://localhost:5000/api/chat/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(session)
+    });
+    
     return session;
   }
 
@@ -89,12 +123,20 @@ class ChatService {
 
   getChatSessionsForUser(userId: string, userType: 'patient' | 'doctor'): ChatSession[] {
     const sessions: ChatSession[] = [];
+    const searchId = userId.toLowerCase();
     
     for (const session of this.sessions.values()) {
-      if (userType === 'patient' && session.patientId === userId) {
-        sessions.push(session);
-      } else if (userType === 'doctor' && session.doctorId === userId) {
-        sessions.push(session);
+      if (userType === 'patient') {
+        const pId = session.patientId.toLowerCase();
+        if (pId === searchId || pId.includes(searchId) || searchId.includes(pId)) {
+          sessions.push(session);
+        }
+      } else if (userType === 'doctor') {
+        const dId = session.doctorId.toLowerCase();
+        const dName = session.doctorName.toLowerCase();
+        if (dId === searchId || dId.includes(searchId) || searchId.includes(dId) || dName.includes(searchId)) {
+          sessions.push(session);
+        }
       }
     }
     
@@ -131,17 +173,13 @@ class ChatService {
     this.sessions.set(chatId, session);
     this.saveSessionsToStorage();
     
-    // Simulate message delivery and seen status
-    setTimeout(() => {
-      message.status = 'delivered';
-      this.emit('messageStatusUpdate', { chatId, messageId: message.id, status: 'delivered' });
-    }, 1000);
-
-    setTimeout(() => {
-      message.status = 'seen';
-      this.emit('messageStatusUpdate', { chatId, messageId: message.id, status: 'seen' });
-    }, 3000);
-
+    // Save to MongoDB
+    fetch('http://localhost:5000/api/chat/message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chatId, message })
+    });
+    
     this.emit('newMessage', { chatId, message, session });
     this.createNotification(chatId, message, session);
     
